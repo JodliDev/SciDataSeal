@@ -1,0 +1,33 @@
+{
+  "name": "pod",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "prepare_dist": "node create_build_structure.mjs",
+    "build_frontend": "vite build src/frontend -c vite.config.prod.frontend.ts",
+    "build_backend": "vite build -c vite.config.prod.backend.ts",
+    "dev": "node --watch -r ts-node/register -r tsconfig-paths/register src/backend/app.ts",
+    "build": "tsc && npm run prepare_dist && npm run build_backend && npm run build_frontend",
+    "run_production": "cd dist && npm run server"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/express": "^5.0.3",
+    "@types/mithril": "^2.2.7",
+    "@types/node": "^24.0.10",
+    "rollup-plugin-node-externals": "^8.0.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "dependencies": {
+    "@solana/spl-memo": "^0.2.5",
+    "@solana/web3.js": "^1.98.2",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.1.0",
+    "mithril": "^2.3.3",
+    "vite-express": "^0.21.1"
+  }
+}

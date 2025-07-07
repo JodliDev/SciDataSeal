@@ -1,0 +1,200 @@
+:root {
+	--color-background: white;
+	--color-surface: #f8faff;
+	--color-shadow: #0003;
+	--color-inside-surface: white;
+	--color-surface-border: #cecdcd;
+	--color-accent-2: #588591;
+	--color-accent-dark: #bc9c30;
+	--color-accent: #ddc575;
+	--color-low-key-text: gray;
+	--radius: 10px;
+	
+	--paw-prints-z-index: 100;
+}
+
+body {
+	/*font-family: Trebuchet MS, Helvetica, sans-serif;*/
+}
+
+a, .clickable {
+	cursor: pointer;
+	font-weight: bold;
+	text-decoration: none;
+	color: var(--color-accent-dark);
+	transition: color 300ms ease-in-out;
+	
+	&:hover {
+		color: var(--color-accent);
+	}
+	
+	svg {
+		fill: var(--color-accent-dark);
+		transition: fill 300ms;
+	}
+	
+	&:hover svg {
+		fill: var(--color-accent);
+	}
+}
+
+
+input[type="text"], input[type="number"], input[type="password"], input[type="datetime-local"], input[type="date"], input[type="time"] {
+	padding: 5px;
+	border: 1px solid var(--color-accent);
+	outline: none;
+	border-radius: 10px;
+	background-color: rgba(255, 255, 255, 0.2);
+	transition: background 300ms ease-in-out;
+	
+	&:focus {
+		background: rgba(255, 255, 255, 0.7);
+	}
+}
+button, input[type="submit"] {
+	padding: 5px;
+	margin: -1px 1px 1px -1px;
+	cursor: pointer;
+	border-radius: 10px;
+	box-shadow: 1px 1px 1px var(--color-shadow);
+	
+	border: 1px solid white;
+	background-color: var(--color-accent);
+	color: white;
+	transition: background-color 300ms ease-in-out;
+	
+	&:hover {
+		background-color: var(--color-accent-dark);
+	}
+	&:active {
+		margin: 0;
+		box-shadow: unset;
+	}
+	&[disabled] {
+		background-color: lightgray;
+		color: white;
+		cursor: unset;
+	}
+}
+
+.fillParent {
+	position: absolute;
+	inset: 0;
+}
+
+.smallText {
+	font-size: small;
+}
+.textCentered {
+	text-align: center;
+}
+.warn {
+	color: red !important;
+}
+.aboveNormal {
+	z-index: 1;
+}
+.abovePawPrints {
+	z-index: calc(var(--paw-prints-z-index) + 1);
+}
+.aboveEverything {
+	z-index: calc(var(--paw-prints-z-index) + 2);
+}
+
+.horizontal, .vertical {
+	gap: 5px;
+	
+	&.noGap {
+		gap: 0;
+	}
+	
+	&.fullLine {
+		display: flex;
+		width: 100%;
+	}
+	
+	&.maxWidth {
+		max-width: 100%;
+	}
+	
+	> .fillSpace {
+		flex: 1 1 auto;
+	}
+	
+	> .selfAlignStart {
+		align-self: flex-start;
+	}
+	> .selfAlignCenter {
+		align-self: center;
+	}
+	> .selfAlignEnd {
+		align-self: flex-end;
+	}
+}
+
+.horizontal {
+	display: inline-flex;
+	flex-direction: row;
+	
+	&.vAlignStart {
+		align-items: flex-start;
+	}
+	&.vAlignCenter {
+		align-items: center;
+	}
+	&.vAlignStretched {
+		align-items: stretch;
+	}
+	&.vAlignEnd {
+		align-items: flex-end;
+	}
+	
+	&.hAlignSpaced {
+		justify-content: space-between;
+	}
+	&.hAlignCenter {
+		justify-content: center;
+	}
+	&.hAlignEnd {
+		justify-content: flex-end;
+	}
+	
+	&.wrapContent {
+		flex-wrap: wrap;
+	}
+}
+.vertical {
+	display: inline-flex;
+	flex-direction: column;
+	
+	&.reversed {
+		flex-direction: column-reverse;
+	}
+	
+	&.hAlignStart {
+		align-items: flex-start;
+	}
+	&.hAlignCenter {
+		align-items: center;
+	}
+	&.hAlignEnd {
+		align-items: flex-end;
+	}
+	&.hAlignStretched {
+		align-items: stretch;
+	}
+	
+	&.vAlignStart {
+		justify-content: flex-start;
+	}
+	&.vAlignCenter {
+		justify-content: center;
+	}
+	&.vAlignEnd {
+		justify-content: flex-end;
+	}
+	
+	&.wrapContent {
+		flex-wrap: wrap;
+	}
+}

@@ -1,0 +1,26 @@
+import {PageComponent} from "../../PageComponent.ts";
+import m from "mithril";
+import getData from "../../actions/getData.ts";
+import postData from "../../actions/postData.ts";
+
+export default async function Home(): PageComponent {
+	
+	async function load() {
+		alert(await getData("solana"));
+	}
+	async function save() {
+		alert(JSON.stringify(
+			await postData("solana", {data: prompt()})
+		));
+	}
+	
+	
+	return () => {
+		return {
+			view: () => <div>
+				<div class="clickable" onclick={save}>Save</div>
+				<div class="clickable" onclick={load}>Load</div>
+			</div>
+		};
+	};
+}

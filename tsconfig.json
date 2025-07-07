@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"useDefineForClassFields": true,
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"skipLibCheck": true,
+		"jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
+		"jsxFactory": "m",
+		
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"allowImportingTsExtensions": true,
+		"moduleDetection": "force",
+		"noEmit": true,
+		
+		/* Linting */
+		"strict": true,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"erasableSyntaxOnly": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedSideEffectImports": true,
+		
+		"paths": {
+			"@locales/*": ["./locales/*"]
+		}
+	},
+	"include": ["src"],
+}
