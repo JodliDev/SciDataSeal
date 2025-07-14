@@ -1,10 +1,16 @@
 import m, {Vnode} from "mithril";
-import "./site.module.css"
+import css from "./Site.module.css"
 import {FrontendOptions} from "../../shared/FrontendOptions.ts";
 import LoadingPage from "./LoadingPage.tsx";
 import {LoadedPageComponent, PageComponent} from "../PageComponent.ts";
 import SessionData from "../../shared/SessionData.ts";
 import Home from "./pages/Home.tsx";
+import {SiteTools} from "./SiteTools.ts";
+
+interface DocumentPageState {
+	page: string;
+	search?: `?${string}`;
+}
 
 export default function Site({attrs: {session, options, homepageName}}: Vnode<{session: SessionData, options: FrontendOptions, homepageName: string}>) {
 	let currentPage: LoadedPageComponent = LoadingPage;
@@ -34,10 +40,32 @@ export default function Site({attrs: {session, options, homepageName}}: Vnode<{s
 		}
 		m.redraw();
 	}
+	
+	function switchPage(page: string, search?: `?${string}`): void {
+		const path = `${page}${search ?? ""}`;
+		window.history.pushState({page: page, search: search} satisfies DocumentPageState, "", path);
+		loadPage(page)
+			.then();
+	}
+	
+	SiteTools.switchPage = switchPage;
+	
+	async function popstateEvent(event: PopStateEvent) {
+		const state = event.state as DocumentPageState;
+		await loadPage(state?.page ?? homepageName);
+	}
+	
+	window.addEventListener("popstate", popstateEvent);
+	
 	loadPage(homepageName)
 		.then();
 	
 	return {
-		view: () => <div id={pageName}>{m(currentPage, {session: session, options: options})}</div>
+		view: () => <div class={`${css.Site} vertical`}>
+			<h1 class={`${css.header} textCentered`}>Project Name</h1>
+			<div class="vertical fullLine fillSpace hAlignCenter vAlignCenter">
+				<div id={pageName} class={css.page}>{m(currentPage, {session: session, options: options})}</div>
+			</div>
+		</div>
 	};
 }

@@ -77,11 +77,6 @@ button, input[type="submit"] {
 	}
 }
 
-.fillParent {
-	position: absolute;
-	inset: 0;
-}
-
 .smallText {
 	font-size: small;
 }

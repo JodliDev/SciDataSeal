@@ -1,0 +1,20 @@
+.Site {
+	position: absolute;
+	inset: 10px;
+	
+	.header {
+	
+	}
+	.page {
+		min-width: 600px;
+		min-height: 300px;
+		box-shadow: 0 0 10px var(--color-shadow);
+		border-radius: 20px;
+		padding: 10px;
+		
+		@media (max-width: 600px) {
+			min-width: unset;
+			width: 90%;
+		}
+	}
+}

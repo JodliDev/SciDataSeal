@@ -2,6 +2,7 @@ import {PageComponent} from "../../PageComponent.ts";
 import m from "mithril";
 import getData from "../../actions/getData.ts";
 import postData from "../../actions/postData.ts";
+import {A} from "../widgets/A.tsx";
 
 export default async function Home(): PageComponent {
 	
@@ -20,6 +21,7 @@ export default async function Home(): PageComponent {
 			view: () => <div>
 				<div class="clickable" onclick={save}>Save</div>
 				<div class="clickable" onclick={load}>Load</div>
+				{m(A, {page: "Test", content: () => <div>sdf</div>})}
 			</div>
 		};
 	};
