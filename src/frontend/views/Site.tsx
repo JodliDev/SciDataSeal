@@ -3,10 +3,10 @@ import "./site.module.css"
 import {FrontendOptions} from "../../shared/FrontendOptions.ts";
 import LoadingPage from "./LoadingPage.tsx";
 import {LoadedPageComponent, PageComponent} from "../PageComponent.ts";
-import SessionData from "../../backend/SessionData.ts";
+import SessionData from "../../shared/SessionData.ts";
 import Home from "./pages/Home.tsx";
 
-export default function Site({attrs: {options, homepageName}}: Vnode<{options: FrontendOptions, homepageName: string}>) {
+export default function Site({attrs: {session, options, homepageName}}: Vnode<{session: SessionData, options: FrontendOptions, homepageName: string}>) {
 	let currentPage: LoadedPageComponent = LoadingPage;
 	let pageName = homepageName;
 	
@@ -28,6 +28,7 @@ export default function Site({attrs: {options, homepageName}}: Vnode<{options: F
 			pageName = newPageName;
 		}
 		catch {
+			console.warn(`Page ${newPageName} not found`);
 			pageName = "Home";
 			currentPage = await Home();
 		}
@@ -37,6 +38,6 @@ export default function Site({attrs: {options, homepageName}}: Vnode<{options: F
 		.then();
 	
 	return {
-		view: () => <div id={pageName}>{m(currentPage)}</div>
+		view: () => <div id={pageName}>{m(currentPage, {session: session, options: options})}</div>
 	};
 }

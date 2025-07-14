@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
+    "prepare_dev": "node create_dev_structure.mjs",
     "prepare_dist": "node create_build_structure.mjs",
     "build_frontend": "vite build src/frontend -c vite.config.prod.frontend.ts",
     "build_backend": "vite build -c vite.config.prod.backend.ts",
-    "dev": "node --watch -r ts-node/register -r tsconfig-paths/register src/backend/app.ts",
+    "dev": "npm run prepare_dev && node -r ts-node/register -r tsconfig-paths/register src/backend/app.ts",
     "build": "tsc && npm run prepare_dist && npm run build_backend && npm run build_frontend",
     "run_production": "cd dist && npm run server",
     "test": "vitest",
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^18.0.1",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.3",
     "@types/jsdom": "^21.1.7",
@@ -36,8 +38,10 @@
   "dependencies": {
     "@solana/spl-memo": "^0.2.5",
     "@solana/web3.js": "^1.98.2",
+    "better-sqlite3": "^12.2.0",
     "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
+    "kysely": "^0.28.2",
     "mithril": "^2.3.3",
     "vite-express": "^0.21.1"
   }

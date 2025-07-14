@@ -13,6 +13,10 @@ const distFolder = resolve(__dirname, "./", "dist");
 if(!existsSync(distFolder))
 	mkdirSync(distFolder, {recursive: true});
 
+const configFolder = resolve(__dirname, "./", "dist", "config");
+if(!existsSync(configFolder))
+	mkdirSync(configFolder, {recursive: true});
+
 packageJson.type = "module";
 packageJson.scripts = {
 	server: "node ./backend/server.js -- mode=production frontendPath=frontend"

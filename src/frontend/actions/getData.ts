@@ -5,10 +5,10 @@ import {Endpoints} from "../../shared/Endpoints.ts";
 
 export default async function getData(endpoint: Endpoints): Promise<unknown> {
 	const response = await fetch(`api/${endpoint}`);
-	if(!response.ok)
-		throw new NetworkErrorException();
-	
 	const data = await response.json() as ResponseData;
+	
+	if(!response.ok)
+		throw new NetworkErrorException(data.error);
 	
 	if(!data.ok)
 		throw new RequestFailedException(data.error);

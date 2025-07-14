@@ -11,7 +11,7 @@ describe("Lang", () => {
 				greetMultiple: "Hello %1$s, %2$s and %3$s. I greet all %4$d of you. Especially %2$s!",
 			},
 		});
-	})
+	});
 	
 	describe("has()", () => {
 		it("should return true for existing keys", () => {

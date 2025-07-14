@@ -1,5 +1,6 @@
 {
 	"colon": "%1$s: ",
 	"networkError": "Network error",
-	"unknownError": "Unknown error"
+	"unknownError": "Unknown error",
+	"unauthorizedError": "Not authorized"
 }
