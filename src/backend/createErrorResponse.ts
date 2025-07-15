@@ -1,4 +1,4 @@
-import {ResponseData} from "../shared/ResponseData.ts";
+import {ResponseFormat} from "../shared/ResponseFormat.ts";
 import {Response} from "express"
 import ExceptionInterface from "../shared/exceptions/ExceptionInterface.ts";
 
@@ -7,5 +7,5 @@ export default function createErrorResponse(error: unknown, response: Response) 
 	response.status(knownError.requestStatus ?? 500).json({
 		ok: false,
 		error: knownError.message ?? "unknownError"
-	} satisfies ResponseData);
+	} satisfies ResponseFormat<{}>);
 }

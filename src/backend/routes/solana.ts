@@ -1,7 +1,10 @@
 import express from "express";
 import {Connection, Transaction, sendAndConfirmTransaction, Keypair, LAMPORTS_PER_SOL, PublicKey, clusterApiUrl} from "@solana/web3.js";
-import {ResponseData} from "../../shared/ResponseData.ts";
 import {createMemoInstruction} from "@solana/spl-memo";
+import {addGetRoute, addPostRoute} from "../actions/addRoutes.ts";
+import SaveStudyData from "../../shared/data/SaveStudyData.ts";
+import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
+import GetDataStructure from "../../shared/data/GetDataStructure.ts";
 
 const router = express.Router();
 
@@ -38,75 +41,48 @@ async function requestAirdrop(connection: Connection, publicKey: PublicKey) {
 	});
 }
 
-router.post("/solana", async (request, response) => {
-	try {
-		const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-		
-		const { data } = request.body;
-		
-		if (!data) {
-			response.status(400).json({ok: false, error: "Data is required in the request body"});
-			return;
-		}
-		
-		const keyPair = await getKeyPair(connection, privateKey);
-		
-		
-		let balance = await connection.getBalance(keyPair.publicKey);
-		if (balance < 0.02 * LAMPORTS_PER_SOL) {
-			console.log('Insufficient funds, requesting airdrop...');
-			await requestAirdrop(connection, keyPair.publicKey)
-		} else {
-			console.log('Sufficient funds available, skipping airdrop.');
-		}
-		
-		const transaction = new Transaction().add(
-			createMemoInstruction(data, [keyPair.publicKey]),
-		)
-		
-		// Send and confirm the transaction
-		const signature = await sendAndConfirmTransaction(
-			connection,
-			transaction,
-			[keyPair]
-		);
-		
-		response.json({
-			ok: true,
-			data: {
-				signature,
-				transactionUrl: `https://explorer.solana.com/tx/${signature}?cluster=devnet`
-			}
-		} satisfies ResponseData);
-		
-	} catch (error) {
-		console.trace('Error saving to Solana:', error);
-		response.status(500).json({
-			ok: false,
-			error: 'Failed to save data to Solana blockchain'
-		} satisfies ResponseData);
+addPostRoute<SaveStudyData>("/solana", router, async data => {
+	if(!data.data)
+		throw new MissingDataException();
+	
+	const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+	
+	const keyPair = await getKeyPair(connection, privateKey);
+	
+	
+	const balance = await connection.getBalance(keyPair.publicKey);
+	if (balance < 0.02 * LAMPORTS_PER_SOL) {
+		console.log('Insufficient funds, requesting airdrop...');
+		await requestAirdrop(connection, keyPair.publicKey)
+	} else {
+		console.log('Sufficient funds available, skipping airdrop.');
 	}
+	
+	const transaction = new Transaction().add(
+		createMemoInstruction(data.data, [keyPair.publicKey]),
+	)
+	
+	// Send and confirm the transaction
+	const signature = await sendAndConfirmTransaction(
+		connection,
+		transaction,
+		[keyPair]
+	);
+	
+	return {
+		signature: signature,
+		transactionUrl: `https://explorer.solana.com/tx/${signature}?cluster=devnet`
+	};
 });
 
-
-router.get("/solana", async(_request, response) => {
-	try {
-		const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-		const keyPair = await getKeyPair(connection, privateKey);
-		const signatures = await connection.getSignaturesForAddress(keyPair.publicKey);
-		
-		response.json({
-			ok: true,
-			data: signatures.map(sig => sig.memo)
-		} satisfies ResponseData);
-		
-	} catch(error) {
-		console.error('Error fetching from Solana:', error);
-		response.status(500).json({
-			ok: false,
-			error: 'Failed to fetch data from Solana blockchain'
-		} satisfies ResponseData);
-	}
+addGetRoute<GetDataStructure>("/solana", router, async _ => {
+	const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+	const keyPair = await getKeyPair(connection, privateKey);
+	const signatures = await connection.getSignaturesForAddress(keyPair.publicKey);
+	
+	return {
+		entries: signatures.map(sig => sig.memo)
+	};
 });
 
 export default router;
