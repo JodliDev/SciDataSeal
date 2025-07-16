@@ -1,9 +1,10 @@
 import m from "mithril";
-import {Lang} from "./Lang.ts";
+import {Lang} from "./singleton/Lang.ts";
 import Site from "./views/Site.tsx";
 import {FrontendOptions} from "../shared/FrontendOptions.ts";
 import LangSource from "../shared/LangSource.ts";
 import SessionData from "../shared/SessionData.ts";
+import "./mithril-polyfill.ts";
 
 const langObj = JSON.parse(document.getElementById("langJson")!.innerHTML) as LangSource;
 const options = JSON.parse(document.getElementById("optionsJson")!.innerHTML) as FrontendOptions;

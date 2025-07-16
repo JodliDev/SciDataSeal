@@ -1,5 +1,5 @@
 import {describe, expect, it, vi, beforeEach} from 'vitest';
-import {Lang, LangKey} from "../../src/frontend/Lang";
+import {Lang, LangKey} from "../../src/frontend/singleton/Lang.ts";
 
 describe("Lang", () => {
 	beforeEach(() => {

@@ -7,10 +7,9 @@
 		"useDefineForClassFields": true,
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],
 		"skipLibCheck": true,
-		"jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
+		"jsx": "react",
 		"jsxFactory": "m",
 		"jsxFragmentFactory": "m.fragment", //see mithril-polyfill.ts
-		
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"esModuleInterop": true,

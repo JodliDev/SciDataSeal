@@ -10,6 +10,7 @@ import {FrontendOptions} from "../shared/FrontendOptions.ts";
 import AuthenticateMiddleware from "./AuthenticateMiddleware.ts";
 import setupDb from "./database/setupDb.ts";
 import getSessionData from "./actions/getSessionData.ts";
+import login from "./routes/login.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -21,6 +22,7 @@ async function init() {
 	webServer.use(cookieParser());
 	
 	webServer.use("/api", authenticateMiddleware, solana);
+	webServer.use("/api", login(db));
 	
 	const langProvider = new LangProvider();
 	const optionsString = JSON.stringify(

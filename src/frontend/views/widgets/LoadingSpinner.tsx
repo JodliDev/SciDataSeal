@@ -1,8 +1,16 @@
-import m, {Vnode} from "mithril"
+import m from "mithril"
 import css from "./LoadingSpinner.module.css"
+import {FixedComponent} from "../../mithril-polyfill.ts";
 
-export function LoadingSpinner({attrs: {visible = true, reserveSpace}}: Vnode<{visible?: boolean, reserveSpace?: boolean}>) {
-	return {
-		view: () => <div class={`${css.LoadingSpinner} ${visible ? "" : css.hidden} ${reserveSpace ? css.reserveSpace : ""}`}></div>
-	};
+interface Attributes {
+	visible?: boolean;
+	reserveSpace?: boolean
 }
+
+export default FixedComponent<Attributes>(({ attrs: { visible, reserveSpace } }) => {
+	return {
+		view: () => (
+			<div class={`${css.LoadingSpinner} ${visible ? "" : css.hidden} ${reserveSpace ? css.reserveSpace : ""}`}></div>
+		)
+	}
+});

@@ -5,7 +5,8 @@ import LoadingPage from "./LoadingPage.tsx";
 import {LoadedPageComponent, PageComponent} from "../PageComponent.ts";
 import SessionData from "../../shared/SessionData.ts";
 import Home from "./pages/Home.tsx";
-import {SiteTools} from "./SiteTools.ts";
+import {SiteTools} from "../singleton/SiteTools.ts";
+import Login from "./pages/Login.tsx";
 
 interface DocumentPageState {
 	page: string;
@@ -22,7 +23,7 @@ export default function Site({attrs: {session, options, homepageName}}: Vnode<{s
 
 		if(!newPageName) {
 			pageName = "Home";
-			currentPage = await Home();
+			currentPage = (await Home()).component;
 			m.redraw();
 			return;
 		}
@@ -30,13 +31,14 @@ export default function Site({attrs: {session, options, homepageName}}: Vnode<{s
 		try {
 			const imported = await import(`./pages/${newPageName}.tsx`) as { default: () => PageComponent };
 			
-			currentPage = await imported.default();
+			const bundle = await imported.default();
+			currentPage = bundle.isAllowed(session) ? bundle.component : (await Login()).component;
 			pageName = newPageName;
 		}
 		catch {
 			console.warn(`Page ${newPageName} not found`);
 			pageName = "Home";
-			currentPage = await Home();
+			currentPage = (await Home()).component;
 		}
 		m.redraw();
 	}
@@ -48,7 +50,7 @@ export default function Site({attrs: {session, options, homepageName}}: Vnode<{s
 			.then();
 	}
 	
-	SiteTools.switchPage = switchPage;
+	SiteTools.init(session, switchPage);
 	
 	async function popstateEvent(event: PopStateEvent) {
 		const state = event.state as DocumentPageState;
@@ -64,7 +66,7 @@ export default function Site({attrs: {session, options, homepageName}}: Vnode<{s
 		view: () => <div class={`${css.Site} vertical`}>
 			<h1 class={`${css.header} textCentered`}>Project Name</h1>
 			<div class="vertical fullLine fillSpace hAlignCenter vAlignCenter">
-				<div id={pageName} class={css.page}>{m(currentPage, {session: session, options: options})}</div>
+				<div id={pageName} class={`${css.page} vertical`}>{m(currentPage, {session: session, options: options})}</div>
 			</div>
 		</div>
 	};

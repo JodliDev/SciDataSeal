@@ -12,10 +12,11 @@ export default async function postData<T extends PostDataStructure>(endpoint: En
 		},
 		body: JSON.stringify(body)
 	});
-	if(!response.ok)
-		throw new NetworkErrorException();
-	
 	const data = await response.json() as ResponseFormat<T["Response"]>;
+	
+	if(!response.ok)
+		throw new NetworkErrorException(data.error);
+	
 	
 	if(!data.ok)
 		throw new RequestFailedException(data.error);

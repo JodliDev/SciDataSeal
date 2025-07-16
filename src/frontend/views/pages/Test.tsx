@@ -1,12 +1,9 @@
-import {PageComponent} from "../../PageComponent.ts";
+import {PageComponent, PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 
 export default async function Test(): PageComponent {
 	
-	return () => {
-		
-		return {
-			view: () => <div>Test</div>
-		};
-	};
+	return PrivatePage(
+		() => <div>Test</div>
+	);
 }

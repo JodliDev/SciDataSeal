@@ -1,23 +1,22 @@
 import {AuthenticatedRequest} from "../AuthenticatedRequest.ts";
 import {DbType} from "../database/setupDb.ts";
+import {Cookies} from "../../shared/Cookies.ts";
 
 export default async function authenticateRequest(db: DbType, request: AuthenticatedRequest) {
 	if(request.wasAuthenticated)
 		return;
 	
-	const authHeader = request.headers.authorization;
-	if(!authHeader)
-		return;
+	const sessionToken = request.cookies[Cookies.sessionToken];
+	const userId = request.cookies[Cookies.userId];
 	
-	// Expect the header to be in the format: "Bearer <token>"
-	const token = authHeader.substring(7);
-	if(!token)
+	if(!sessionToken || !userId)
 		return;
 	
 	const session = await db
 		.selectFrom("Session")
 		.select(["userId", "expires"])
-		.where("token", "=", token)
+		.where("userId", "=", userId)
+		.where("token", "=", sessionToken)
 		.where("expires", ">", Date.now())
 		.limit(1)
 		.executeTakeFirst();

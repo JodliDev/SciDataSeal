@@ -1,1 +1,1 @@
-export type Endpoints = "solana";
+export type Endpoints = "/solana" | "/login";

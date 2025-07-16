@@ -9,13 +9,13 @@ import GetDataStructure from "../../shared/data/GetDataStructure.ts";
 export function addPostRoute<T extends PostDataStructure>(
 	path: Endpoints,
 	router: express.Router,
-	validate: (data: Partial<T["Request"]>) => Promise<T["Response"]>
+	validate: (data: Partial<T["Request"]>, request: express.Request, response: express.Response) => Promise<T["Response"]>
 ) {
 	router.post(`${path}`, async (request, response) => {
 		try {
 			if(!request.body)
 				throw new MissingDataException();
-			const data = await validate(request.body);
+			const data = await validate(request.body, request, response);
 			
 			response.json({
 				ok: true,

@@ -1,5 +1,5 @@
 import strings from "@locales/strings/en.json";
-import LangSource from "../shared/LangSource.ts";
+import LangSource from "../../shared/LangSource.ts";
 
 export type LangKey = keyof typeof strings;
 

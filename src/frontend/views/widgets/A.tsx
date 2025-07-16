@@ -1,5 +1,5 @@
 import m, {Vnode} from "mithril";
-import {SiteTools} from "../SiteTools.ts";
+import {SiteTools} from "../../singleton/SiteTools.ts";
 
 
 export function A({attrs: {page, search, className, content}}: Vnode<{page: string, search?: `?${string}`, className?: string, content:() => Vnode}>) {

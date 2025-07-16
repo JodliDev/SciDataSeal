@@ -1,5 +1,7 @@
 {
 	"colon": "%1$s: ",
+	"login": "Login",
+	"missingDataError": "Missing data",
 	"networkError": "Network error",
 	"unknownError": "Unknown error",
 	"unauthorizedError": "Not authorized"
