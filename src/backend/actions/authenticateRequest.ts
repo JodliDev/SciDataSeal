@@ -18,7 +18,8 @@ export default async function authenticateRequest(db: DbType, request: Authentic
 		.selectFrom("Session")
 		.select(["userId", "expires"])
 		.where("token", "=", token)
-		.where("expires", ">", new Date())
+		.where("expires", ">", Date.now())
+		.limit(1)
 		.executeTakeFirst();
 	
 	if(session) {

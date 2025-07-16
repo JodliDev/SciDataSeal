@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"experimentalDecorators": true,
 		"target": "ESNext",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
@@ -8,6 +9,7 @@
 		"skipLibCheck": true,
 		"jsx": "react" /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */,
 		"jsxFactory": "m",
+		"jsxFragmentFactory": "m.fragment", //see mithril-polyfill.ts
 		
 		"resolveJsonModule": true,
 		"isolatedModules": true,
@@ -15,6 +17,7 @@
 		"allowImportingTsExtensions": true,
 		"moduleDetection": "force",
 		"noEmit": true,
+		"sourceMap": true,
 		
 		/* Linting */
 		"strict": true,
