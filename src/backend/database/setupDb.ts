@@ -2,15 +2,22 @@ import {Kysely, SqliteDialect} from "kysely";
 import SQLite from "better-sqlite3";
 import {Options} from "../Options.ts";
 import {CONFIG_FOLDER, SQLITE_FILE_NAME} from "../../shared/definitions/Constants.ts";
-import {prepareAndRunMigration} from "sqlmorpheus";
+import {DatabaseAccess, prepareAndRunMigration, runMigrationWithoutHistory} from "sqlmorpheus";
 import {KyselyTables, SqlMorpheusConfig} from "./DatabaseConfigs.ts";
 
-export default async function setupDb(): Promise<Kysely<KyselyTables>> {
-	const path = `${Options.root}/${CONFIG_FOLDER}/${SQLITE_FILE_NAME}`;
+/**
+ * Sets up the database connection, performs migrations, and returns a database instance.
+ * Parameters are only used in testing.
+ *
+ * @param path The file path to the SQLite database.
+ * @param silentMigration If true, runs the migration process without creating any sql files.
+ * @return A promise that resolves with the configured database instance.
+ */
+export default async function setupDb(path: string = `${Options.root}/${CONFIG_FOLDER}/${SQLITE_FILE_NAME}`, silentMigration?: boolean): Promise<DbType> {
 	console.log(`Using database at ${path}`);
 	const db = new SQLite(path);
 	
-	await prepareAndRunMigration({
+	const dbAccess: DatabaseAccess = {
 		runGetStatement: (query: string) => {
 			return Promise.resolve(db.prepare(query).all());
 		},
@@ -19,10 +26,15 @@ export default async function setupDb(): Promise<Kysely<KyselyTables>> {
 				db.exec(query);
 			});
 			transaction();
-
+			
 			return Promise.resolve();
 		}
-	}, SqlMorpheusConfig);
+	}
+	
+	if(!silentMigration)
+		await prepareAndRunMigration(dbAccess, SqlMorpheusConfig);
+	else
+		await runMigrationWithoutHistory(dbAccess, SqlMorpheusConfig);
 	
 	const dialect = new SqliteDialect({
 		database: db,

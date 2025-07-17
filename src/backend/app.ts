@@ -9,18 +9,22 @@ import LangProvider from "./LangProvider.ts";
 import {FrontendOptionsString, recreateOptionsString} from "../shared/FrontendOptions.ts";
 import AuthenticateMiddleware from "./AuthenticateMiddleware.ts";
 import setupDb from "./database/setupDb.ts";
-import getSessionData from "./actions/getSessionData.ts";
+import getSessionData from "./actions/authentication/getSessionData.ts";
 import login from "./routes/login.ts";
 import initialize from "./routes/initialize.ts";
+import Scheduler from "./Scheduler.ts";
+import deleteOutdatedSessions from "./actions/authentication/deleteOutdatedSessions.ts";
 
-/**
- * Note: locales are cached. When developing, changes to a language JSON will only show after the server was restarted.
- */
 async function init() {
 	const db = await setupDb()
 	const authenticateMiddleware = AuthenticateMiddleware(db);
 	const webServer = express();
+	const scheduler = new Scheduler(Options.schedulerHourOfDay);
 	await recreateOptionsString(db);
+	
+	scheduler.add(() => {
+		deleteOutdatedSessions(db);
+	})
 	
 	webServer.use(express.json());
 	webServer.use(express.urlencoded({ extended: false }));

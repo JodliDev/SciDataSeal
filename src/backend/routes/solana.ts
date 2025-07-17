@@ -1,10 +1,11 @@
 import express from "express";
 import {Connection, Transaction, sendAndConfirmTransaction, Keypair, LAMPORTS_PER_SOL, PublicKey, clusterApiUrl} from "@solana/web3.js";
 import {createMemoInstruction} from "@solana/spl-memo";
-import {addGetRoute, addPostRoute} from "../actions/addRoutes.ts";
+import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import SaveStudyData from "../../shared/data/SaveStudyData.ts";
 import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import GetDataStructureInterface from "../../shared/GetDataStructureInterface.ts";
+import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 
 const router = express.Router();
 

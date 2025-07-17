@@ -4,12 +4,12 @@ import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import bcrypt from "bcrypt";
 import {PASSWORD_MIN_LENGTH, USERNAME_MIN_LENGTH} from "../../shared/definitions/Constants.ts";
-import {addPostRoute} from "../actions/addRoutes.ts";
 import Initialize from "../../shared/data/Initialize.ts";
 import {Options} from "../Options.ts";
-import doLogin from "../actions/doLogin.ts";
+import doLogin from "../actions/authentication/doLogin.ts";
 import TooShortException from "../../shared/exceptions/TooShortException.ts";
 import {recreateOptionsString} from "../../shared/FrontendOptions.ts";
+import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 
 export default function initialize(db: DbType): express.Router {
 	const router = express.Router();

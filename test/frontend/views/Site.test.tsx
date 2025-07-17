@@ -29,7 +29,7 @@ describe("Site", () => {
 	});
 	
 	it("should load the Home page when an empty page is provided", async() => {
-		const out = mq(Site, {homepageName: "", options: {urlPath: ""} satisfies FrontendOptions});
+		const out = mq(Site, {homepageName: "", options: {urlPath: "", isInit: true} satisfies FrontendOptions});
 		
 		await wait(10);
 		out.redraw();
@@ -38,7 +38,7 @@ describe("Site", () => {
 	});
 	
 	it("should load the Home page when a faulty page is provided", async() => {
-		const out = mq(Site, {homepageName: "DoesNotExist", options: {urlPath: ""} satisfies FrontendOptions});
+		const out = mq(Site, {homepageName: "DoesNotExist", options: {urlPath: "", isInit: true} satisfies FrontendOptions});
 		
 		out.should.have("#DoesNotExist");
 		
@@ -49,7 +49,7 @@ describe("Site", () => {
 	});
 	
 	it("should show the loading icon while a page is loading", async() => {
-		const out = mq(Site, {homepageName: "Test", options: {urlPath: ""} satisfies FrontendOptions});
+		const out = mq(Site, {homepageName: "Test", options: {urlPath: "", isInit: true} satisfies FrontendOptions});
 		
 		out.should.have(`.${css.LoadingSpinner}`); //default loader
 		expect(TestData.count, "Initial imports of Test").toBe(0);

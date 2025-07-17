@@ -4,8 +4,8 @@ import LoginData from "../../shared/data/LoginData.ts";
 import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import bcrypt from "bcrypt";
-import {addPostRoute} from "../actions/addRoutes.ts";
-import doLogin from "../actions/doLogin.ts";
+import doLogin from "../actions/authentication/doLogin.ts";
+import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 
 export default function login(db: DbType): express.Router {
 	const router = express.Router();

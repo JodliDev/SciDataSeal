@@ -5,6 +5,7 @@ class OptionsClass implements FrontendOptions {
 	public readonly port: number = 80;
 	public readonly root: string = process.cwd();
 	public readonly urlPath: string = "/";
+	public readonly schedulerHourOfDay: number = 3;
 	public isInit: boolean = false;
 	
 	constructor() {
@@ -48,6 +49,9 @@ class OptionsClass implements FrontendOptions {
 
 export const Options = new OptionsClass();
 
+/**
+ * Only used for testing
+ */
 export function createNewOptionsForTest(): OptionsClass {
 	return new OptionsClass();
 }

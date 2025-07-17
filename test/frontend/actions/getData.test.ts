@@ -8,15 +8,15 @@ describe("getData()", () => {
 	it("should return data when the response is successful", async() => {
 		mockFetch({ok: true, data: "testData"}, 200);
 		
-		expect(await getData("solana")).toBe("testData");
+		expect(await getData("/solana")).toBe("testData");
 	});
 	it("should throw NetworkErrorException when request failed", async() => {
 		mockFetch({ok: true, data: "testData"}, 500);
-		await expect(getData("solana")).rejects.toThrow(NetworkErrorException);
+		await expect(getData("/solana")).rejects.toThrow(NetworkErrorException);
 	});
 	it("should throw RequestFailedException when data.ok is false", async() => {
 		mockFetch({ok: false, error: 'Request failed'}, 200);
-		await expect(getData("solana")).rejects.toThrow(RequestFailedException);
+		await expect(getData("/solana")).rejects.toThrow(RequestFailedException);
 	});
 })
 
