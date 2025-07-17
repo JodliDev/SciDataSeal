@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 import {addPostRoute} from "../actions/addRoutes.ts";
 import doLogin from "../actions/doLogin.ts";
 
-export default function login(db: DbType) {
+export default function login(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addPostRoute<LoginData>("/login", router, async (data, request, response) => {

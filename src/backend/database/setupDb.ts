@@ -1,7 +1,7 @@
 import {Kysely, SqliteDialect} from "kysely";
 import SQLite from "better-sqlite3";
 import {Options} from "../Options.ts";
-import {CONFIG_FOLDER, SQLITE_FILE_NAME} from "../../shared/Constants.ts";
+import {CONFIG_FOLDER, SQLITE_FILE_NAME} from "../../shared/definitions/Constants.ts";
 import {prepareAndRunMigration} from "sqlmorpheus";
 import {KyselyTables, SqlMorpheusConfig} from "./DatabaseConfigs.ts";
 

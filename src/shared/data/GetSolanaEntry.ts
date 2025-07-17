@@ -1,6 +1,6 @@
-import GetDataStructure from "./GetDataStructure.ts";
+import GetDataStructureInterface from "../GetDataStructureInterface.ts";
 
-export default interface GetSolanaEntry extends GetDataStructure {
+export default interface GetSolanaEntry extends GetDataStructureInterface {
 	Response: {
 		entries: string[]
 	}

@@ -1,12 +1,12 @@
 import {ResponseFormat} from "../../shared/ResponseFormat.ts";
 import express from "express";
 import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
-import {Endpoints} from "../../shared/Endpoints.ts";
-import PostDataStructure from "../../shared/data/PostDataStructure.ts";
-import createErrorResponse from "../createErrorResponse.ts";
-import GetDataStructure from "../../shared/data/GetDataStructure.ts";
+import {Endpoints} from "../../shared/definitions/Endpoints.ts";
+import PostDataStructureInterface from "../../shared/PostDataStructureInterface.ts";
+import createErrorResponse from "./createErrorResponse.ts";
+import GetDataStructureInterface from "../../shared/GetDataStructureInterface.ts";
 
-export function addPostRoute<T extends PostDataStructure>(
+export function addPostRoute<T extends PostDataStructureInterface>(
 	path: Endpoints,
 	router: express.Router,
 	validate: (data: Partial<T["Request"]>, request: express.Request, response: express.Response) => Promise<T["Response"]>
@@ -28,7 +28,7 @@ export function addPostRoute<T extends PostDataStructure>(
 	});
 }
 
-export function addGetRoute<T extends GetDataStructure>(
+export function addGetRoute<T extends GetDataStructureInterface>(
 	path: Endpoints,
 	router: express.Router,
 	validate: (query: Partial<T["Query"]>) => Promise<T["Response"]>

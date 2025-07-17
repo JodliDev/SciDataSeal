@@ -1,6 +1,6 @@
 import PostDataStructureInterface from "../PostDataStructureInterface.ts";
 
-export default interface LoginData extends PostDataStructureInterface {
+export default interface Initialize extends PostDataStructureInterface {
 	Request: {
 		username: string;
 		password: string;

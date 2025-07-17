@@ -4,7 +4,7 @@ import {createMemoInstruction} from "@solana/spl-memo";
 import {addGetRoute, addPostRoute} from "../actions/addRoutes.ts";
 import SaveStudyData from "../../shared/data/SaveStudyData.ts";
 import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
-import GetDataStructure from "../../shared/data/GetDataStructure.ts";
+import GetDataStructureInterface from "../../shared/GetDataStructureInterface.ts";
 
 const router = express.Router();
 
@@ -75,7 +75,7 @@ addPostRoute<SaveStudyData>("/solana", router, async data => {
 	};
 });
 
-addGetRoute<GetDataStructure>("/solana", router, async _ => {
+addGetRoute<GetDataStructureInterface>("/solana", router, async _ => {
 	const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 	const keyPair = await getKeyPair(connection, privateKey);
 	const signatures = await connection.getSignaturesForAddress(keyPair.publicKey);

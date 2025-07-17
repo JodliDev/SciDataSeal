@@ -1,6 +1,6 @@
 import {AuthenticatedRequest} from "../AuthenticatedRequest.ts";
 import {DbType} from "../database/setupDb.ts";
-import {Cookies} from "../../shared/Cookies.ts";
+import {Cookies} from "../../shared/definitions/Cookies.ts";
 
 export default async function authenticateRequest(db: DbType, request: AuthenticatedRequest) {
 	if(request.wasAuthenticated)

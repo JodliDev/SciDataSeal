@@ -1,8 +1,14 @@
 {
 	"colon": "%1$s: ",
+	"initDescription": "Init",
 	"login": "Login",
-	"missingDataError": "Missing data",
-	"networkError": "Network error",
-	"unknownError": "Unknown error",
-	"unauthorizedError": "Not authorized"
+	"errorMissingData": "Missing data",
+	"errorNetwork": "Network error",
+	"errorTooShort": "\"%1$s\" needs to consist of at least %2$d characters.",
+	"errorUnknown": "Unknown error",
+	"errorUnauthorized": "Not authorized",
+	"password": "Password",
+	"passwordAgain": "Password again",
+	"passwordMismatch": "The passwords dont match",
+	"username": "Username"
 }

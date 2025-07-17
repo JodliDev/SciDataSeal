@@ -1,18 +1,14 @@
-import NetworkErrorException from "../../shared/exceptions/NetworkErrorException.ts";
-import {ResponseFormat} from "../../shared/ResponseFormat.ts";
-import RequestFailedException from "../../shared/exceptions/RequestFailedException.ts";
-import {Endpoints} from "../../shared/Endpoints.ts";
-import GetDataStructure from "../../shared/data/GetDataStructure.ts";
+import {Endpoints} from "../../shared/definitions/Endpoints.ts";
+import GetDataStructureInterface from "../../shared/GetDataStructureInterface.ts";
+import UnknownException from "../../shared/exceptions/UnknownException.ts";
+import unpackResponse from "./unpackResponse.ts";
 
-export default async function getData<T extends GetDataStructure>(endpoint: Endpoints): Promise<T["Response"]> {
+export default async function getData<T extends GetDataStructureInterface>(endpoint: Endpoints): Promise<T["Response"]> {
 	const response = await fetch(`api/${endpoint}`);
-	const data = await response.json() as ResponseFormat<T["Response"]>;
+	const data = await unpackResponse<T["Response"]>(response);
 	
-	if(!response.ok)
-		throw new NetworkErrorException(data.error);
+	if(!data)
+		throw new UnknownException();
 	
-	if(!data.ok || !data.data)
-		throw new RequestFailedException(data.error);
-	
-	return data.data;
+	return data;
 }

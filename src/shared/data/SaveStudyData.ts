@@ -1,6 +1,6 @@
-import PostDataStructure from "./PostDataStructure.ts";
+import PostDataStructureInterface from "../PostDataStructureInterface.ts";
 
-export default interface SaveStudyData extends PostDataStructure {
+export default interface SaveStudyData extends PostDataStructureInterface {
 	Request: {
 		data: string
 	}

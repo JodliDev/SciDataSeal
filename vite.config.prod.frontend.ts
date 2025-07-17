@@ -1,5 +1,5 @@
 import {UserConfig} from "vite";
-import {FRONTEND_FOLDER} from "./src/shared/Constants";
+import {FRONTEND_FOLDER} from "./src/shared/definitions/Constants";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 // noinspection JSUnusedGlobalSymbols

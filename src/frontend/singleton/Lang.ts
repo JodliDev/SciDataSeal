@@ -15,8 +15,8 @@ class LangClass {
 		return this.langSource.strings.hasOwnProperty(key);
 	}
 	
-	public getDynamic(key: string): string {
-		return this.get(key as LangKey);
+	public getDynamic(key: string, ... replacers: Array<string | number>): string {
+		return this.get(key as LangKey, ...replacers);
 	}
 	public getWithColon(key: LangKey, ... replacers: Array<string | number>): string {
 		return Lang.get("colon", Lang.get(key, ...replacers));

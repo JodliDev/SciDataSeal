@@ -1,6 +1,6 @@
 import express, {NextFunction} from "express";
 import {DbType} from "./database/setupDb.ts";
-import createErrorResponse from "./createErrorResponse.ts";
+import createErrorResponse from "./actions/createErrorResponse.ts";
 import isLoggedIn from "./actions/isLoggedIn.ts";
 import UnauthorizedException from "../shared/exceptions/UnauthorizedException.ts";
 

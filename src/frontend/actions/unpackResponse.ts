@@ -1,0 +1,40 @@
+import {ResponseFormat} from "../../shared/ResponseFormat.ts";
+import UnknownException from "../../shared/exceptions/UnknownException.ts";
+import NetworkErrorException from "../../shared/exceptions/NetworkErrorException.ts";
+import {ResponseType} from "../../shared/ResponseType.ts";
+import ExceptionInterface from "../../shared/exceptions/ExceptionInterface.ts";
+import {Lang} from "../singleton/Lang.ts";
+
+function translateValues(values: ExceptionInterface["values"]): ExceptionInterface["values"] {
+	if(!values)
+		return values;
+	for(let i = 0; i < values.length; i++){
+		const value = values[i];
+		if(typeof value == "string" && Lang.has(value))
+			values[i] = Lang.getDynamic(value);
+	}
+	return values;
+}
+
+/**
+ * Processes and unpacks the JSON response from a fetch API call.
+ * If the response contains an error, the method throws an appropriate exception.
+ *
+ * @see src/backend/actions/createErrorResponse.ts
+ * @param response The Response object obtained from a fetch call.
+ * @return A promise resolving to the unpacked data of type T or undefined if no data exists.
+ */
+export default async function unpackResponse<T extends ResponseType | undefined>(response: Response): Promise<T | undefined> {
+	const data = await response.json() as ResponseFormat<T>;
+	
+	if(!response.ok) {
+		if(data.error)
+			throw new UnknownException(data.error?.message, translateValues(data.error?.values));
+		else
+			throw new NetworkErrorException();
+	}
+	if(!data.ok)
+		throw new UnknownException(data.error?.message, translateValues(data.error?.values));
+	
+	return data.data;
+}

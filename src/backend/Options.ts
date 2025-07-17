@@ -5,6 +5,7 @@ class OptionsClass implements FrontendOptions {
 	public readonly port: number = 80;
 	public readonly root: string = process.cwd();
 	public readonly urlPath: string = "/";
+	public isInit: boolean = false;
 	
 	constructor() {
 		const keys = Object.keys(this);

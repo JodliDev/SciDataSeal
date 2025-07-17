@@ -1,10 +1,8 @@
-import NetworkErrorException from "../../shared/exceptions/NetworkErrorException.ts";
-import {ResponseFormat} from "../../shared/ResponseFormat.ts";
-import RequestFailedException from "../../shared/exceptions/RequestFailedException.ts";
-import {Endpoints} from "../../shared/Endpoints.ts";
-import PostDataStructure from "../../shared/data/PostDataStructure.ts";
+import {Endpoints} from "../../shared/definitions/Endpoints.ts";
+import PostDataStructureInterface from "../../shared/PostDataStructureInterface.ts";
+import unpackResponse from "./unpackResponse.ts";
 
-export default async function postData<T extends PostDataStructure>(endpoint: Endpoints, body: T["Request"]): Promise<T["Response"]> {
+export default async function postData<T extends PostDataStructureInterface>(endpoint: Endpoints, body: T["Request"]): Promise<T["Response"]> {
 	const response = await fetch(`api${endpoint}`, {
 		method: "POST",
 		headers: {
@@ -12,14 +10,5 @@ export default async function postData<T extends PostDataStructure>(endpoint: En
 		},
 		body: JSON.stringify(body)
 	});
-	const data = await response.json() as ResponseFormat<T["Response"]>;
-	
-	if(!response.ok)
-		throw new NetworkErrorException(data.error);
-	
-	
-	if(!data.ok)
-		throw new RequestFailedException(data.error);
-	
-	return data.data;
+	return await unpackResponse<T["Response"]>(response);
 }

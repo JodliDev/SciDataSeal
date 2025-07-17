@@ -7,6 +7,7 @@ import SessionData from "../../shared/SessionData.ts";
 import Home from "./pages/Home.tsx";
 import {SiteTools} from "../singleton/SiteTools.ts";
 import Login from "./pages/Login.tsx";
+import Init from "./pages/Init.tsx";
 
 interface DocumentPageState {
 	page: string;
@@ -20,7 +21,13 @@ export default function Site({attrs: {session, options, homepageName}}: Vnode<{s
 	async function loadPage(newPageName: string): Promise<void> {
 		currentPage = LoadingPage;
 		m.redraw();
-
+		
+		if(!options.isInit) {
+			pageName = "Init";
+			currentPage = (await Init()).component;
+			m.redraw();
+			return;
+		}
 		if(!newPageName) {
 			pageName = "Home";
 			currentPage = (await Home()).component;
