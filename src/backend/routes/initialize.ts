@@ -31,7 +31,7 @@ export default function initialize(db: DbType): express.Router {
 		const insert = await db.insertInto("User")
 			.values(() => ({
 				password: hash,
-				name: data.username!,
+				username: data.username!,
 				lastLogin: Date.now()
 			})).executeTakeFirst();
 		

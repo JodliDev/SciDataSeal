@@ -10,7 +10,7 @@ describe("deleteOutdatedSessions", () => {
 		db = await setupDb(":memory:", true);
 		
 		// Seed test data
-		await db.insertInto("User").values([{name: "Aang", password: "", lastLogin: 0}]).execute();
+		await db.insertInto("User").values([{username: "Aang", password: "", lastLogin: 0}]).execute();
 		
 		await db.insertInto("Session")
 			.values([

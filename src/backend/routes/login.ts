@@ -17,7 +17,7 @@ export default function login(db: DbType): express.Router {
 		const user = await db
 			.selectFrom("User")
 			.select(["password", "userId"])
-			.where("name", "=", data.username)
+			.where("username", "=", data.username)
 			.limit(1)
 			.executeTakeFirst();
 		
