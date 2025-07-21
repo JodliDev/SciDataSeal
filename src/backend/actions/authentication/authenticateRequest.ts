@@ -1,15 +1,16 @@
 import {AuthenticatedRequest} from "../../AuthenticatedRequest.ts";
 import {DbType} from "../../database/setupDb.ts";
 import {Cookies} from "../../../shared/definitions/Cookies.ts";
+import isValidBackendString from "../../../shared/actions/isValidBackendString.ts";
 
 export default async function authenticateRequest(db: DbType, request: AuthenticatedRequest) {
 	if(request.wasAuthenticated)
 		return;
 	
 	const sessionToken = request.cookies[Cookies.sessionToken];
-	const userId = request.cookies[Cookies.userId];
+	const userId = parseInt(request.cookies[Cookies.userId]);
 	
-	if(!sessionToken || !userId)
+	if(!sessionToken || !userId || !isValidBackendString(sessionToken))
 		return;
 	
 	const session = await db

@@ -1,13 +1,13 @@
 import m, {Vnode} from "mithril";
 import css from "./Site.module.css"
 import {FrontendOptions} from "../../shared/FrontendOptions.ts";
-import LoadingPage from "./LoadingPage.tsx";
+import Loading from "./pages/fallback/Loading.tsx";
 import {LoadedPageComponent, PageComponent} from "../PageComponent.ts";
 import SessionData from "../../shared/SessionData.ts";
-import Home from "./pages/Home.tsx";
 import {SiteTools} from "../singleton/SiteTools.ts";
-import Login from "./pages/Login.tsx";
-import Init from "./pages/Init.tsx";
+import Login from "./pages/fallback/Login.tsx";
+import Init from "./pages/fallback/Init.tsx";
+import Home from "./pages/fallback/Home.tsx";
 
 interface DocumentPageState {
 	page: string;
@@ -15,44 +15,50 @@ interface DocumentPageState {
 }
 
 export default function Site({attrs: {session, options, homepageName}}: Vnode<{session: SessionData, options: FrontendOptions, homepageName: string}>) {
-	let currentPage: LoadedPageComponent = LoadingPage;
+	let currentPage: LoadedPageComponent = Loading;
 	let pageName = homepageName;
 	
 	async function loadPage(newPageName: string): Promise<void> {
-		currentPage = LoadingPage;
+		currentPage = Loading;
 		m.redraw();
 		
 		if(!options.isInit) {
 			pageName = "Init";
-			currentPage = (await Init()).component;
+			currentPage = Init;
 			m.redraw();
 			return;
 		}
 		if(!newPageName) {
-			pageName = "Home";
-			currentPage = (await Home()).component;
-			m.redraw();
-			return;
+			if(session.isLoggedIn)
+				pageName = "Admin";
+			else {
+				pageName = "Home";
+				currentPage = Home;
+				m.redraw();
+				return;
+			}
 		}
 
 		try {
 			const imported = await import(`./pages/${newPageName}.tsx`) as { default: () => PageComponent };
 			
 			const bundle = await imported.default();
-			currentPage = bundle.isAllowed(session) ? bundle.component : (await Login()).component;
+			currentPage = bundle.isAllowed(session) ? bundle.component : Login;
 			pageName = newPageName;
 		}
 		catch {
 			console.warn(`Page ${newPageName} not found`);
 			pageName = "Home";
-			currentPage = (await Home()).component;
+			currentPage = Home;
 		}
 		m.redraw();
 	}
 	
 	function switchPage(page: string, search?: `?${string}`): void {
-		const path = `${page}${search ?? ""}`;
-		window.history.pushState({page: page, search: search} satisfies DocumentPageState, "", path);
+		if(page != pageName) {
+			const path = `${page}${search ?? ""}`;
+			window.history.pushState({page: page, search: search} satisfies DocumentPageState, "", path);
+		}
 		loadPage(page)
 			.then();
 	}

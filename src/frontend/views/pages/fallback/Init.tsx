@@ -1,10 +1,9 @@
-import {PageComponent, PublicPage} from "../../PageComponent.ts";
 import m from "mithril";
-import Form from "../widgets/Form.tsx";
-import Initialize from "../../../shared/data/Initialize.ts";
-import {Lang} from "../../singleton/Lang.ts";
+import Form from "../../widgets/Form.tsx";
+import Initialize from "../../../../shared/data/Initialize.ts";
+import {Lang} from "../../../singleton/Lang.ts";
 
-export default async function Init(): PageComponent {
+export default function Init() {
 	const filterData = (data: Record<string, unknown>) => {
 		if(data.password !== data.passwordRepeat)
 			throw new Error(Lang.get("passwordMismatch"));
@@ -17,8 +16,8 @@ export default async function Init(): PageComponent {
 		window.location.reload();
 	}
 	
-	return PublicPage(() =>
-		<div class="fillSpace vertical hAlignCenter vAlignCenter">
+	return {
+		view: () => <div class="fillSpace vertical hAlignCenter vAlignCenter">
 			<div>{Lang.get("initDescription")}</div>
 			<Form<Initialize> endpoint="/initialize" filterData={filterData} onReceive={onReceive}>
 				<label>
@@ -35,5 +34,5 @@ export default async function Init(): PageComponent {
 				</label>
 			</Form>
 		</div>
-	);
+	};
 }
