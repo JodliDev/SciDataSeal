@@ -14,8 +14,9 @@ interface DocumentPageState {
 	query?: `?${string}`;
 }
 
-export default function Site({attrs: {session, options, homepageName, homeQuery}}: Vnode<{session: SessionData, options: FrontendOptions, homepageName: string, homeQuery: string}>) {
+export default function Site({attrs: {session, options}}: Vnode<{session: SessionData, options: FrontendOptions}>) {
 	let currentPage: LoadedPageComponent = Loading;
+	const {page: homepageName, query: homeQuery} = getUrlData();
 	let pageName = homepageName;
 	
 	async function loadPage(newPageName: string, query: string): Promise<void> {
@@ -53,6 +54,16 @@ export default function Site({attrs: {session, options, homepageName, homeQuery}
 		m.redraw();
 	}
 	
+	function getUrlData() {
+		const homepage = window.location.pathname.substring(options.urlPath.length);
+		const search = window.location.search;
+		
+		return {
+			page: homepage,
+			query: search
+		};
+	}
+	
 	function switchPage(page: string, newQuery?: `?${string}`): void {
 		if(page != pageName) {
 			const path = `${page}${newQuery ?? ""}`;
@@ -65,7 +76,8 @@ export default function Site({attrs: {session, options, homepageName, homeQuery}
 	SiteTools.init(session, switchPage);
 	
 	async function popstateEvent(event: PopStateEvent) {
-		const state = event.state as DocumentPageState;
+		const state: DocumentPageState = event.state ?? getUrlData();
+		console.log(event)
 		await loadPage(state?.page ?? homepageName, state?.query ?? homeQuery);
 	}
 	
