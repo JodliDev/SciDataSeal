@@ -1,3 +1,3 @@
 export default function isValidBackendString(text: string): boolean {
-	return /^\w+$/.test(text);
+	return /^[\w\s]+$/.test(text);
 }

@@ -14,6 +14,9 @@ import login from "./routes/login.ts";
 import initialize from "./routes/initialize.ts";
 import Scheduler from "./Scheduler.ts";
 import deleteOutdatedSessions from "./actions/authentication/deleteOutdatedSessions.ts";
+import createStudy from "./routes/createStudy.ts";
+import listStudies from "./routes/listStudies.ts";
+import getStudy from "./routes/getStudy.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -31,8 +34,12 @@ async function init() {
 	webServer.use(cookieParser());
 	
 	webServer.use("/api", login(db));
-	webServer.use("/api", initialize(db));
+	if(!Options.isInit)
+		webServer.use("/api", initialize(db));
 	webServer.use("/api", authenticateMiddleware, solana);
+	webServer.use("/api", authenticateMiddleware, createStudy(db));
+	webServer.use("/api", authenticateMiddleware, listStudies(db));
+	webServer.use("/api", authenticateMiddleware, getStudy(db));
 	
 	const langProvider = new LangProvider();
 	

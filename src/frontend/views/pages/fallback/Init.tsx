@@ -1,6 +1,6 @@
 import m from "mithril";
 import Form from "../../widgets/Form.tsx";
-import Initialize from "../../../../shared/data/Initialize.ts";
+import InitializeInterface from "../../../../shared/data/InitializeInterface.ts";
 import {Lang} from "../../../singleton/Lang.ts";
 
 export default function Init() {
@@ -19,7 +19,7 @@ export default function Init() {
 	return {
 		view: () => <div class="fillSpace vertical hAlignCenter vAlignCenter">
 			<div>{Lang.get("initDescription")}</div>
-			<Form<Initialize> endpoint="/initialize" filterData={filterData} onReceive={onReceive}>
+			<Form<InitializeInterface> endpoint="/initialize" filterData={filterData} onReceive={onReceive}>
 				<label>
 					<small>{Lang.get("username")}</small>
 					<input type="text" name="username"/>

@@ -1,6 +1,6 @@
 import {ResponseType} from "./ResponseType.ts";
 
 export default interface GetDataStructureInterface {
-	Query?: Record<string, unknown>
+	Query?: Record<string, string>
 	Response: ResponseType
 }

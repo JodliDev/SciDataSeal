@@ -1,4 +1,4 @@
-import {DbTable, ForeignKey} from "sqlmorpheus";
+import {ForeignKey, TableClass} from "sqlmorpheus";
 import {UserTable} from "./User.ts";
 import {Generated, Insertable} from "kysely";
 
@@ -9,10 +9,11 @@ export default interface Session {
 	expires: number;
 }
 
-@DbTable("Session", "sessionId")
+@TableClass("Session", "sessionId")
 export class SessionTable implements Insertable<Session> {
 	sessionId = 0;
-	@ForeignKey(UserTable, "userId") userId = 0;
+	@ForeignKey(UserTable, "userId")
+	userId = 0;
 	token = "";
 	expires = 0;
 }

@@ -12,4 +12,5 @@ const session = JSON.parse(document.getElementById("sessionJson")!.innerHTML) as
 
 Lang.init(langObj);
 const homepage = window.location.pathname.substring(options.urlPath.length);
-m.mount(document.getElementById("site")!, {view: () => m(Site, {session: session, options: options, homepageName: homepage})});
+const search = window.location.search;
+m.mount(document.getElementById("site")!, {view: () => m(Site, {session: session, options: options, homepageName: homepage, homeQuery: search})});

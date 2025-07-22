@@ -1,1 +1,8 @@
-export type Endpoints = "/solana" | "/login" | "/initialize";
+export type Endpoints
+	= "/initialize"
+	| "/createStudy"
+	| "/getStudy"
+	| "/listStudies"
+	| "/login"
+	| "/saveData"
+	| "/solana";

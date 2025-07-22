@@ -1,11 +1,11 @@
 import {Children, Vnode} from "mithril";
 import SessionData from "../shared/SessionData.ts";
-import {FrontendOptions} from "../shared/FrontendOptions.ts";
 
-export type PageOptions = Vnode<{session: SessionData, options: FrontendOptions}>;
-export type LoadedPageComponent = (pageData: PageOptions) => {view: () => Children};
+export type PageVnode = Vnode;
+export type LoadedPageComponent = (vNode: PageVnode) => {view: () => Children};
 export type PageBundle = {isAllowed: (session: SessionData) => boolean, component: LoadedPageComponent};
 export type PageComponent = Promise<PageBundle>;
+export type PageImport = {default: (query: URLSearchParams) => PageComponent}
 
 export function PrivatePage(view: () => Children): PageBundle {
 	const bundle = PublicPage(view);
@@ -17,8 +17,6 @@ export function PrivatePage(view: () => Children): PageBundle {
 export function PublicPage(view: () => Children): PageBundle {
 	return {
 		isAllowed: () => true,
-		component: () => {
-			return {view: view}
-		}
+		component: () => ({view: view})
 	};
 }

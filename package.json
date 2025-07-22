@@ -7,7 +7,7 @@
     "prepare_dist": "node create_build_structure.mjs",
     "build_frontend": "vite build src/frontend -c vite.config.prod.frontend.ts",
     "build_backend": "vite build -c vite.config.prod.backend.ts",
-    "dev": "npm run prepare_dev && node --watch -r ts-node/register -r tsconfig-paths/register src/backend/app.ts",
+    "dev": "npm run prepare_dev && node -r ts-node/register -r tsconfig-paths/register src/backend/app.ts",
     "build": "tsc && npm run prepare_dist && npm run build_backend && npm run build_frontend",
     "run_production": "cd dist && npm run server",
     "test": "vitest",
@@ -45,7 +45,7 @@
     "express": "^5.1.0",
     "kysely": "^0.28.2",
     "mithril": "^2.3.3",
-    "sqlmorpheus": "^0.1.7",
+    "sqlmorpheus": "^0.2.1",
     "vite-express": "^0.21.1"
   }
 }

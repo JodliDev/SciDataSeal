@@ -4,17 +4,19 @@ import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import bcrypt from "bcrypt";
 import {PASSWORD_MIN_LENGTH, USERNAME_MIN_LENGTH} from "../../shared/definitions/Constants.ts";
-import Initialize from "../../shared/data/Initialize.ts";
+import InitializeInterface from "../../shared/data/InitializeInterface.ts";
 import {Options} from "../Options.ts";
 import doLogin from "../actions/authentication/doLogin.ts";
 import TooShortException from "../../shared/exceptions/TooShortException.ts";
 import {recreateOptionsString} from "../../shared/FrontendOptions.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
+import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
+import FaultyDataException from "../../shared/exceptions/FaultyDataException.ts";
 
 export default function initialize(db: DbType): express.Router {
 	const router = express.Router();
 	
-	addPostRoute<Initialize>("/initialize", router, async (data, request, response) => {
+	addPostRoute<InitializeInterface>("/initialize", router, async (data, request, response) => {
 		if(Options.isInit)
 			throw new UnauthorizedException();
 		
@@ -24,6 +26,8 @@ export default function initialize(db: DbType): express.Router {
 			throw new TooShortException("username", USERNAME_MIN_LENGTH);
 		if(data.password.length < PASSWORD_MIN_LENGTH)
 			throw new TooShortException("password", PASSWORD_MIN_LENGTH);
+		if(isValidBackendString(data.username))
+			throw new FaultyDataException("username");
 		
 		const salt = await bcrypt.genSalt();
 		const hash = await bcrypt.hash(data.password, salt);

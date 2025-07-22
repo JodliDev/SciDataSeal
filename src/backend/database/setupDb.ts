@@ -28,6 +28,10 @@ export default async function setupDb(path: string = `${Options.root}/${CONFIG_F
 			transaction();
 			
 			return Promise.resolve();
+		},
+		async createBackup(backupName: string): Promise<void> {
+			const backupPath = `${Options.root}/${CONFIG_FOLDER}/${backupName}.sqlite`;
+			await db.backup(backupPath);
 		}
 	}
 	

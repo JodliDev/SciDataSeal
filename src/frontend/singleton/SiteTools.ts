@@ -2,11 +2,11 @@ import SessionData from "../../shared/SessionData.ts";
 
 class SiteToolsClass {
 	private _session?: SessionData;
-	private _switchPage?: (_page: string, _search?: `?${string}`) => void
+	private _switchPage?: (_page: string, _query?: `?${string}`) => void
 	
 	public init(
 		session: SessionData,
-		switchPage: (_page: string, _search?: `?${string}`) => void
+		switchPage: (_page: string, _query?: `?${string}`) => void
 	) {
 		this._session = session;
 		this._switchPage = switchPage;

@@ -10,6 +10,7 @@ import {FixedComponent} from "../../mithril-polyfill.ts";
 type FormOptions<T extends PostDataStructureInterface> = {
 	endpoint: Endpoints
 	onReceive: (response: T["Response"]) => void,
+	submitLabel?: string,
 	filterData?: (data: Record<string, unknown>) => T["Request"],
 	class?: string
 };
@@ -46,13 +47,13 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 	return {
 		view: () => (
 			<form onsubmit={onSubmit} class={`vertical hAlignCenter ${vNode.attrs.class ?? ""}`}>
-				<div class="warn selfAlignStart">{errorMessage}</div>
+				<div class="warn">{errorMessage}</div>
 				<div class="vertical hAlignCenter">
 					{vNode.children}
 					<div class="entry horizontal vAlignCenter">
 						<div class="fillSpace"></div>
 						{isLoading && <LoadingSpinner/>}
-						<input type="submit" value={Lang.get("login")} disabled={isLoading}/>
+						<input type="submit" value={vNode.attrs.submitLabel ?? Lang.get("save")} disabled={isLoading}/>
 					</div>
 				</div>
 			</form>

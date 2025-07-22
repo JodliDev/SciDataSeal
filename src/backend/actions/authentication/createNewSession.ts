@@ -10,7 +10,7 @@ export default async function createNewSession(db: DbType, userId: number): Prom
 			expires: Date.now() + SESSION_MAX_AGE,
 			userId: userId
 		}))
-		.executeTakeFirst();
+		.execute();
 	
 	return token;
 }
