@@ -74,4 +74,4 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 	};
 }
 
-export default FixedComponent(Form)
+export default FixedComponent(Form);

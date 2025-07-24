@@ -2,20 +2,23 @@ import User, {UserTable} from "./tables/User.ts";
 import Session, {SessionTable} from "./tables/Session.ts";
 import {DatabaseInstructions, PublicMigrations, SqlChanges} from "sqlmorpheus";
 import Study, {StudyTable} from "./tables/Study.ts";
+import DataLog, {DataLogTable} from "./tables/DataLog.ts";
 
 export interface KyselyTables {
 	User: User
 	Session: Session
 	Study: Study
+	DataLog: DataLog
 }
 export const SqlMorpheusConfig = {
 	dialect: "Sqlite",
-	version: 5,
-	configPath: `${process.cwd()}/config/`,
+	version: 7,
+	configPath: `${process.cwd()}/config`,
 	tables: [
 		SessionTable,
 		UserTable,
-		StudyTable
+		StudyTable,
+		DataLogTable,
 	],
 	throwIfNotAllowed: true,
 	preMigration(migrations: PublicMigrations): SqlChanges | void {

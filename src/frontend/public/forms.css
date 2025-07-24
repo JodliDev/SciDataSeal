@@ -10,6 +10,10 @@ select, input, textarea, .inputLike {
 		border-color: var(--color-accent-dark);
 		color: var(--color-accent-dark);
 	}
+	
+	&.warn {
+		border-color: red;
+	}
 }
 
 label, .labelLike {

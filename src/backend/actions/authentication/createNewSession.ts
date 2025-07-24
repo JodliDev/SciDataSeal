@@ -3,7 +3,7 @@ import {DbType} from "../../database/setupDb.ts";
 import {randomBytes} from "node:crypto";
 
 export default async function createNewSession(db: DbType, userId: number): Promise<string> {
-	const token = randomBytes(20).toString("hex");
+	const token = randomBytes(32).toString("hex");
 	await db.insertInto("Session")
 		.values(() => ({
 			token: token,

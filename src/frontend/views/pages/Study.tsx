@@ -3,34 +3,21 @@ import m from "mithril";
 import getData from "../../actions/getData.ts";
 import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
-import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
 import css from "./Study.module.css";
+import A from "../widgets/A.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default async function Study(query: URLSearchParams): PageComponent {
 	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${query.get("id")}`);
 	
-	const url = window.location.origin + ("/saveData" satisfies Endpoints);
 	return PrivatePage(
-		() => <div class={`${css.Study} vertical`}>
+		() => <div class={`${css.Study} horizontal wrapContent`}>
 			{study
 				? <>
-					<h2 class="selfAlignCenter">{study.studyName}</h2>
-					{Lang.getWithColon("connectStudyDescription")}
-					<h3>GET</h3>
-					<div class="labelLike">
-						<small>{Lang.get("url")}</small>
-						<pre class="inputLike">{`${url}?id=${study.studyId}&pass=${study.apiPassword}&data=`}</pre>
-					</div>
-					<h3>POST</h3>
-					<div class="labelLike">
-						<small>{Lang.get("url")}</small>
-						<pre class="inputLike">{url}</pre>
-					</div>
-					<div class="labelLike">
-						<small>{Lang.get("body")}</small>
-						<pre class="inputLike">{`id=${study.studyId}&pass=${study.apiPassword}&data=`}</pre>
-					</div>
+					<A page="ManuallySaveData" query={`?id=${study.studyId}`} class="bigButton">{Lang.get("saveData")}</A>
+					<A page="ManuallySetColumns" query={`?id=${study.studyId}`} class="bigButton">{Lang.get("setColumns")}</A>
+					<A page="ViewStudyData" query={`?id=${study.studyId}`} class="bigButton">{Lang.get("viewData")}</A>
+					<A page="ConnectAppHelp" query={`?id=${study.studyId}`} class="bigButton">{Lang.get("howToConnectMyApp")}</A>
 				</>
 				: <div class="selfAlignCenter">{Lang.get("notFound")}</div>
 			}

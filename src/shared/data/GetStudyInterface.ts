@@ -8,6 +8,7 @@ export default interface GetStudyInterface extends GetDataStructureInterface {
 		studyId: number;
 		studyName: string;
 		apiPassword: string;
+		columns: string | null;
 	}
 }
 

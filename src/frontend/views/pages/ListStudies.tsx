@@ -9,7 +9,7 @@ export default async function ListStudies(): PageComponent {
 	const response = await getData<ListStudiesInterface>("/listStudies");
 	
 	return PrivatePage(
-		() => <div class="vertical wrapContent">
+		() => <div class="horizontal wrapContent">
 			{response?.studies.map(study => <A class="bigButton" page="Study" query={`?id=${study.studyId}`}>{study.studyName}</A> )}
 		</div>
 	);

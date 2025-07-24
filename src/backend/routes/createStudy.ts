@@ -28,7 +28,7 @@ export default function createStudy(db: DbType): express.Router {
 		if(!session.userId)
 			throw new UnauthorizedException();
 		
-		const token = randomBytes(20).toString("hex");
+		const apiPassword = randomBytes(32).toString("base64url");
 		
 		const insert = await db
 			.insertInto("Study")
@@ -37,7 +37,7 @@ export default function createStudy(db: DbType): express.Router {
 				studyName: data.studyName,
 				blockchainType: data.blockchainType,
 				blockchainPrivateKey: data.blockchainPrivateKey,
-				apiPassword: token
+				apiPassword: apiPassword
 			})
 			.executeTakeFirst();
 		

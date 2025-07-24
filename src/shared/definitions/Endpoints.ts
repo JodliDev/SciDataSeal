@@ -5,4 +5,5 @@ export type Endpoints
 	| "/listStudies"
 	| "/login"
 	| "/saveData"
+	| "/setStudyColumns"
 	| "/solana";

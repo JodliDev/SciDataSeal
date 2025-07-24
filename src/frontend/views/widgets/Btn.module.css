@@ -1,0 +1,16 @@
+.BtnWidget {
+	&:hover svg {
+		fill: var(--color-accent-light);
+	}
+	
+	svg {
+		fill: var(--color-accent-dark);
+		transition: fill 300ms;
+	}
+	
+	&.empty {
+		visibility: hidden;
+		width: var(--btnSize);
+		height: var(--btnSize);
+	}
+}

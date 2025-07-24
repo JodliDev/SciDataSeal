@@ -18,7 +18,7 @@ export default function getStudy(db: DbType): express.Router {
 			throw new UnauthorizedException();
 		
 		const study = await db.selectFrom("Study")
-			.select(["studyId", "studyName", "apiPassword"])
+			.select(["studyId", "studyName", "apiPassword", "columns"])
 			.where("userId", "=", session.userId)
 			.where("studyId", "=", studyId)
 			.limit(1)
@@ -30,7 +30,8 @@ export default function getStudy(db: DbType): express.Router {
 		return {
 			studyName: study.studyName,
 			studyId: study.studyId,
-			apiPassword: study.apiPassword
+			apiPassword: study.apiPassword,
+			columns: study.columns
 		}
 	});
 	return router;
