@@ -1,3 +1,5 @@
 export default interface BlockchainInterface {
-	saveMessage(data: string, dataKey: string): Promise<string[]>;
+	getPublicKey(privateKey: string): Promise<string>;
+	saveMessage(privateKey: string, data: string, dataKey: string): Promise<string[]>;
+	listData(publicKey: string, dataKey: string): Promise<string[]>;
 }

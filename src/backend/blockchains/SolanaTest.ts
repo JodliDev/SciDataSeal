@@ -2,25 +2,20 @@ import BlockchainInterface from "./BlockchainInterface.ts";
 import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction, Transaction} from "@solana/web3.js";
 import {createMemoInstruction} from "@solana/spl-memo";
-import {createCipheriv, randomBytes} from "node:crypto";
-import {deflateSync} from "node:zlib";
+import {createCipheriv, createDecipheriv, randomBytes} from "node:crypto";
+import {deflateSync, inflateSync} from "node:zlib";
 import MessageIsTooLongException from "../../shared/exceptions/MessageIsTooLongException.ts";
 
 const DATA_MAX_BYTE_LENGTH = 560;
 export default class SolanaTest implements BlockchainInterface {
 	private readonly maxTransactionsPerMessage = 50;
-	private readonly privateKey: string;
 	
-	constructor(privateKey: string) {
-		this.privateKey = privateKey;
-	}
-	
-	getKeyPair() {
-		const secretKey = Buffer.from(this.privateKey, "hex");
+	private getKeyPair(privateKey: string): Keypair {
+		const secretKey = Buffer.from(privateKey, "hex");
 		return Keypair.fromSecretKey(secretKey);
 	}
 	
-	async requestAirdrop(connection: Connection, publicKey: PublicKey) {
+	private async requestAirdrop(connection: Connection, publicKey: PublicKey): Promise<void> {
 		const airdropSignature = await connection.requestAirdrop(
 			publicKey,
 			LAMPORTS_PER_SOL
@@ -33,9 +28,9 @@ export default class SolanaTest implements BlockchainInterface {
 		});
 	}
 	
-	private async uploadMessage(message: string): Promise<string> {
+	private async uploadMessage(privateKey: string, message: string): Promise<string> {
 		const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-		const keyPair = this.getKeyPair();
+		const keyPair = this.getKeyPair(privateKey);
 		
 		const balance = await connection.getBalance(keyPair.publicKey);
 		if (balance < 0.02 * LAMPORTS_PER_SOL) {
@@ -55,7 +50,7 @@ export default class SolanaTest implements BlockchainInterface {
 		);
 	}
 	
-    async saveMessage(data: string, dataKey: string): Promise<string[]> {
+    async saveMessage(privateKey: string, data: string, dataKey: string): Promise<string[]> {
 		if(!data)
 			throw new MissingDataException();
 		
@@ -84,10 +79,39 @@ export default class SolanaTest implements BlockchainInterface {
 		const signatures: string[] = [];
 		for(let i = 0; i < neededMessages; ++i) {
 			const part = result.substring(i * partLength, (i + 1) * partLength);
-			signatures.push(await this.uploadMessage(part + (i < neededMessages - 1 ? "~" : "")));
+			signatures.push(await this.uploadMessage(privateKey, part + (i < neededMessages - 1 ? "~" : "")));
 		}
 		
 		return signatures;
     }
-
+	
+	public async listData(publicKey: string, dataKey: string): Promise<string[]> {
+		const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+		const signatures = await connection.getSignaturesForAddress(new PublicKey(publicKey));
+		
+		const output: string[] = [];
+		for(const sig of signatures) {
+			try {
+				const memo = sig.memo?.match(/\[\d+] (.+)/)?.[1] ?? "";
+				const ivCiphertext = Buffer.from(memo, "base64url");
+				const iv = ivCiphertext.subarray(0, 16);
+				const ciphertext = ivCiphertext.subarray(16);
+				const cipher = createDecipheriv("aes-256-cbc", Buffer.from(dataKey, "base64url"), iv);
+				const decrypted = Buffer.concat([cipher.update(ciphertext), cipher.final()]);
+				
+				const decompressed = inflateSync(decrypted).toString();
+				output.push(decompressed);
+			}
+			catch(e) {
+				output.push(`Invalid line: ${sig.memo}`);
+			}
+		}
+		
+		return output;
+	}
+	
+	public async getPublicKey(privateKey: string): Promise<string> {
+		const keyPair = this.getKeyPair(privateKey);
+		return keyPair.publicKey.toString();
+	}
 }

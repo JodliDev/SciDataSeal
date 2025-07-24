@@ -8,6 +8,8 @@ export default interface GetStudyInterface extends GetDataStructureInterface {
 		studyId: number;
 		studyName: string;
 		apiPassword: string;
+		blockchainType: string;
+		blockchainPublicKey: string;
 		columns: string | null;
 	}
 }

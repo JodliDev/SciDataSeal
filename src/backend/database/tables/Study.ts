@@ -10,6 +10,7 @@ export default interface Study {
 	apiPassword: string;
 	blockchainType: string;
 	blockchainPrivateKey: string;
+	blockchainPublicKey: string;
 }
 
 @TableClass("Study", "studyId")
@@ -23,4 +24,5 @@ export class StudyTable implements Insertable<Study> {
 	apiPassword: string = "";
 	blockchainType: string = "";
 	blockchainPrivateKey: string = "";
+	blockchainPublicKey: string = "";
 }

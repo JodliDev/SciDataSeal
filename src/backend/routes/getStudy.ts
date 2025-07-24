@@ -10,7 +10,6 @@ export default function getStudy(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addGetRoute<GetStudyInterface>("/getStudy", router, async (data, request) => {
-		
 		const session = await getSessionData(db, request);
 		const studyId = parseInt(data.studyId ?? "0");
 		
@@ -18,7 +17,7 @@ export default function getStudy(db: DbType): express.Router {
 			throw new UnauthorizedException();
 		
 		const study = await db.selectFrom("Study")
-			.select(["studyId", "studyName", "apiPassword", "columns"])
+			.select(["studyId", "studyName", "apiPassword", "blockchainType", "blockchainPublicKey", "columns"])
 			.where("userId", "=", session.userId)
 			.where("studyId", "=", studyId)
 			.limit(1)
@@ -31,6 +30,8 @@ export default function getStudy(db: DbType): express.Router {
 			studyName: study.studyName,
 			studyId: study.studyId,
 			apiPassword: study.apiPassword,
+			blockchainType: study.blockchainType,
+			blockchainPublicKey: study.blockchainPublicKey,
 			columns: study.columns
 		}
 	});

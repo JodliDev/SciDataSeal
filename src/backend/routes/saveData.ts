@@ -40,8 +40,8 @@ export default function saveData(db: DbType): express.Router {
 		if(!dataArray.length)
 			throw new MissingDataException();
 		
-		const blockChain = getBlockchain(study.blockchainType, study.blockchainPrivateKey);
-		const signature = await blockChain.saveMessage(JSON.stringify(dataArray), pass);
+		const blockChain = getBlockchain(study.blockchainType);
+		const signature = await blockChain.saveMessage(study.blockchainPrivateKey, JSON.stringify(dataArray), pass);
 		
 		await db.insertInto("DataLog")
 			.values({

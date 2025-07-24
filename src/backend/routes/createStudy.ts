@@ -8,6 +8,7 @@ import {randomBytes} from "node:crypto";
 import getSessionData from "../actions/authentication/getSessionData.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import FaultyDataException from "../../shared/exceptions/FaultyDataException.ts";
+import getBlockchain from "../actions/authentication/getBlockchain.ts";
 
 export default function createStudy(db: DbType): express.Router {
 	const router = express.Router();
@@ -29,6 +30,7 @@ export default function createStudy(db: DbType): express.Router {
 			throw new UnauthorizedException();
 		
 		const apiPassword = randomBytes(32).toString("base64url");
+		const blockChain = getBlockchain(data.blockchainType);
 		
 		const insert = await db
 			.insertInto("Study")
@@ -37,6 +39,7 @@ export default function createStudy(db: DbType): express.Router {
 				studyName: data.studyName,
 				blockchainType: data.blockchainType,
 				blockchainPrivateKey: data.blockchainPrivateKey,
+				blockchainPublicKey: await blockChain.getPublicKey(data.blockchainPrivateKey),
 				apiPassword: apiPassword
 			})
 			.executeTakeFirst();

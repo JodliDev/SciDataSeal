@@ -40,8 +40,8 @@ export default function setStudyColumns(db: DbType): express.Router {
 		if(!study)
 			throw new UnauthorizedException();
 		
-		const blockChain = getBlockchain(study.blockchainType, study.blockchainPrivateKey);
-		const signature = await blockChain.saveMessage(columnsString, pass);
+		const blockChain = getBlockchain(study.blockchainType);
+		const signature = await blockChain.saveMessage(study.blockchainPrivateKey, columnsString, pass);
 		
 		await db.insertInto("DataLog")
 			.values({

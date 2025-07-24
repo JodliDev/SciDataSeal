@@ -3,7 +3,6 @@ import cookieParser from "cookie-parser"
 import ViteExpress from "vite-express";
 import {Options} from "./Options.ts";
 import {FRONTEND_FOLDER} from "../shared/definitions/Constants.ts";
-import solana from "./routes/solana.ts";
 import {Cookies} from "../shared/definitions/Cookies.ts";
 import LangProvider from "./LangProvider.ts";
 import {FrontendOptionsString, recreateOptionsString} from "../shared/FrontendOptions.ts";
@@ -19,6 +18,7 @@ import listStudies from "./routes/listStudies.ts";
 import getStudy from "./routes/getStudy.ts";
 import saveData from "./routes/saveData.ts";
 import setStudyColumns from "./routes/setStudyColumns.ts";
+import listStudyData from "./routes/listStudyData.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -38,12 +38,12 @@ async function init() {
 	webServer.use("/api", login(db));
 	if(!Options.isInit)
 		webServer.use("/api", initialize(db));
-	webServer.use("/api", authenticateMiddleware, solana);
 	webServer.use("/api", saveData(db));
 	webServer.use("/api", authenticateMiddleware, createStudy(db));
 	webServer.use("/api", authenticateMiddleware, listStudies(db));
 	webServer.use("/api", authenticateMiddleware, getStudy(db));
 	webServer.use("/api", authenticateMiddleware, setStudyColumns(db));
+	webServer.use("/api", authenticateMiddleware, listStudyData());
 	
 	const langProvider = new LangProvider();
 	
