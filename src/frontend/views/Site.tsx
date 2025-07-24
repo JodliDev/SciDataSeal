@@ -22,6 +22,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 	async function loadPage(newPageName: string, query: string): Promise<void> {
 		currentPage = Loading;
 		m.redraw();
+		pageName = newPageName;
 		
 		if(!options.isInit) {
 			pageName = "Init";
@@ -41,10 +42,9 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		}
 
 		try {
-			const imported = await import(`./pages/${newPageName}.tsx`) as PageImport;
+			const imported = await import(`./pages/${pageName}.tsx`) as PageImport;
 			const bundle = await imported.default(new URLSearchParams(query));
 			currentPage = bundle.isAllowed(session) ? bundle.component : Login;
-			pageName = newPageName;
 		}
 		catch(e) {
 			console.error(e);
@@ -77,7 +77,6 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 	
 	async function popstateEvent(event: PopStateEvent) {
 		const state: DocumentPageState = event.state ?? getUrlData();
-		console.log(event)
 		await loadPage(state?.page ?? homepageName, state?.query ?? homeQuery);
 	}
 	
