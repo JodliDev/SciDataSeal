@@ -8,6 +8,7 @@
 	--color-accent: #A1C6EA;
 	--color-accent-dark: #507DBC;
 	--radius: 10px;
+	--btnSize: 24px;
 	
 	--paw-prints-z-index: 100;
 }
@@ -77,6 +78,9 @@ a, .clickable {
 		flex: 1 1 auto;
 	}
 	
+	> .selfAlignStretch {
+		align-self: stretch;
+	}
 	> .selfAlignStart {
 		align-self: flex-start;
 	}

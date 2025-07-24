@@ -1,0 +1,28 @@
+@keyframes fade-out {
+	0% { opacity: 1; }
+	100% { opacity: 0; }
+}
+.FeedbackIcon {
+	display: inline-block;
+	animation: fade-out 2s ease-in-out;
+	opacity: 0;
+	
+	&.hidden {
+		animation: unset;
+		display: none;
+	}
+	&.reserveSpace.hidden {
+		width: var(--btnSize);
+		height: var(--btnSize);
+		display: inline-block;
+		visibility: hidden;
+		animation: none;
+	}
+	
+	&.failed svg {
+		fill: red;
+	}
+	&.success svg {
+		fill: green;
+	}
+}

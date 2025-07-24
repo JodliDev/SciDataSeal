@@ -4,24 +4,26 @@ import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
 import ExceptionInterface from "../../../shared/exceptions/ExceptionInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import PostDataStructureInterface from "../../../shared/PostDataStructureInterface.ts";
-import LoadingSpinner from "./LoadingSpinner.tsx";
 import {FixedComponent} from "../../mithril-polyfill.ts";
+import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 
 type FormOptions<T extends PostDataStructureInterface> = {
 	endpoint: Endpoints
-	onReceive: (response: T["Response"]) => void,
+	onReceive?: (response: T["Response"]) => void,
 	submitLabel?: string,
+	query?: `?${string}`
+	headers?: Record<string, string>,
 	filterData?: (data: Record<string, unknown>) => T["Request"],
 	class?: string
 };
 
 function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T>>) {
 	let errorMessage: string = "";
-	let isLoading: boolean = false;
+	const feedback = new FeedbackCallBack();
 	
 	const onSubmit = async (event: SubmitEvent) => {
 		try {
-			isLoading = true;
+			feedback.setLoading(true);
 			m.redraw();
 			
 			event.preventDefault();
@@ -29,31 +31,42 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 			
 			const data: Record<string, unknown> = {};
 			for(const entry of formData.entries()) {
-				data[entry[0]] = entry[1];
+				const key = entry[0];
+				if(key.endsWith("[]")) {
+					const realKey = key.substring(0, key.length - 2);
+					if(data.hasOwnProperty(key))
+						(data[realKey] as unknown[]).push(entry[1]);
+					else
+						data[realKey] = [entry[1]];
+				}
+				else
+					data[entry[0]] = entry[1];
 			}
 			const uploadData = vNode.attrs.filterData ? vNode.attrs.filterData(data) : data;
 			
-			const response = await postData(vNode.attrs.endpoint, uploadData);
-			vNode.attrs.onReceive(response);
+			const response = await postData(vNode.attrs.endpoint, uploadData, {query: vNode.attrs.query, headers: vNode.attrs.headers});
+			vNode.attrs.onReceive?.(response);
+			feedback.setSuccess(true);
 		}
 		catch(error) {
 			const knownError = error as ExceptionInterface;
 			errorMessage = knownError.message ? Lang.getDynamic(knownError.message, ...(knownError.values ?? [])) : Lang.get("errorUnknown");
+			feedback.setSuccess(false);
 		}
-		isLoading = false;
+		feedback.setLoading(false);
 		m.redraw();
 	}
 	
 	return {
-		view: () => (
+		view: ({children}: m.Vnode<FormOptions<T>>) => (
 			<form onsubmit={onSubmit} class={`vertical hAlignCenter ${vNode.attrs.class ?? ""}`}>
 				<div class="warn">{errorMessage}</div>
 				<div class="vertical hAlignCenter">
-					{vNode.children}
-					<div class="entry horizontal vAlignCenter">
+					{children}
+					<div class="entry horizontal vAlignCenter selfAlignStretch">
 						<div class="fillSpace"></div>
-						{isLoading && <LoadingSpinner/>}
-						<input type="submit" value={vNode.attrs.submitLabel ?? Lang.get("save")} disabled={isLoading}/>
+						<FeedbackIcon callback={feedback} reserveSpace={true}/>
+						<input type="submit" value={vNode.attrs.submitLabel ?? Lang.get("save")} disabled={!feedback.isReady()}/>
 					</div>
 				</div>
 			</form>
