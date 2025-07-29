@@ -22,6 +22,7 @@ describe("Options", () => {
 		process.env.port = "8080";
 		process.env.root = "/custom/root";
 		process.env.urlPath = "/custom/path/";
+		process.env.isInit = "";
 		
 		const options = createNewOptionsForTest();
 		
@@ -29,10 +30,11 @@ describe("Options", () => {
 		expect(options.port).toBe(8080);
 		expect(options.root).toBe("/custom/root");
 		expect(options.urlPath).toBe("/custom/path/");
+		expect(options.isInit).toBe(false);
 	});
 	
 	it("should override properties with command-line arguments", () => {
-		process.argv.push("mode=production", "port=8080", "root=/custom/root", "urlPath=/custom/path/");
+		process.argv.push("mode=production", "port=8080", "root=/custom/root", "urlPath=/custom/path/", "isInit=true");
 		
 		const options = createNewOptionsForTest();
 		
@@ -40,6 +42,7 @@ describe("Options", () => {
 		expect(options.port).toBe(8080);
 		expect(options.root).toBe("/custom/root");
 		expect(options.urlPath).toBe("/custom/path/");
+		expect(options.isInit).toBe(true);
 	});
 	
 	it("should prioritize command-line arguments over environment variables", () => {
@@ -47,8 +50,9 @@ describe("Options", () => {
 		process.env.port = "3000";
 		process.env.root = "/env/root";
 		process.env.urlPath = "/env/path/";
+		process.env.isInit = "";
 		
-		process.argv.push("mode=production", "port=8080", "root=/arg/root", "urlPath=/arg/path/");
+		process.argv.push("mode=production", "port=8080", "root=/arg/root", "urlPath=/arg/path/", "isInit=true");
 		
 		const options = createNewOptionsForTest();
 		
@@ -56,6 +60,7 @@ describe("Options", () => {
 		expect(options.port).toBe(8080);
 		expect(options.root).toBe("/arg/root");
 		expect(options.urlPath).toBe("/arg/path/");
+		expect(options.isInit).toBe(true);
 	});
 	
 	it("should append a trailing slash to urlPath if missing", () => {

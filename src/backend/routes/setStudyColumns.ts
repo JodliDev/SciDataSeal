@@ -22,7 +22,7 @@ export default function setStudyColumns(db: DbType): express.Router {
 		
 		for(const column of columns) {
 			if(!isValidBackendString(column))
-				throw new FaultyDataException("column");
+				throw new FaultyDataException("columns");
 		}
 		
 		const columnsString = JSON.stringify(columns);
@@ -34,11 +34,11 @@ export default function setStudyColumns(db: DbType): express.Router {
 			.limit(1)
 			.executeTakeFirst();
 		
-		if(study?.columns == columnsString)
-			return; //Already the same. We don't need to do anything.
-		
 		if(!study)
 			throw new UnauthorizedException();
+		
+		if(study.columns == columnsString)
+			return; //Already the same. We don't need to do anything.
 		
 		const blockChain = getBlockchain(study.blockchainType);
 		const signature = await blockChain.saveMessage(study.blockchainPrivateKey, columnsString, pass);

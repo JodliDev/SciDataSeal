@@ -1,4 +1,4 @@
-import express from 'express'
+import express from "express"
 import cookieParser from "cookie-parser"
 import ViteExpress from "vite-express";
 import {Options} from "./Options.ts";
