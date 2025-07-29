@@ -1,9 +1,9 @@
 import m from "mithril";
-import {PageVnode} from "../../../PageComponent.ts";
+import {PageContent} from "../../../PageComponent.ts";
 
-export default function Home(vNode: PageVnode) {
-	console.log(vNode);
+export default function Home(): PageContent {
 	return {
+		history: [],
 		view: () =>  <div>Home</div>
 	};
 }

@@ -1,14 +1,14 @@
 select, input, textarea, .inputLike {
 	margin: 5px;
-	border: 1px solid var(--color-primary);
+	border: 1px solid var(--color-accent);
 	outline: none;
 	transition: background-color 300ms, color 300ms, border-color 300ms;
 	background-color: var(--color-inside-surface);
 	
 	&:focus {
-		background-color: var(--color-accent-light);
-		border-color: var(--color-accent-dark);
-		color: var(--color-accent-dark);
+		background-color: var(--color-primary-light);
+		border-color: var(--color-primary-dark);
+		color: var(--color-primary-dark);
 	}
 	
 	&.warn {
@@ -28,7 +28,7 @@ label, .labelLike {
 		pointer-events: none;
 		margin-bottom: -10px;
 		padding: 0 4px;
-		color: var(--color-primary);
+		color: var(--color-accent);
 		background-color: var(--color-inside-surface);
 	}
 	> small:last-child {
@@ -37,7 +37,7 @@ label, .labelLike {
 		color: gray;
 	}
 	input {
-		accent-color: var(--color-accent-dark);
+		accent-color: var(--color-primary-dark);
 	}
 	input[type="checkbox"], input[type="radio"] {
 		margin: 20px 0 15px 5px;
@@ -63,11 +63,11 @@ form {
 		box-shadow: 1px 1px 1px var(--color-shadow);
 		
 		border: 1px solid white;
-		background-color: var(--color-primary);
+		background-color: var(--color-accent);
 		color: white;
 		
 		&:hover {
-			background-color: var(--color-accent-dark);
+			background-color: var(--color-primary-dark);
 		}
 		&:active {
 			margin: 0;

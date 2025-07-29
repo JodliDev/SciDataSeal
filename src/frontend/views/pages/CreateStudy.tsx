@@ -1,4 +1,4 @@
-import {PageComponent, PrivatePage} from "../../PageComponent.ts";
+import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import Form from "../widgets/Form.tsx";
 import CreateStudyInterface from "../../../shared/data/CreateStudyInterface.ts";
@@ -6,14 +6,14 @@ import {Lang} from "../../singleton/Lang.ts";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 
 // noinspection JSUnusedGlobalSymbols
-export default async function CreateStudy(): PageComponent {
-	
+export default PrivatePage(async () => {
 	async function onReceive(response: CreateStudyInterface["Response"]) {
 		SiteTools.switchPage("Study", `?id=${response.studyId}`);
 	}
 	
-	return PrivatePage(
-		() => <Form<CreateStudyInterface> endpoint="/createStudy" onReceive={onReceive}>
+	return{
+		history: [["Admin"]],
+		view: () => <Form<CreateStudyInterface> endpoint="/createStudy" onReceive={onReceive}>
 			<label>
 				<small>{Lang.get("studyName")}</small>
 				<input type="text" name="studyName"/>
@@ -30,5 +30,5 @@ export default async function CreateStudy(): PageComponent {
 				<textarea name="blockchainPrivateKey"></textarea>
 			</label>
 		</Form>
-	);
-}
+	};
+});

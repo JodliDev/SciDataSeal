@@ -2,8 +2,9 @@ import m from "mithril";
 import Form from "../../widgets/Form.tsx";
 import InitializeInterface from "../../../../shared/data/InitializeInterface.ts";
 import {Lang} from "../../../singleton/Lang.ts";
+import {PageContent} from "../../../PageComponent.ts";
 
-export default function Init() {
+export default function Init(): PageContent {
 	const filterData = (data: Record<string, unknown>) => {
 		if(data.password !== data.passwordRepeat)
 			throw new Error(Lang.get("passwordMismatch"));
@@ -17,6 +18,7 @@ export default function Init() {
 	}
 	
 	return {
+		history: [],
 		view: () => <div class="fillSpace vertical hAlignCenter vAlignCenter">
 			<div>{Lang.get("initDescription")}</div>
 			<Form<InitializeInterface> endpoint="/initialize" filterData={filterData} onReceive={onReceive}>

@@ -1,7 +1,41 @@
-.surface {
-	padding: 10px;
-	background-color: var(--color-surface);
-	border: 1px solid var(--color-accent);
+:root {
+	--color-background: white;
+	--color-surface: #f8faff;
+	/*--color-shadow: #880D1E;*/
+	--color-shadow: #cbcbcb;
+	--color-inside-surface: white;
+	/*--color-primary: #86CD82;*/
+	/*--color-accent-light: #BBD1EA;*/
+	/*--color-accent: #A1C6EA;*/
+	/*--color-accent-dark: #507DBC;*/
+	--color-accent-light: #A5BE00;
+	--color-accent: #679436;
+	--color-primary-light: #DBE4EE;
+	--color-primary: #427AA1;
+	--color-primary-dark: #064789;
+	--radius: 10px;
+	--btnSize: 24px;
+}
+
+a, .clickable {
+	cursor: pointer;
+	font-weight: bold;
+	text-decoration: none;
+	color: var(--color-primary);
+	transition: color 300ms ease-in-out;
+	
+	&:hover {
+		color: var(--color-primary-light);
+	}
+	
+	svg {
+		fill: var(--color-primary);
+		transition: fill 300ms;
+	}
+	
+	&:hover svg {
+		fill: var(--color-primary-light);
+	}
 }
 
 .bigButton {
@@ -12,7 +46,7 @@
 	max-width: 400px;
 	min-height: 75px;
 	padding: 5px 3px;
-	background-color: var(--color-accent-light);
+	background-color: var(--color-primary);
 	border-radius: var(--radius);
 	
 	display: flex;
@@ -24,7 +58,7 @@
 	
 	color: white;
 	&:hover {
-		background-color: var(--color-accent);
-		color: var(--color-accent-dark);
+		background-color: var(--color-primary-light);
+		color: var(--color-primary-dark);
 	}
 }

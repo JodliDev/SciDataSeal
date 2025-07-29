@@ -9,7 +9,7 @@
 	height: 10px;
 	margin: 2px;
 	
-	border: 5px solid var(--color-accent-dark);
+	border: 5px solid var(--color-primary-dark);
 	border-radius: 50%;
 	animation: spin 2s linear infinite;
 	border-top-color: rgba(0,0,0,0);

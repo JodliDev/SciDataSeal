@@ -1,0 +1,43 @@
+.Navigation {
+	padding: 10px;
+	box-shadow: inset 0 0 10px var(--color-shadow);
+	border-radius: 20px 20px 0 0;
+	gap: 10px;
+	
+	.entry {
+		font-weight: normal;
+		
+		&::before {
+			content: ">";
+			margin-right: 10px;
+			font-weight: normal;
+		}
+		&:first-child::before {
+			content: "";
+		}
+		&:last-child {
+			font-weight: bold;
+		}
+	}
+	
+	a, .clickable {
+		cursor: pointer;
+		font-weight: bold;
+		text-decoration: none;
+		color: var(--color-accent);
+		transition: color 300ms ease-in-out;
+		
+		&:hover {
+			color: var(--color-accent-light);
+		}
+		
+		svg {
+			fill: var(--color-accent);
+			transition: fill 300ms;
+		}
+		
+		&:hover svg {
+			fill: var(--color-accent-light);
+		}
+	}
+}

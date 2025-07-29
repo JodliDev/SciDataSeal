@@ -1,42 +1,7 @@
-:root {
-	--color-background: white;
-	--color-surface: #f8faff;
-	--color-shadow: #0003;
-	--color-inside-surface: white;
-	--color-primary: #86CD82;
-	--color-accent-light: #BBD1EA;
-	--color-accent: #A1C6EA;
-	--color-accent-dark: #507DBC;
-	--radius: 10px;
-	--btnSize: 24px;
-	
-	--paw-prints-z-index: 100;
-}
-
 body {
-	/*font-family: Trebuchet MS, Helvetica, sans-serif;*/
+	font-family: Trebuchet MS, Helvetica, sans-serif;
 }
 
-a, .clickable {
-	cursor: pointer;
-	font-weight: bold;
-	text-decoration: none;
-	color: var(--color-accent-dark);
-	transition: color 300ms ease-in-out;
-	
-	&:hover {
-		color: var(--color-accent);
-	}
-	
-	svg {
-		fill: var(--color-accent-dark);
-		transition: fill 300ms;
-	}
-	
-	&:hover svg {
-		fill: var(--color-accent);
-	}
-}
 
 
 .smallText {
@@ -47,15 +12,6 @@ a, .clickable {
 }
 .warn {
 	color: red !important;
-}
-.aboveNormal {
-	z-index: 1;
-}
-.abovePawPrints {
-	z-index: calc(var(--paw-prints-z-index) + 1);
-}
-.aboveEverything {
-	z-index: calc(var(--paw-prints-z-index) + 2);
 }
 
 .horizontal, .vertical {

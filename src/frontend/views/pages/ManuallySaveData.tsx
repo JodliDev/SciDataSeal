@@ -1,4 +1,4 @@
-import {PageComponent, PrivatePage} from "../../PageComponent.ts";
+import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import Form from "../widgets/Form.tsx";
 import {Lang} from "../../singleton/Lang.ts";
@@ -9,13 +9,15 @@ import {SetStudyColumnsPostInterface} from "../../../shared/data/SetStudyColumns
 import css from "./ManuallySaveData.module.css";
 
 // noinspection JSUnusedGlobalSymbols
-export default async function ManuallySetColumns(query: URLSearchParams): PageComponent {
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${query.get("id")}`);
+export default PrivatePage(async (query: URLSearchParams) => {
+	const id = query.get("id");
+	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${id}`);
 	const columns: string[] = JSON.parse(study?.columns ?? "[]");
 	const data: Record<string, string> = {};
 	
-	return PrivatePage(
-		() => <Form<SetStudyColumnsPostInterface> endpoint="/saveData" query={`?id=${study?.studyId}`} headers={{authorization: `Bearer ${study?.apiPassword}`}}>
+	return {
+		history: [["Admin"], ["ListStudies"], ["Study", `?id=${id}`], ["ManuallySaveData", `?id=${id}`]],
+		view: () => <Form<SetStudyColumnsPostInterface> endpoint="/saveData" query={`?id=${study?.studyId}`} headers={{authorization: `Bearer ${study?.apiPassword}`}}>
 			{columns.map(column =>
 				<label>
 					<div class="horizontal vAlignCenter">
@@ -29,5 +31,5 @@ export default async function ManuallySetColumns(query: URLSearchParams): PageCo
 				</label>
 			)}
 		</Form>
-	);
-}
+	};
+});

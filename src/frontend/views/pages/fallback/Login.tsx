@@ -3,8 +3,9 @@ import LoginInterface from "../../../../shared/data/LoginInterface.ts";
 import Form from "../../widgets/Form.tsx";
 import {SiteTools} from "../../../singleton/SiteTools.ts";
 import {Lang} from "../../../singleton/Lang.ts";
+import {PageContent} from "../../../PageComponent.ts";
 
-export default function Login() {
+export default function Login(): PageContent {
 	const onReceive = (response: LoginInterface["Response"]) => {
 		SiteTools.session.userId = response.userId;
 		SiteTools.session.isLoggedIn = true;
@@ -13,6 +14,7 @@ export default function Login() {
 	}
 	
 	return {
+		history: [],
 		view: () =>  <div class="fillSpace horizontal hAlignCenter vAlignCenter">
 			<Form<LoginInterface> endpoint="/login" onReceive={onReceive} submitLabel={Lang.get("login")}>
 				<label>

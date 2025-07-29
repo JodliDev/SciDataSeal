@@ -1,4 +1,4 @@
-import {PageComponent, PrivatePage} from "../../PageComponent.ts";
+import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import getData from "../../actions/getData.ts";
 import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
@@ -7,12 +7,13 @@ import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
 import css from "./Study.module.css";
 
 // noinspection JSUnusedGlobalSymbols
-export default async function ConnectAppHelp(query: URLSearchParams): PageComponent {
+export default PrivatePage(async (query: URLSearchParams) => {
 	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${query.get("id")}`);
-	
 	const url = window.location.origin + "/api" + ("/saveData" satisfies Endpoints);
-	return PrivatePage(
-		() => <div class={`${css.Study} vertical`}>
+	
+	return {
+		history: [["Admin"]],
+		view: () => <div class={`${css.Study} vertical`}>
 			{study
 				? <>
 					<h2 class="selfAlignCenter">{study.studyName}</h2>
@@ -35,5 +36,5 @@ export default async function ConnectAppHelp(query: URLSearchParams): PageCompon
 				: <div class="selfAlignCenter">{Lang.get("notFound")}</div>
 			}
 		</div>
-	);
-}
+	};
+});

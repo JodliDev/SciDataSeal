@@ -1,4 +1,4 @@
-import {PageComponent, PrivatePage} from "../../PageComponent.ts";
+import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import Form from "../widgets/Form.tsx";
 import {Lang} from "../../singleton/Lang.ts";
@@ -9,7 +9,7 @@ import bindValueToInput from "../../actions/bindValueToInput.ts";
 import {SetStudyColumnsPostInterface} from "../../../shared/data/SetStudyColumnsInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
-export default async function ManuallySetColumns(query: URLSearchParams): PageComponent {
+export default PrivatePage(async (query: URLSearchParams) => {
 	function addColumn() {
 		columns.push("");
 		console.log(columns);
@@ -24,8 +24,9 @@ export default async function ManuallySetColumns(query: URLSearchParams): PageCo
 	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${query.get("id")}`);
 	const columns: string[] = JSON.parse(study?.columns ?? "[]");
 	
-	return PrivatePage(
-		() => <Form<SetStudyColumnsPostInterface> endpoint="/setStudyColumns" query={`?id=${study?.studyId}`} headers={{authorization: `Bearer ${study?.apiPassword}`}}>
+	return {
+		history: [["Admin"]],
+		view: () => <Form<SetStudyColumnsPostInterface> endpoint="/setStudyColumns" query={`?id=${study?.studyId}`} headers={{authorization: `Bearer ${study?.apiPassword}`}}>
 			{columns.length
 				? columns.map((column, index) =>
 					<label>
@@ -47,5 +48,5 @@ export default async function ManuallySetColumns(query: URLSearchParams): PageCo
 			
 			<Btn.PopoverBtn description="test" iconKey="add" onClick={addColumn}/>
 		</Form>
-	);
-}
+	};
+});

@@ -1,4 +1,4 @@
-import {PageComponent, PrivatePage} from "../../PageComponent.ts";
+import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import getData from "../../actions/getData.ts";
 import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
@@ -7,11 +7,13 @@ import css from "./Study.module.css";
 import A from "../widgets/A.tsx";
 
 // noinspection JSUnusedGlobalSymbols
-export default async function Study(query: URLSearchParams): PageComponent {
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${query.get("id")}`);
+export default PrivatePage(async (query: URLSearchParams) => {
+	const id = query.get("id");
+	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${id}`);
 	
-	return PrivatePage(
-		() => <div class={`${css.Study} horizontal wrapContent`}>
+	return {
+		history: [["Admin"], ["ListStudies"], ["Study", `?id=${id}`]],
+		view: () => <div class={`${css.Study} horizontal wrapContent`}>
 			{study
 				? <>
 					<A page="ManuallySaveData" query={`?id=${study.studyId}`} class="bigButton">{Lang.get("saveData")}</A>
@@ -22,5 +24,5 @@ export default async function Study(query: URLSearchParams): PageComponent {
 				: <div class="selfAlignCenter">{Lang.get("notFound")}</div>
 			}
 		</div>
-	);
-}
+	};
+});

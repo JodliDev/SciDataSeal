@@ -16,6 +16,6 @@ export default FixedComponent<Attributes>(vNode => {
 	}
 	
 	return {
-		view: () => <a href={`${page}${query}`} class={vNode.attrs.class} onclick={onClick}>{vNode.children}</a>
+		view: () => <a href={`${page}${query ?? ""}`} class={vNode.attrs.class} onclick={onClick}>{vNode.children}</a>
 	};
 });

@@ -1,10 +1,10 @@
 .BtnWidget {
 	&:hover svg {
-		fill: var(--color-accent-light);
+		fill: var(--color-primary-light);
 	}
 	
 	svg {
-		fill: var(--color-accent-dark);
+		fill: var(--color-primary-dark);
 		transition: fill 300ms;
 	}
 	

@@ -5,16 +5,20 @@
 	.header {
 	
 	}
-	.page {
-		min-width: 600px;
-		min-height: 300px;
-		box-shadow: 0 0 10px var(--color-shadow);
-		border-radius: 20px;
-		padding: 10px;
+	.siteContent {
+		width: 600px;
+		gap: 10px;
 		
-		@media (max-width: 600px) {
-			min-width: unset;
-			width: 90%;
+		.page {
+			min-height: 300px;
+			border-radius: 0 0 20px 20px;
+			padding: 10px;
+			box-shadow: inset 0 0 10px var(--color-shadow);
+			
+			@media (max-width: 600px) {
+				min-width: unset;
+				width: 90%;
+			}
 		}
 	}
 }

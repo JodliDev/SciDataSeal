@@ -2,12 +2,13 @@ import m, {Vnode} from "mithril";
 import css from "./Site.module.css"
 import {FrontendOptions} from "../../shared/FrontendOptions.ts";
 import Loading from "./pages/fallback/Loading.tsx";
-import {LoadedPageComponent, PageImport} from "../PageComponent.ts";
+import {PageContent, PageImport} from "../PageComponent.ts";
 import SessionData from "../../shared/SessionData.ts";
 import {SiteTools} from "../singleton/SiteTools.ts";
 import Login from "./pages/fallback/Login.tsx";
 import Init from "./pages/fallback/Init.tsx";
 import Home from "./pages/fallback/Home.tsx";
+import Navigation from "./Navigation.tsx";
 
 interface DocumentPageState {
 	page: string;
@@ -15,18 +16,20 @@ interface DocumentPageState {
 }
 
 export default function Site({attrs: {session, options}}: Vnode<{session: SessionData, options: FrontendOptions}>) {
-	let currentPage: LoadedPageComponent = Loading;
+	let currentPage: PageContent = Loading();
 	const {page: homepageName, query: homeQuery} = getUrlData();
 	let pageName = homepageName;
 	
 	async function loadPage(newPageName: string, query: string): Promise<void> {
-		currentPage = Loading;
+		const loading = Loading();
+		loading.history = currentPage.history;
+		currentPage = loading;
 		m.redraw();
 		pageName = newPageName;
 		
 		if(!options.isInit) {
 			pageName = "Init";
-			currentPage = Init;
+			currentPage = Init();
 			m.redraw();
 			return;
 		}
@@ -35,21 +38,22 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 				pageName = "Admin";
 			else {
 				pageName = "Home";
-				currentPage = Home;
+				currentPage = Home();
 				m.redraw();
 				return;
 			}
 		}
-
+		
 		try {
 			const imported = await import(`./pages/${pageName}.tsx`) as PageImport;
-			const bundle = await imported.default(new URLSearchParams(query));
-			currentPage = bundle.isAllowed(session) ? bundle.component : Login;
+			const bundle = imported.default;
+			
+			currentPage = bundle.isAllowed(session) ? await bundle.component(new URLSearchParams(query)) : Login();
 		}
 		catch(e) {
 			console.error(e);
 			pageName = "Home";
-			currentPage = Home;
+			currentPage = Home();
 		}
 		m.redraw();
 	}
@@ -86,10 +90,11 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		.then();
 	
 	return {
-		view: () => <div class={`${css.Site} vertical`}>
-			<h1 class={`${css.header} textCentered`}>Project Name</h1>
-			<div class="vertical fullLine fillSpace hAlignCenter vAlignCenter">
-				<div id={pageName} class={`${css.page} vertical`}>{m(currentPage)}</div>
+		view: () => <div class={`${css.Site} vertical hAlignCenter`}>
+			<div class={`${css.siteContent} vertical fullLine fillSpace hAlignCenter vAlignCenter`}>
+				<h1 class={`${css.header} textCentered`}>Project Name</h1>
+				<Navigation entries={currentPage.history}/>
+				<div id={pageName} class={`${css.page} vertical selfAlignStretch`}>{m(currentPage)}</div>
 			</div>
 		</div>
 	};
