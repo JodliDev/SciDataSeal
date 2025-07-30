@@ -6,9 +6,7 @@ export interface SaveDataPostInterface extends PostDataStructureInterface {
 		id?: string;
 		pass?: string;
 	}
-	Request: {
-		data: Record<string, string>;
-	}
+	Request: Record<string, string>;
 }
 
 export interface SaveDataGetInterface extends GetDataStructureInterface {

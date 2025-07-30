@@ -7,6 +7,7 @@ import {deflateSync, inflateSync} from "node:zlib";
 import MessageIsTooLongException from "../../shared/exceptions/MessageIsTooLongException.ts";
 
 const DATA_MAX_BYTE_LENGTH = 560;
+const CONTINUE_TAG = "~";
 export default class SolanaTest implements BlockchainInterface {
 	private readonly maxTransactionsPerMessage = 50;
 	
@@ -67,7 +68,7 @@ export default class SolanaTest implements BlockchainInterface {
 		const encrypted = Buffer.concat([iv, update, final]);
 		const result = encrypted.toString("base64");
 		
-		//figure out necessary length:
+		//figure out the necessary length:
 		const textEncoder = new TextEncoder();
 		const neededBytes = textEncoder.encode(result).length;
 		const neededMessages = neededBytes / DATA_MAX_BYTE_LENGTH;
@@ -79,7 +80,7 @@ export default class SolanaTest implements BlockchainInterface {
 		const signatures: string[] = [];
 		for(let i = 0; i < neededMessages; ++i) {
 			const part = result.substring(i * partLength, (i + 1) * partLength);
-			signatures.push(await this.uploadMessage(privateKey, part + (i < neededMessages - 1 ? "~" : "")));
+			signatures.push(await this.uploadMessage(privateKey, part + (i < neededMessages - 1 ? CONTINUE_TAG : "")));
 		}
 		
 		return signatures;
@@ -90,17 +91,30 @@ export default class SolanaTest implements BlockchainInterface {
 		const signatures = await connection.getSignaturesForAddress(new PublicKey(publicKey));
 		
 		const output: string[] = [];
-		for(const sig of signatures) {
+		
+		const addLine = (line: string) => {
+			const ivCiphertext = Buffer.from(line, "base64url");
+			const iv = ivCiphertext.subarray(0, 16);
+			const ciphertext = ivCiphertext.subarray(16);
+			const cipher = createDecipheriv("aes-256-cbc", Buffer.from(dataKey, "base64url"), iv);
+			const decrypted = Buffer.concat([cipher.update(ciphertext), cipher.final()]);
+			
+			const decompressed = inflateSync(decrypted).toString();
+			output.push(decompressed);
+		}
+		
+		let temp = "";
+		for(const sig of signatures.reverse()) {
 			try {
 				const memo = sig.memo?.match(/\[\d+] (.+)/)?.[1] ?? "";
-				const ivCiphertext = Buffer.from(memo, "base64url");
-				const iv = ivCiphertext.subarray(0, 16);
-				const ciphertext = ivCiphertext.subarray(16);
-				const cipher = createDecipheriv("aes-256-cbc", Buffer.from(dataKey, "base64url"), iv);
-				const decrypted = Buffer.concat([cipher.update(ciphertext), cipher.final()]);
 				
-				const decompressed = inflateSync(decrypted).toString();
-				output.push(decompressed);
+				if(memo.endsWith(CONTINUE_TAG)) {
+					temp += memo.substring(0, memo.length - CONTINUE_TAG.length);
+				}
+				else {
+					addLine(temp + memo);
+					temp = "";
+				}
 			}
 			catch(e) {
 				output.push(`Invalid line: ${sig.memo}`);

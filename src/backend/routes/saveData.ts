@@ -34,7 +34,8 @@ export default function saveData(db: DbType): express.Router {
 			throw new UnauthorizedException();
 		
 		const dataArray: string[] = [];
-		for(const column of study.columns) {
+		const columnObj = JSON.parse(study.columns);
+		for(const column of columnObj) {
 			dataArray.push(data.hasOwnProperty(column) ? data[column] : "");
 		}
 		if(!dataArray.length)
@@ -56,11 +57,11 @@ export default function saveData(db: DbType): express.Router {
 		const pass = getAuthHeader(request) ?? query.pass as string;
 		const studyId = parseInt(query.id as string);
 		
-		if(!pass || !studyId || !data.data)
+		if(!pass || !studyId || !data)
 			throw new MissingDataException();
 		
 
-		await saveData(studyId, pass, data.data);
+		await saveData(studyId, pass, data as Record<string, string>);
 		
 		return {}
 	});
