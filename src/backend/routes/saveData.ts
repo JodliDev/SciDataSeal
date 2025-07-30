@@ -9,45 +9,48 @@ import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import {SaveDataGetInterface, SaveDataPostInterface} from "../../shared/data/SaveDataInterface.ts";
 import getAuthHeader from "../actions/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
+import QuestionnaireHasNoColumnsException from "../../shared/exceptions/QuestionnaireHasNoColumnsException.ts";
 
 export default function saveData(db: DbType): express.Router {
 	const router = express.Router();
 	
-	async function saveData(studyId: number, pass: string, data: Record<string, string>): Promise<void> {
+	async function saveData(questionnaireId: number, pass: string, data: Record<string, string>): Promise<void> {
 		if(!isValidBackendString(pass))
 			throw new FaultyDataException("apiPassword");
 		
 		if(typeof data !== "object")
 			throw new FaultyDataException("data");
 		
-		const study = await db.selectFrom("Study")
-			.select(["blockchainPrivateKey", "blockchainType", "columns"])
-			.where("studyId", "=", studyId)
+		const questionnaire = await db.selectFrom("Questionnaire")
+			.innerJoin("BlockchainAccount", "Questionnaire.blockchainAccountId", "BlockchainAccount.blockchainAccountId")
+			.select(["blockchainType", "privateKey", "columns", "questionnaireId", "Questionnaire.userId as userId"])
+			.where("questionnaireId", "=", questionnaireId)
 			.where("apiPassword", "=", pass)
 			.limit(1)
 			.executeTakeFirst();
 		
-		if(!study)
+		if(!questionnaire)
 			throw new UnauthorizedException();
 		
-		if(!study.columns)
-			throw new UnauthorizedException();
+		if(!questionnaire.columns)
+			throw new QuestionnaireHasNoColumnsException();
 		
 		const dataArray: string[] = [];
-		const columnObj = JSON.parse(study.columns);
+		const columnObj = JSON.parse(questionnaire.columns);
 		for(const column of columnObj) {
 			dataArray.push(data.hasOwnProperty(column) ? data[column] : "");
 		}
 		if(!dataArray.length)
 			throw new MissingDataException();
 		
-		const blockChain = getBlockchain(study.blockchainType);
-		const signature = await blockChain.saveMessage(study.blockchainPrivateKey, JSON.stringify(dataArray), pass);
+		const blockChain = getBlockchain(questionnaire.blockchainType);
+		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.questionnaireId, JSON.stringify(dataArray), pass);
 		
 		await db.insertInto("DataLog")
 			.values({
-				studyId: studyId,
-				signature: JSON.stringify(signature)
+				questionnaireId: questionnaireId,
+				userId: questionnaire.userId,
+				signature: JSON.stringify(signature),
 			})
 			.execute();
 	}
@@ -55,13 +58,13 @@ export default function saveData(db: DbType): express.Router {
 	addPostRoute<SaveDataPostInterface>("/saveData", router, async (data, request) => {
 		const query = request.query;
 		const pass = getAuthHeader(request) ?? query.pass as string;
-		const studyId = parseInt(query.id as string);
+		const questionnaireId = parseInt(query.id as string);
 		
-		if(!pass || !studyId || !data)
+		if(!pass || !questionnaireId || !data)
 			throw new MissingDataException();
 		
 
-		await saveData(studyId, pass, data as Record<string, string>);
+		await saveData(questionnaireId, pass, data as Record<string, string>);
 		
 		return {}
 	});

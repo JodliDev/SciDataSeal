@@ -5,6 +5,7 @@ import {createMemoInstruction} from "@solana/spl-memo";
 import {createCipheriv, createDecipheriv, randomBytes} from "node:crypto";
 import {deflateSync, inflateSync} from "node:zlib";
 import MessageIsTooLongException from "../../shared/exceptions/MessageIsTooLongException.ts";
+import generateStringDenotation from "../actions/generateStringDenotation.ts";
 
 const DATA_MAX_BYTE_LENGTH = 560;
 const CONTINUE_TAG = "~";
@@ -21,10 +22,10 @@ export default class SolanaTest implements BlockchainInterface {
 			publicKey,
 			LAMPORTS_PER_SOL
 		);
-		const latestBlockhash = await connection.getLatestBlockhash();
+		const latestBlockHash = await connection.getLatestBlockhash();
 		await connection.confirmTransaction({
-			blockhash: latestBlockhash.blockhash,
-			lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+			blockhash: latestBlockHash.blockhash,
+			lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
 			signature: airdropSignature
 		});
 	}
@@ -51,13 +52,14 @@ export default class SolanaTest implements BlockchainInterface {
 		);
 	}
 	
-    async saveMessage(privateKey: string, data: string, dataKey: string): Promise<string[]> {
+    async saveMessage(privateKey: string, intDenotation: number, data: string, dataKey: string): Promise<string[]> {
 		if(!data)
 			throw new MissingDataException();
 		
 		//compress:
 		//Thanks to https://stackoverflow.com/a/39800991
 		const compressed = deflateSync(data);
+		const denotation = generateStringDenotation(intDenotation);
 		
 		//encode:
 		//Thanks to https://stackoverflow.com/a/78687217
@@ -80,15 +82,18 @@ export default class SolanaTest implements BlockchainInterface {
 		const signatures: string[] = [];
 		for(let i = 0; i < neededMessages; ++i) {
 			const part = result.substring(i * partLength, (i + 1) * partLength);
-			signatures.push(await this.uploadMessage(privateKey, part + (i < neededMessages - 1 ? CONTINUE_TAG : "")));
+			const endTag = i < neededMessages - 1 ? CONTINUE_TAG : "";
+			signatures.push(await this.uploadMessage(privateKey, denotation + part + endTag));
 		}
 		
 		return signatures;
     }
 	
-	public async listData(publicKey: string, dataKey: string): Promise<string[]> {
+	public async listData(publicKey: string, intDenotation: number, dataKey: string): Promise<string[]> {
 		const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 		const signatures = await connection.getSignaturesForAddress(new PublicKey(publicKey));
+		const denotation = generateStringDenotation(intDenotation);
+		const denotationLength = denotation.length;
 		
 		const output: string[] = [];
 		
@@ -107,12 +112,16 @@ export default class SolanaTest implements BlockchainInterface {
 		for(const sig of signatures.reverse()) {
 			try {
 				const memo = sig.memo?.match(/\[\d+] (.+)/)?.[1] ?? "";
+				const memoDenotation = memo.substring(0, denotationLength);
+				if(memoDenotation != denotation)
+					continue;
+				const message = memo.substring(denotationLength);
 				
-				if(memo.endsWith(CONTINUE_TAG)) {
-					temp += memo.substring(0, memo.length - CONTINUE_TAG.length);
+				if(message.endsWith(CONTINUE_TAG)) {
+					temp += message.substring(0, message.length - CONTINUE_TAG.length);
 				}
 				else {
-					addLine(temp + memo);
+					addLine(temp + message);
 					temp = "";
 				}
 			}

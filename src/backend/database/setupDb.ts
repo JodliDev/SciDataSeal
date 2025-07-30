@@ -36,7 +36,7 @@ export default async function setupDb(path: string = `${Options.root}/${CONFIG_F
 	}
 	
 	if(!silentMigration)
-		await prepareAndRunMigration(dbAccess, SqlMorpheusConfig);
+		await prepareAndRunMigration(dbAccess, SqlMorpheusConfig, true);
 	else
 		await runMigrationWithoutHistory(dbAccess, SqlMorpheusConfig);
 	

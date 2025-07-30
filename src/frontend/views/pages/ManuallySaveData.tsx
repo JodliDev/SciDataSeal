@@ -3,21 +3,21 @@ import m from "mithril";
 import Form from "../widgets/Form.tsx";
 import {Lang} from "../../singleton/Lang.ts";
 import getData from "../../actions/getData.ts";
-import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
+import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import bindValueToInput from "../../actions/bindValueToInput.ts";
-import {SetStudyColumnsPostInterface} from "../../../shared/data/SetStudyColumnsInterface.ts";
+import {SetQuestionnaireColumnsPostInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import css from "./ManuallySaveData.module.css";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	const id = query.get("id");
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${id}`);
-	const columns: string[] = JSON.parse(study?.columns ?? "[]");
+	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`);
+	const columns: string[] = JSON.parse(questionnaire?.columns || "[]");
 	const data: Record<string, string> = {};
 	
 	return {
-		history: [["Admin"], ["ListStudies"], ["Study", `?id=${id}`], ["ManuallySaveData", `?id=${id}`]],
-		view: () => <Form<SetStudyColumnsPostInterface> endpoint="/saveData" query={`?id=${study?.studyId}`} headers={{authorization: `Bearer ${study?.apiPassword}`}}>
+		history: [["Admin"], ["ListQuestionnaires"], ["Questionnaire", `?id=${id}`], ["ManuallySaveData", `?id=${id}`]],
+		view: () => <Form<SetQuestionnaireColumnsPostInterface> endpoint="/saveData" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
 			{columns.map(column =>
 				<label>
 					<div class="horizontal vAlignCenter">

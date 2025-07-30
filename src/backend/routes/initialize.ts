@@ -26,7 +26,7 @@ export default function initialize(db: DbType): express.Router {
 			throw new TooShortException("username", USERNAME_MIN_LENGTH);
 		if(data.password.length < PASSWORD_MIN_LENGTH)
 			throw new TooShortException("password", PASSWORD_MIN_LENGTH);
-		if(isValidBackendString(data.username))
+		if(!isValidBackendString(data.username))
 			throw new FaultyDataException("username");
 		
 		const salt = await bcrypt.genSalt();

@@ -12,7 +12,7 @@ export default interface Session {
 @TableClass("Session", "sessionId")
 export class SessionTable implements Insertable<Session> {
 	sessionId = 0;
-	@ForeignKey(UserTable, "userId")
+	@ForeignKey(UserTable, "userId", {onDelete: "CASCADE"})
 	userId = 0;
 	token = "";
 	expires = 0;

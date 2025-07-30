@@ -3,16 +3,16 @@ import m from "mithril";
 import Form from "../widgets/Form.tsx";
 import {Lang} from "../../singleton/Lang.ts";
 import getData from "../../actions/getData.ts";
-import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
+import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import { Btn } from "../widgets/Btn.tsx";
 import bindValueToInput from "../../actions/bindValueToInput.ts";
-import {SetStudyColumnsPostInterface} from "../../../shared/data/SetStudyColumnsInterface.ts";
+import {SetQuestionnaireColumnsPostInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
+	const id = query.get("id");
 	function addColumn() {
 		columns.push("");
-		console.log(columns);
 		m.redraw.sync();
 		(document.getElementById("lastColumnText") as HTMLInputElement)?.focus();
 	}
@@ -21,12 +21,13 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		m.redraw();
 	}
 	
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${query.get("id")}`);
-	const columns: string[] = JSON.parse(study?.columns ?? "[]");
+	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`);
+	const columns: string[] = JSON.parse(questionnaire?.columns || "[]");
+	
 	
 	return {
-		history: [["Admin"]],
-		view: () => <Form<SetStudyColumnsPostInterface> endpoint="/setStudyColumns" query={`?id=${study?.studyId}`} headers={{authorization: `Bearer ${study?.apiPassword}`}}>
+		history: [["Admin"], ["ListQuestionnaires"], ["Questionnaire", `?id=${id}`], ["ManuallySaveData", `?id=${id}`],],
+		view: () => <Form<SetQuestionnaireColumnsPostInterface> endpoint="/setQuestionnaireColumns" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
 			{columns.length
 				? columns.map((column, index) =>
 					<label>
@@ -43,10 +44,10 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						</div>
 					</label>
 				)
-				: Lang.get("noColumnsInfo")
+				: <div class="warn">{Lang.get("noColumnsInfo")}</div>
 			}
 			
-			<Btn.PopoverBtn description="test" iconKey="add" onClick={addColumn}/>
+			<Btn.Default description="test" iconKey="add" onClick={addColumn}/>
 		</Form>
 	};
 });

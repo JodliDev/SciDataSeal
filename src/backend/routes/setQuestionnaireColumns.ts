@@ -8,12 +8,12 @@ import getBlockchain from "../actions/authentication/getBlockchain.ts";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import getAuthHeader from "../actions/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
-import {SetStudyColumnsGetInterface, SetStudyColumnsPostInterface} from "../../shared/data/SetStudyColumnsInterface.ts";
+import {SetQuestionnaireColumnsGetInterface, SetQuestionnaireColumnsPostInterface} from "../../shared/data/SetQuestionnaireColumnsInterface.ts";
 
-export default function setStudyColumns(db: DbType): express.Router {
+export default function setQuestionnaireColumns(db: DbType): express.Router {
 	const router = express.Router();
 	
-	async function setColumns(studyId: number, pass: string, columns: string[]): Promise<void> {
+	async function setColumns(questionnaireId: number, pass: string, columns: string[]): Promise<void> {
 		if(!isValidBackendString(pass))
 			throw new FaultyDataException("apiPassword");
 		
@@ -27,51 +27,53 @@ export default function setStudyColumns(db: DbType): express.Router {
 		
 		const columnsString = JSON.stringify(columns);
 		
-		const study = await db.selectFrom("Study")
-			.select(["blockchainPrivateKey", "blockchainType", "columns"])
-			.where("studyId", "=", studyId)
+		const questionnaire = await db.selectFrom("Questionnaire")
+			.innerJoin("BlockchainAccount", "Questionnaire.blockchainAccountId", "BlockchainAccount.blockchainAccountId")
+			.select(["blockchainType", "privateKey", "columns", "blockchainDenotation", "Questionnaire.userId as userId"])
+			.where("questionnaireId", "=", questionnaireId)
 			.where("apiPassword", "=", pass)
 			.limit(1)
 			.executeTakeFirst();
 		
-		if(!study)
+		if(!questionnaire)
 			throw new UnauthorizedException();
 		
-		if(study.columns == columnsString)
+		if(questionnaire.columns == columnsString)
 			return; //Already the same. We don't need to do anything.
 		
-		const blockChain = getBlockchain(study.blockchainType);
-		const signature = await blockChain.saveMessage(study.blockchainPrivateKey, columnsString, pass);
+		const blockChain = getBlockchain(questionnaire.blockchainType);
+		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.blockchainDenotation, columnsString, pass);
 		
 		await db.insertInto("DataLog")
 			.values({
-				studyId: studyId,
+				questionnaireId: questionnaireId,
+				userId: questionnaire.userId,
 				signature: JSON.stringify(signature)
 			})
 			.execute();
 		
-		await db.updateTable("Study")
+		await db.updateTable("Questionnaire")
 			.set({"columns": columnsString})
-			.where("studyId", "=", studyId)
+			.where("questionnaireId", "=", questionnaireId)
 			.limit(1)
 			.execute();
 	}
 	
-	addPostRoute<SetStudyColumnsPostInterface>("/setStudyColumns", router, async (data, request) => {
+	addPostRoute<SetQuestionnaireColumnsPostInterface>("/setQuestionnaireColumns", router, async (data, request) => {
 		const query = request.query;
 		const pass = getAuthHeader(request) ?? query.pass as string;
-		const studyId = parseInt(query.id as string);
+		const questionnaireId = parseInt(query.id as string);
 		
-		if(!pass || !studyId || !data.columns)
+		if(!pass || !questionnaireId || !data.columns)
 			throw new MissingDataException();
 		
 
-		await setColumns(studyId, pass, data.columns);
+		await setColumns(questionnaireId, pass, data.columns);
 		
 		return {}
 	});
 	
-	addGetRoute<SetStudyColumnsGetInterface>("/setStudyColumns", router, async (data, request) => {
+	addGetRoute<SetQuestionnaireColumnsGetInterface>("/setQuestionnaireColumns", router, async (data, request) => {
 		const pass = getAuthHeader(request) ?? data.pass;
 		
 		if(!data.id || !data.columns || !pass)

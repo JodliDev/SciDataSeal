@@ -1,27 +1,26 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import getData from "../../actions/getData.ts";
-import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
+import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
-import css from "./Study.module.css";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${query.get("id")}`);
+	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${query.get("id")}`);
 	const url = window.location.origin + "/api" + ("/saveData" satisfies Endpoints);
 	
 	return {
 		history: [["Admin"]],
-		view: () => <div class={`${css.Study} vertical`}>
-			{study
+		view: () => <div class="vertical">
+			{questionnaire
 				? <>
-					<h2 class="selfAlignCenter">{study.studyName}</h2>
-					{Lang.getWithColon("connectStudyDescription")}
+					<h2 class="selfAlignCenter">{questionnaire.questionnaireName}</h2>
+					{Lang.getWithColon("connectQuestionnaireDescription")}
 					<h3>GET</h3>
 					<div class="labelLike">
 						<small>{Lang.get("url")}</small>
-						<pre class="inputLike">{`${url}?id=${study.studyId}&pass=${study.apiPassword}&data=`}</pre>
+						<pre class="inputLike">{`${url}?id=${questionnaire.questionnaireId}&pass=${questionnaire.apiPassword}&data=`}</pre>
 					</div>
 					<h3>POST</h3>
 					<div class="labelLike">
@@ -30,7 +29,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 					</div>
 					<div class="labelLike">
 						<small>{Lang.get("body")}</small>
-						<pre class="inputLike">{`id=${study.studyId}&pass=${study.apiPassword}&data=`}</pre>
+						<pre class="inputLike">{`id=${questionnaire.questionnaireId}&pass=${questionnaire.apiPassword}&data=`}</pre>
 					</div>
 				</>
 				: <div class="selfAlignCenter">{Lang.get("notFound")}</div>

@@ -7,6 +7,6 @@ export default function getBlockchain(type: string): BlockchainInterface {
 		case "solanaTest":
 			return new SolanaTest();
 		default:
-			throw new FaultyDataException("blockchain");
+			throw new FaultyDataException("blockchainType");
 	}
 }

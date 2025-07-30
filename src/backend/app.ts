@@ -13,12 +13,15 @@ import login from "./routes/login.ts";
 import initialize from "./routes/initialize.ts";
 import Scheduler from "./Scheduler.ts";
 import deleteOutdatedSessions from "./actions/authentication/deleteOutdatedSessions.ts";
-import createStudy from "./routes/createStudy.ts";
-import listStudies from "./routes/listStudies.ts";
-import getStudy from "./routes/getStudy.ts";
+import createQuestionnaire from "./routes/createQuestionnaire.ts";
+import listQuestionnaires from "./routes/listQuestionnaires.ts";
+import getQuestionnaire from "./routes/getQuestionnaire.ts";
 import saveData from "./routes/saveData.ts";
-import setStudyColumns from "./routes/setStudyColumns.ts";
-import listStudyData from "./routes/listStudyData.ts";
+import setQuestionnaireColumns from "./routes/setQuestionnaireColumns.ts";
+import listQUestionnaireData from "./routes/listQUestionnaireData.ts";
+import editBlockchainAccount from "./routes/editBlockchainAccount.ts";
+import listBlockchainAccounts from "./routes/listBlockchainAccounts.ts";
+import getBlockchainAccount from "./routes/getBlockchainAccount.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -39,11 +42,14 @@ async function init() {
 	if(!Options.isInit)
 		webServer.use("/api", initialize(db));
 	webServer.use("/api", saveData(db));
-	webServer.use("/api", authenticateMiddleware, createStudy(db));
-	webServer.use("/api", authenticateMiddleware, listStudies(db));
-	webServer.use("/api", authenticateMiddleware, getStudy(db));
-	webServer.use("/api", authenticateMiddleware, setStudyColumns(db));
-	webServer.use("/api", authenticateMiddleware, listStudyData());
+	webServer.use("/api", authenticateMiddleware, editBlockchainAccount(db));
+	webServer.use("/api", authenticateMiddleware, createQuestionnaire(db));
+	webServer.use("/api", authenticateMiddleware, listBlockchainAccounts(db));
+	webServer.use("/api", authenticateMiddleware, listQuestionnaires(db));
+	webServer.use("/api", authenticateMiddleware, getBlockchainAccount(db));
+	webServer.use("/api", authenticateMiddleware, getQuestionnaire(db));
+	webServer.use("/api", authenticateMiddleware, setQuestionnaireColumns(db));
+	webServer.use("/api", authenticateMiddleware, listQUestionnaireData());
 	
 	const langProvider = new LangProvider();
 	

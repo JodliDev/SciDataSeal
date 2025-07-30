@@ -1,10 +1,13 @@
 export type Endpoints
 	= "/initialize"
-	| "/createStudy"
-	| "/getStudy"
-	| "/listStudyData"
-	| "/listStudies"
+	| "/createQuestionnaire"
+	| "/editBlockchainAccount"
+	| "/getBlockchainAccount"
+	| "/getQuestionnaire"
+	| "/listBlockchainAccounts"
+	| "/listQuestionnaireData"
+	| "/listQuestionnaires"
 	| "/login"
 	| "/saveData"
-	| "/setStudyColumns"
+	| "/setQuestionnaireColumns"
 	| "/solana";

@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import request from "supertest";
-import setStudyColumns from "../../../src/backend/routes/setStudyColumns.ts";
+import setQuestionnaireColumns from "../../../src/backend/routes/setQuestionnaireColumns.ts";
 import express from "express";
 import {DbType} from "../../../src/backend/database/setupDb.ts";
 
@@ -78,10 +78,10 @@ class MockKysely {
 	}
 }
 
-describe("setStudyColumns", () => {
+describe("setQuestionnaireColumns", () => {
 	const mockDb = new MockKysely();
 	
-	const mockRouter = setStudyColumns(mockDb as unknown as DbType);
+	const mockRouter = setQuestionnaireColumns(mockDb as unknown as DbType);
 	const mockApp = express();
 	mockApp.use(express.json());
 	mockApp.use(mockRouter);
@@ -91,7 +91,7 @@ describe("setStudyColumns", () => {
 	});
 	
 	it("should return errorMissingData if data is missing in GET route", async() => {
-		const res = await request(mockApp).get("/setStudyColumns");
+		const res = await request(mockApp).get("/setQuestionnaireColumns");
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("error");
 		expect(res.body.error).toHaveProperty("message", "errorMissingData");
@@ -100,14 +100,14 @@ describe("setStudyColumns", () => {
 	it("should also accept an Authorization header in GET route", async() => {
 		mockDb.returnMocks.executeTakeFirst = {columns: "[\"asd\",\"qwe\"]"};
 		const res = await request(mockApp)
-			.get("/setStudyColumns?id=1&columns=[\"asd\",\"qwe\"]")
+			.get("/setQuestionnaireColumns?id=1&columns=[\"asd\",\"qwe\"]")
 			.set("Authorization", "Basic dGVzdDp0ZXN0");
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("ok", true);
 	});
 	
 	it("should return errorMissingData if data is missing in POST route", async() => {
-		const res = await request(mockApp).post("/setStudyColumns").send({});
+		const res = await request(mockApp).post("/setQuestionnaireColumns").send({});
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("error");
 		expect(res.body.error).toHaveProperty("message", "errorMissingData");
@@ -116,7 +116,7 @@ describe("setStudyColumns", () => {
 	it("should also accept an Authorization header in POST route", async() => {
 		mockDb.returnMocks.executeTakeFirst = {columns: "[\"asd\",\"qwe\"]"};
 		const res = await request(mockApp)
-			.post("/setStudyColumns?id=1")
+			.post("/setQuestionnaireColumns?id=1")
 			.set("Authorization", "Basic dGVzdDp0ZXN0")
 			.send({columns: ["asd", "qwe"]});
 		expect(res.status).toBe(200);
@@ -124,7 +124,7 @@ describe("setStudyColumns", () => {
 	});
 	
 	it("should return errorFaultyData if pass has invalid characters", async() => {
-		const res = await request(mockApp).post("/setStudyColumns?id=1&pass=q$we").send({columns: []});
+		const res = await request(mockApp).post("/setQuestionnaireColumns?id=1&pass=q$we").send({columns: []});
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("error");
 		expect(res.body.error).toHaveProperty("message", "errorFaultyData");
@@ -132,7 +132,7 @@ describe("setStudyColumns", () => {
 	});
 	
 	it("should return errorFaultyData if column is not an array", async() => {
-		const res = await request(mockApp).post("/setStudyColumns?id=1&pass=qwe").send({columns: "qwe"});
+		const res = await request(mockApp).post("/setQuestionnaireColumns?id=1&pass=qwe").send({columns: "qwe"});
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("error");
 		expect(res.body.error).toHaveProperty("message", "errorFaultyData");
@@ -140,16 +140,16 @@ describe("setStudyColumns", () => {
 	});
 	
 	it("should return errorFaultyData if a column entry has invalid characters", async() => {
-		const res = await request(mockApp).post("/setStudyColumns?id=1&pass=qwe").send({columns: ["asd", "qw$e"]});
+		const res = await request(mockApp).post("/setQuestionnaireColumns?id=1&pass=qwe").send({columns: ["asd", "qw$e"]});
 		expect(res.status).toBe(400);
 		expect(res.body).toHaveProperty("error");
 		expect(res.body.error).toHaveProperty("message", "errorFaultyData");
 		expect(res.body.error).toHaveProperty("values", ["columns"]);
 	});
 	
-	it("should return early if columns is identical to study.columns", async() => {
+	it("should return early if columns is identical to questionnaire.columns", async() => {
 		mockDb.returnMocks.executeTakeFirst = {columns: "[\"asd\",\"qwe\"]"};
-		const res = await request(mockApp).post("/setStudyColumns?id=1&pass=qwe").send({columns: ["asd", "qwe"]});
+		const res = await request(mockApp).post("/setQuestionnaireColumns?id=1&pass=qwe").send({columns: ["asd", "qwe"]});
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("ok", true);
 	});
@@ -157,12 +157,12 @@ describe("setStudyColumns", () => {
 	
 	it("should save the correct values", async() => {
 		mockDb.returnMocks.executeTakeFirst = {columns: "[\"asd\"]"};
-		const res = await request(mockApp).post("/setStudyColumns?id=1&pass=qwe").send({columns: ["asd", "qwe"]});
+		const res = await request(mockApp).post("/setQuestionnaireColumns?id=1&pass=qwe").send({columns: ["asd", "qwe"]});
 		expect(res.status).toBe(200);
 		expect(res.body).toHaveProperty("ok", true);
 		expect(mockDb.mocks.insertInto).toHaveBeenCalledWith("DataLog");
-		expect(mockDb.mocks.values).toHaveBeenCalledWith({studyId: 1, signature: "[\"someSignature\"]"});
-		expect(mockDb.mocks.updateTable).toHaveBeenCalledWith("Study");
+		expect(mockDb.mocks.values).toHaveBeenCalledWith({questionnaireId: 1, signature: "[\"someSignature\"]"});
+		expect(mockDb.mocks.updateTable).toHaveBeenCalledWith("Questionnaire");
 		expect(mockDb.mocks.set).toHaveBeenCalledWith({columns: "[\"asd\",\"qwe\"]"});
 	});
 });
