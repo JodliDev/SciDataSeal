@@ -9,6 +9,7 @@ import Login from "./pages/fallback/Login.tsx";
 import Init from "./pages/fallback/Init.tsx";
 import Home from "./pages/fallback/Home.tsx";
 import Navigation from "./Navigation.tsx";
+import ErrorPage from "./pages/fallback/Error.tsx";
 
 interface DocumentPageState {
 	page: string;
@@ -19,6 +20,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 	let currentPage: PageContent = Loading();
 	const {page: homepageName, query: homeQuery} = getUrlData();
 	let pageName = homepageName;
+	let currentQuery = homeQuery;
 	
 	async function loadPage(newPageName: string, query: string): Promise<void> {
 		const loading = Loading();
@@ -26,6 +28,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		currentPage = loading;
 		m.redraw();
 		pageName = newPageName;
+		currentQuery = query;
 		
 		if(!options.isInit) {
 			pageName = "Init";
@@ -52,8 +55,8 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		}
 		catch(e) {
 			console.error(e);
-			pageName = "Home";
-			currentPage = Home();
+			pageName = "Error";
+			currentPage = ErrorPage();
 		}
 		m.redraw();
 	}
@@ -69,7 +72,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 	}
 	
 	function switchPage(page: string, newQuery?: `?${string}`): void {
-		if(page != pageName) {
+		if(page != pageName || newQuery != currentQuery) {
 			const path = `${page}${newQuery ?? ""}`;
 			window.history.pushState({page: page, query: newQuery} satisfies DocumentPageState, "", path);
 		}
