@@ -13,13 +13,4 @@
 	border-radius: 50%;
 	animation: spin 2s linear infinite;
 	border-top-color: rgba(0,0,0,0);
-	
-	&.hidden {
-		display: none;
-	}
-	&.reserveSpace.hidden {
-		display: inline-block;
-		visibility: hidden;
-		animation: none;
-	}
 }

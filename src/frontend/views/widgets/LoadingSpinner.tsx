@@ -3,14 +3,12 @@ import css from "./LoadingSpinner.module.css"
 import {FixedComponent} from "../../mithril-polyfill.ts";
 
 interface Attributes {
-	visible?: boolean;
-	reserveSpace?: boolean
 }
 
-export default FixedComponent<Attributes>(({ attrs: { visible, reserveSpace } }) => {
+export default FixedComponent<Attributes>(() => {
 	return {
 		view: () => (
-			<div class={`${css.LoadingSpinner} ${visible ? "" : css.hidden} ${reserveSpace ? css.reserveSpace : ""}`}></div>
+			<div class={css.LoadingSpinner}></div>
 		)
 	}
 });

@@ -44,7 +44,7 @@ export default FixedComponent<FeedbackIconOptions>(vNode => {
 	
 	return {
 		view: () => isLoadingState
-			? <LoadingSpinner reserveSpace={true}/>
+			? <LoadingSpinner/>
 			: (showIconState
 				? <div class={`${css.FeedbackIcon} ${successState ? css.success : css.failed}`}>{
 					m.trust(successState ? checkCircleFilledSvg : failSvg)

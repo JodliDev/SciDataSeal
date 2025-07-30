@@ -6,7 +6,7 @@ export default function Loading(): PageContent {
 	return {
 		history: [],
 		view: () =>  <div class="vertical hAlignCenter vAlignCenter fillSpace">
-			<LoadingSpinner visible={true} />
+			<LoadingSpinner/>
 		</div>
 	};
 }
