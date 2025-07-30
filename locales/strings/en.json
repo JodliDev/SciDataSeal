@@ -2,6 +2,7 @@
 	"admin": "Admin",
 	"blockchainName": "Name",
 	"body": "Body",
+	"changeBlockchainAccount": "Change blockchain account",
 	"colon": "%1$s: ",
 	"columnData": "Column data",
 	"columnName": "Column name",

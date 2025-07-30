@@ -11,7 +11,11 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`);
 	
 	return {
-		history: [["Admin"], ["ListQuestionnaires"], ["Questionnaire", `?id=${id}`]],
+		history: [
+			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("listQuestionnaires"), page: "ListQuestionnaires"},
+			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
+		],
 		view: () => <div class="horizontal wrapContent">
 			{questionnaire
 				? <>

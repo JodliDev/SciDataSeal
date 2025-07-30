@@ -26,7 +26,12 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	
 	
 	return {
-		history: [["Admin"], ["ListQuestionnaires"], ["Questionnaire", `?id=${id}`], ["ManuallySaveData", `?id=${id}`],],
+		history: [
+			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("listQuestionnaires"), page: "ListQuestionnaires"},
+			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
+			{label: Lang.get("setColumns"), page: "ManuallySetColumn", query: `?id=${id}`},
+		],
 		view: () => <Form<SetQuestionnaireColumnsPostInterface> endpoint="/setQuestionnaireColumns" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
 			{columns.length
 				? columns.map((column, index) =>

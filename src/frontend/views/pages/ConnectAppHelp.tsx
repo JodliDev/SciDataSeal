@@ -7,11 +7,15 @@ import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${query.get("id")}`);
+	const id = query.get("id");
+	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`);
 	const url = window.location.origin + "/api" + ("/saveData" satisfies Endpoints);
 	
 	return {
-		history: [["Admin"]],
+		history: [
+			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("howToConnectMyApp"), page: "ConnectAppHelp", query: `?id=${id}`},
+		],
 		view: () => <div class="vertical">
 			{questionnaire
 				? <>

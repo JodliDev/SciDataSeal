@@ -1,7 +1,6 @@
-import {Children, Vnode} from "mithril";
+import {Children} from "mithril";
 import SessionData from "../shared/SessionData.ts";
 
-export type PageVnode = Vnode;
 export type PageContent = {history: HistoryEntry[], view: () => Children};
 export type AsyncComponent = (query: URLSearchParams) => Promise<PageContent>;
 export type PageBox = {
@@ -10,7 +9,7 @@ export type PageBox = {
 };
 export type PageImport = {default: PageBox};
 
-export type HistoryEntry = [string, `?${string}`] | [string];
+export type HistoryEntry = {label: string, page: string, query?: `?${string}`};
 
 export function PrivatePage(view: AsyncComponent): PageBox {
 	const bundle = PublicPage(view);

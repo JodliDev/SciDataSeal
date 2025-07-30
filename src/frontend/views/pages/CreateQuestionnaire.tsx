@@ -15,7 +15,10 @@ export default PrivatePage(async () => {
 	const response = await getData<ListBlockchainAccountsInterface>("/listBlockchainAccounts");
 	
 	return{
-		history: [["Admin"]],
+		history: [
+			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("createQuestionnaire"), page: "CreateQuestionnaire"},
+		],
 		view: () => <Form<CreateQuestionnaireInterface> endpoint="/createQuestionnaire" onReceive={onReceive}>
 			<label>
 				<small>{Lang.get("questionnaireName")}</small>

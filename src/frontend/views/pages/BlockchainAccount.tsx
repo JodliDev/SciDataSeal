@@ -21,7 +21,11 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	
 	
 	return {
-		history: [["Admin"], id ? ["BlockchainAccount", `?id=${id}`] : ["BlockchainAccount"]],
+		history: [
+			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("listBlockchainAccounts"), page: "ListBlockchainAccounts"},
+			{label: Lang.get(id ? "changeBlockchainAccount" : "createBlockchainAccount"), page: "BlockchainAccount", query: `?id=${id}`},
+		],
 		view: () => <Form<EditBlockchainInterface> endpoint="/editBlockchainAccount" onReceive={onReceive}>
 			{id &&
 				<input type="hidden" name="blockchainAccountId" value={id}/>

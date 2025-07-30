@@ -16,7 +16,12 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	const data: Record<string, string> = {};
 	
 	return {
-		history: [["Admin"], ["ListQuestionnaires"], ["Questionnaire", `?id=${id}`], ["ManuallySaveData", `?id=${id}`]],
+		history: [
+			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("listQuestionnaires"), page: "ListQuestionnaires"},
+			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
+			{label: Lang.get("saveData"), page: "ManuallySaveData", query: `?id=${id}`},
+		],
 		view: () => <Form<SetQuestionnaireColumnsPostInterface> endpoint="/saveData" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
 			{columns.map(column =>
 				<label>

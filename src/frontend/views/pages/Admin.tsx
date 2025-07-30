@@ -6,7 +6,9 @@ import A from "../widgets/A.tsx";
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
 	return {
-		history: [["Admin"]],
+		history: [
+			{label: Lang.get("admin"), page: "Admin"}
+		],
 		view: () => <div class="horizontal vAlignCenter hAlignCenter wrapContent">
 			<A page="BlockchainAccount" class="bigButton">{Lang.get("createBlockchainAccount")}</A>
 			<A page="ListBlockchainAccounts" class="bigButton">{Lang.get("listBlockchainAccounts")}</A>
