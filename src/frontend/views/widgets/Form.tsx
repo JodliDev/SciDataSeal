@@ -34,7 +34,7 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 				const key = entry[0];
 				if(key.endsWith("[]")) {
 					const realKey = key.substring(0, key.length - 2);
-					if(data.hasOwnProperty(key))
+					if(data.hasOwnProperty(realKey))
 						(data[realKey] as unknown[]).push(entry[1]);
 					else
 						data[realKey] = [entry[1]];
