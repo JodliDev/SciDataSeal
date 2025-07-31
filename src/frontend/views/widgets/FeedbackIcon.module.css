@@ -26,3 +26,8 @@
 		fill: green;
 	}
 }
+
+
+label .FeedbackIcon, :global .labelLike :local .FeedbackIcon {
+	height: 6px;
+}

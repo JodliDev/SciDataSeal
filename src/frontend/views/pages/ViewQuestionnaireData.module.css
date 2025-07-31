@@ -1,0 +1,11 @@
+.preselectBox {
+	width: 100%;
+	
+	:global .inputLike {
+		align-self: stretch;
+		
+		.entry::after {
+			content: ", "
+		}
+	}
+}

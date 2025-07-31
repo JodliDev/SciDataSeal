@@ -21,7 +21,6 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				? <>
 					<A page="ManuallySaveData" query={`?id=${id}`} class="bigButton">{Lang.get("saveData")}</A>
 					<A page="ManuallySetColumns" query={`?id=${id}`} class="bigButton">{Lang.get("setColumns")}</A>
-					<A page="ViewQuestionnaireData" query={`?id=${id}`} class="bigButton">{Lang.get("viewData")}</A>
 					<A page="ConnectAppHelp" query={`?id=${id}`} class="bigButton">{Lang.get("howToConnectMyApp")}</A>
 				</>
 				: <div class="selfAlignCenter">{Lang.get("notFound")}</div>
