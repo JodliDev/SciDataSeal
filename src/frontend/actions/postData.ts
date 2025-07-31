@@ -6,7 +6,7 @@ type PostDataOptions = {
 	query?: `?${string}`
 	headers?: Record<string, string>
 }
-export default async function postData<T extends PostDataStructureInterface>(endpoint: Endpoints, body: T["Request"], options?: PostDataOptions): Promise<T["Response"]> {
+export default async function postData<T extends PostDataStructureInterface>(endpoint: Endpoints, body: T["Request"], options?: PostDataOptions): Promise<T["Response"] | undefined> {
 	const response = await fetch(`api${endpoint}${options?.query ?? ""}`, {
 		method: "POST",
 		headers: {
