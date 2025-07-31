@@ -1,4 +1,7 @@
 {
 	"extends": "../tsconfig.json",
-	"include": ["./", "../src/shared", "../src/frontend", "../src/backend"],
+	"compilerOptions": {
+		"composite": true
+	},
+	"include": ["./", "../src/shared", "../src/frontend", "../src/backend"]
 }
