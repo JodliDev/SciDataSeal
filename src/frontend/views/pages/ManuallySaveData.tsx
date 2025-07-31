@@ -6,7 +6,6 @@ import getData from "../../actions/getData.ts";
 import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import bindValueToInput from "../../actions/bindValueToInput.ts";
 import {SetQuestionnaireColumnsPostInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
-import css from "./ManuallySaveData.module.css";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -23,18 +22,18 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: Lang.get("saveData"), page: "ManuallySaveData", query: `?id=${id}`},
 		],
 		view: () => <Form<SetQuestionnaireColumnsPostInterface> endpoint="/saveData" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
-			{columns.map(column =>
-				<label>
-					<div class="horizontal vAlignCenter">
-						<span class={css.columnLabel}>{Lang.get("colon", column)}</span>
+			<div class="horizontal wrapContent">
+				{columns.map(column =>
+					<label>
+						<small>{Lang.get("colon", column)}</small>
 						<textarea
 							placeholder={Lang.get("columnData")}
 							name={column}
 							{...bindValueToInput(data[column], value => data[column] = value)}
 						></textarea>
-					</div>
-				</label>
-			)}
+					</label>
+				)}
+			</div>
 		</Form>
 	};
 });

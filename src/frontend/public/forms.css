@@ -1,6 +1,6 @@
 select, input, textarea, .inputLike {
 	margin: 5px;
-	border: 1px solid var(--color-accent);
+	border: 1px solid var(--color-primary);
 	outline: none;
 	transition: background-color 300ms, color 300ms, border-color 300ms;
 	background-color: var(--color-inside-surface);
@@ -28,7 +28,7 @@ label, .labelLike {
 		pointer-events: none;
 		margin-bottom: -10px;
 		padding: 0 4px;
-		color: var(--color-accent);
+		color: var(--color-primary);
 		background-color: var(--color-inside-surface);
 	}
 	> small:last-child {
@@ -63,7 +63,7 @@ form {
 		box-shadow: 1px 1px 1px var(--color-shadow);
 		
 		border: 1px solid white;
-		background-color: var(--color-accent);
+		background-color: var(--color-primary);
 		color: white;
 		
 		&:hover {
