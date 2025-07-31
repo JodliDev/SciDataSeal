@@ -8,14 +8,18 @@ interface Attributes {
 	class?: string
 }
 
-export default FixedComponent<Attributes>(vNode => {
-	const {page, query} = vNode.attrs;
-	const onClick = (event: MouseEvent) => {
+export default FixedComponent<Attributes>(() => {
+	const onClick = (page: string, query: `?${string}` | undefined, event: MouseEvent) => {
 		event.preventDefault();
 		SiteTools.switchPage(page, query);
 	}
 	
 	return {
-		view: () => <a href={`${page}${query ?? ""}`} class={vNode.attrs.class} onclick={onClick}>{vNode.children}</a>
+		view: (vNode) => {
+			const {page, query} = vNode.attrs;
+			return <a href={`${page}${query ?? ""}`} class={vNode.attrs.class} onclick={onClick.bind(null, page, query)}>
+				{vNode.children}
+			</a>
+		}
 	};
 });
