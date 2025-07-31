@@ -11,7 +11,7 @@ interface Attributes {
 export default FixedComponent<Attributes>(_ => {
 	return {
 		view: (vNode) => (
-			<div class={`horizontal selfAlignStretch ${css.Navigation}`}>{vNode.attrs.entries.map(entry =>
+			<div class={`horizontal vAlignCenter selfAlignStretch ${css.Navigation}`}>{vNode.attrs.entries.map(entry =>
 				<A class={css.entry} page={entry.page} query={entry.query}>{entry.label}</A>
 			)}</div>
 		)

@@ -22,7 +22,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: Lang.get("saveData"), page: "ManuallySaveData", query: `?id=${id}`},
 		],
 		view: () => <Form<SetQuestionnaireColumnsPostInterface> endpoint="/saveData" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
-			<div class="horizontal wrapContent">
+			<div class="horizontal hAlignCenter wrapContent">
 				{columns.map(column =>
 					<label>
 						<small>{Lang.get("colon", column)}</small>

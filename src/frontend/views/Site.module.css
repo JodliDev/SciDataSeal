@@ -16,10 +16,11 @@
 			padding: 10px;
 			box-shadow: inset 0 0 10px var(--color-shadow);
 			
-			@media (max-width: 600px) {
-				min-width: unset;
-				width: 90%;
-			}
+		}
+		
+		@media (max-width: 600px) {
+			min-width: unset;
+			width: 90%;
 		}
 	}
 }

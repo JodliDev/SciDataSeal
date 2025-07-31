@@ -76,7 +76,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 							<FeedbackIcon callback={fromListFeedback}/>
 						</div>
 					</div>
-					<div class="horizontal">
+					<div class="horizontal hAlignCenter wrapContent">
 						<label>
 							<small>{Lang.get("publicKey")}</small>
 							<textarea name="publicKey">{publicKey}</textarea>
@@ -88,7 +88,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						</label>
 					</div>
 					
-					<div class="horizontal">
+					<div class="horizontal hAlignCenter wrapContent">
 						<label>
 							<small>{Lang.get("type")}</small>
 							<select name="blockchainType" value={blockchainType}>
