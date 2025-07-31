@@ -1,5 +1,6 @@
 import strings from "@locales/strings/en.json";
 import LangSource from "../../shared/LangSource.ts";
+import ExceptionInterface from "../../shared/exceptions/ExceptionInterface.ts";
 
 export type LangKey = keyof typeof strings;
 
@@ -49,6 +50,11 @@ class LangClass {
 		}
 		else
 			return value;
+	}
+	
+	public getError(error: unknown): string {
+		const knownError = error as ExceptionInterface;
+		return knownError.message ? Lang.getDynamic(knownError.message, ...(knownError.values ?? [])) : (error as string ?? Lang.get("errorUnknown"));
 	}
 }
 

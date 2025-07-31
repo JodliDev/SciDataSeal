@@ -9,7 +9,7 @@ import Login from "./pages/fallback/Login.tsx";
 import Init from "./pages/fallback/Init.tsx";
 import Home from "./pages/fallback/Home.tsx";
 import Navigation from "./Navigation.tsx";
-import ErrorPage from "./pages/fallback/Error.tsx";
+import ErrorPage from "./pages/fallback/ErrorPage.tsx";
 
 interface DocumentPageState {
 	page: string;
@@ -55,8 +55,9 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		}
 		catch(e) {
 			console.error(e);
+			console.log(currentPage)
+			currentPage = ErrorPage(currentPage.history, pageName, e);
 			pageName = "Error";
-			currentPage = ErrorPage();
 		}
 		m.redraw();
 	}

@@ -1,7 +1,6 @@
 import m from "mithril";
 import postData from "../../actions/postData.ts";
 import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
-import ExceptionInterface from "../../../shared/exceptions/ExceptionInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import PostDataStructureInterface from "../../../shared/PostDataStructureInterface.ts";
 import {FixedComponent} from "../../mithril-polyfill.ts";
@@ -49,8 +48,7 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 			feedback.setSuccess(true);
 		}
 		catch(error) {
-			const knownError = error as ExceptionInterface;
-			errorMessage = knownError.message ? Lang.getDynamic(knownError.message, ...(knownError.values ?? [])) : Lang.get("errorUnknown");
+			errorMessage = Lang.getError(error);
 			feedback.setSuccess(false);
 		}
 		feedback.setLoading(false);

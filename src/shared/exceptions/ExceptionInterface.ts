@@ -1,4 +1,5 @@
-import {LangKey} from "../../frontend/singleton/Lang.ts";
+import strings from "@locales/strings/en.json";
+type LangKey = keyof typeof strings;
 
 export default interface ExceptionInterface {
 	requestStatus?: number
