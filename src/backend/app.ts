@@ -18,7 +18,7 @@ import listQuestionnaires from "./routes/listQuestionnaires.ts";
 import getQuestionnaire from "./routes/getQuestionnaire.ts";
 import saveData from "./routes/saveData.ts";
 import setQuestionnaireColumns from "./routes/setQuestionnaireColumns.ts";
-import listQUestionnaireData from "./routes/listQUestionnaireData.ts";
+import listQuestionnaireData from "./routes/listQuestionnaireData.ts";
 import editBlockchainAccount from "./routes/editBlockchainAccount.ts";
 import listBlockchainAccounts from "./routes/listBlockchainAccounts.ts";
 import getBlockchainAccount from "./routes/getBlockchainAccount.ts";
@@ -49,7 +49,7 @@ async function init() {
 	webServer.use("/api", authenticateMiddleware, getBlockchainAccount(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, setQuestionnaireColumns(db));
-	webServer.use("/api", authenticateMiddleware, listQUestionnaireData());
+	webServer.use("/api", authenticateMiddleware, listQuestionnaireData());
 	
 	const langProvider = new LangProvider();
 	
