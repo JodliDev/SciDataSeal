@@ -1,7 +1,6 @@
 import express from "express";
 import {DbType} from "../database/setupDb.ts";
-import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
-import getSessionData from "../actions/authentication/getSessionData.ts";
+import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import GetQuestionnaireInterface from "../../shared/data/GetQuestionnaireInterface.ts";
 import NotFoundException from "../../shared/exceptions/NotFoundException.ts";
@@ -10,11 +9,8 @@ export default function getQuestionnaire(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addGetRoute<GetQuestionnaireInterface>("/getQuestionnaire", router, async (data, request) => {
-		const session = await getSessionData(db, request);
+		const session = await getLoggedInSessionData(db, request);
 		const questionnaireId = parseInt(data.questionnaireId ?? "0");
-		
-		if(!session.userId)
-			throw new UnauthorizedException();
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
 			.select(["questionnaireId", "questionnaireName", "blockchainDenotation", "blockchainAccountId", "apiPassword", "dataKey", "columns"])

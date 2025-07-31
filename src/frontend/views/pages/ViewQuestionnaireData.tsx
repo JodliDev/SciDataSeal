@@ -99,7 +99,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						
 						<label>
 							<small>{Lang.get("denotation")}</small>
-							<input type="text" name="denotation" value={denotation}/>
+							<input type="number" min="1" name="denotation" value={denotation}/>
 						</label>
 					</div>
 				</Form>

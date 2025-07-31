@@ -16,12 +16,13 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: Lang.get("listQuestionnaires"), page: "ListQuestionnaires"},
 			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
 		],
-		view: () => <div class="horizontal wrapContent">
+		view: () => <div class="horizontal hAlignCenter wrapContent">
 			{questionnaire
 				? <>
 					<A page="ManuallySaveData" query={`?id=${id}`} class="bigButton">{Lang.get("saveData")}</A>
 					<A page="ManuallySetColumns" query={`?id=${id}`} class="bigButton">{Lang.get("setColumns")}</A>
 					<A page="ConnectAppHelp" query={`?id=${id}`} class="bigButton">{Lang.get("howToConnectMyApp")}</A>
+					<A page="EditQuestionnaire" query={`?id=${id}`} class="bigButton">{Lang.get("changeQuestionnaire")}</A>
 				</>
 				: <div class="selfAlignCenter">{Lang.get("notFound")}</div>
 			}

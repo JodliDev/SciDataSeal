@@ -66,7 +66,6 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 		
 		if(!pass || !questionnaireId || !data.columns)
 			throw new MissingDataException();
-		
 
 		await setColumns(questionnaireId, pass, data.columns);
 		

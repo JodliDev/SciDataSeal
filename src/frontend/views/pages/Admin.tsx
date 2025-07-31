@@ -12,7 +12,7 @@ export default PrivatePage(async () => {
 		view: () => <div class="horizontal vAlignCenter hAlignCenter wrapContent">
 			<A page="BlockchainAccount" class="bigButton">{Lang.get("createBlockchainAccount")}</A>
 			<A page="ListBlockchainAccounts" class="bigButton">{Lang.get("listBlockchainAccounts")}</A>
-			<A page="CreateQuestionnaire" class="bigButton">{Lang.get("createQuestionnaire")}</A>
+			<A page="EditQuestionnaire" class="bigButton">{Lang.get("createQuestionnaire")}</A>
 			<A page="ListQuestionnaires" class="bigButton">{Lang.get("listQuestionnaires")}</A>
 			<A page="ViewQuestionnaireData" class="bigButton">{Lang.get("viewData")}</A>
 		</div>

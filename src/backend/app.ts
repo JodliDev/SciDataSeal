@@ -13,7 +13,7 @@ import login from "./routes/login.ts";
 import initialize from "./routes/initialize.ts";
 import Scheduler from "./Scheduler.ts";
 import deleteOutdatedSessions from "./actions/authentication/deleteOutdatedSessions.ts";
-import createQuestionnaire from "./routes/createQuestionnaire.ts";
+import editQuestionnaire from "./routes/editQuestionnaire.ts";
 import listQuestionnaires from "./routes/listQuestionnaires.ts";
 import getQuestionnaire from "./routes/getQuestionnaire.ts";
 import saveData from "./routes/saveData.ts";
@@ -22,6 +22,8 @@ import listQuestionnaireData from "./routes/listQuestionnaireData.ts";
 import editBlockchainAccount from "./routes/editBlockchainAccount.ts";
 import listBlockchainAccounts from "./routes/listBlockchainAccounts.ts";
 import getBlockchainAccount from "./routes/getBlockchainAccount.ts";
+import generateRandomString from "./routes/generateRandomString.ts";
+import getNewDenotation from "./routes/getNewDenotation.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -42,14 +44,16 @@ async function init() {
 	if(!Options.isInit)
 		webServer.use("/api", initialize(db));
 	webServer.use("/api", saveData(db));
+	webServer.use("/api", setQuestionnaireColumns(db));
 	webServer.use("/api", authenticateMiddleware, editBlockchainAccount(db));
-	webServer.use("/api", authenticateMiddleware, createQuestionnaire(db));
+	webServer.use("/api", authenticateMiddleware, editQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, listBlockchainAccounts(db));
 	webServer.use("/api", authenticateMiddleware, listQuestionnaires(db));
 	webServer.use("/api", authenticateMiddleware, getBlockchainAccount(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaire(db));
-	webServer.use("/api", authenticateMiddleware, setQuestionnaireColumns(db));
 	webServer.use("/api", authenticateMiddleware, listQuestionnaireData());
+	webServer.use("/api", authenticateMiddleware, generateRandomString());
+	webServer.use("/api", authenticateMiddleware, getNewDenotation(db));
 	
 	const langProvider = new LangProvider();
 	

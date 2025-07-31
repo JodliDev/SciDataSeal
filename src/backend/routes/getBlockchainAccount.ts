@@ -1,7 +1,6 @@
 import express from "express";
 import {DbType} from "../database/setupDb.ts";
-import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
-import getSessionData from "../actions/authentication/getSessionData.ts";
+import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import NotFoundException from "../../shared/exceptions/NotFoundException.ts";
 import GetBlockchainInterface from "../../shared/data/GetBlockchainInterface.ts";
@@ -10,11 +9,8 @@ export default function getBlockchainAccount(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addGetRoute<GetBlockchainInterface>("/getBlockchainAccount", router, async (data, request) => {
-		const session = await getSessionData(db, request);
+		const session = await getLoggedInSessionData(db, request);
 		const accountId = parseInt(data.accountId ?? "0");
-		
-		if(!session.userId)
-			throw new UnauthorizedException();
 		
 		const account = await db.selectFrom("BlockchainAccount")
 			.select(["blockchainName", "blockchainType", "privateKey", "publicKey", "highestDenotation"])

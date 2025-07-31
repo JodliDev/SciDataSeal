@@ -3,7 +3,7 @@ import MissingDataException from "../../shared/exceptions/MissingDataException.t
 import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
-import getSessionData from "../actions/authentication/getSessionData.ts";
+import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import FaultyDataException from "../../shared/exceptions/FaultyDataException.ts";
 import getBlockchain from "../actions/authentication/getBlockchain.ts";
@@ -23,10 +23,7 @@ export default function editBlockchainAccount(db: DbType): express.Router {
 		if(!isValidBackendString(data.privateKey))
 			throw new FaultyDataException("privateKey");
 		
-		const session = await getSessionData(db, request);
-		
-		if(!session.userId)
-			throw new UnauthorizedException();
+		const session = await getLoggedInSessionData(db, request);
 		
 		const blockChain = getBlockchain(data.blockchainType);
 		

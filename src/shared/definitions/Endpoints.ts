@@ -1,8 +1,10 @@
 export type Endpoints
 	= "/initialize"
-	| "/createQuestionnaire"
 	| "/editBlockchainAccount"
+	| "/editQuestionnaire"
+	| "/generateRandomString"
 	| "/getBlockchainAccount"
+	| "/getNewDenotation"
 	| "/getQuestionnaire"
 	| "/listBlockchainAccounts"
 	| "/listQuestionnaireData"

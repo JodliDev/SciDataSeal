@@ -1,7 +1,9 @@
 {
 	"admin": "Admin",
+	"apiPassword": "API password",
 	"blockchainName": "Name",
 	"body": "Body",
+	"changeQuestionnaire": "Change questionnaire",
 	"changeBlockchainAccount": "Change blockchain account",
 	"colon": "%1$s: ",
 	"columnData": "Column data",
@@ -17,6 +19,7 @@
 	"listQuestionnaires": "List questionnaires",
 	"login": "Login",
 	"errorDenotationIsTooLarge": "The Questionnaire denotation is too large. There are too many questionnaires saved to this wallet.",
+	"errorAlreadyExists": "Already exists (%1$s)",
 	"errorFaultyData": "Faulty data (%1$s)",
 	"errorFaultyResponse": "Faulty response",
 	"errorMessageIsTooLong": "Message is too long.",
