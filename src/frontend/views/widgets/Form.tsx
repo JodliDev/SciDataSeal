@@ -1,13 +1,12 @@
 import m from "mithril";
 import postData from "../../actions/postData.ts";
-import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import PostDataStructureInterface from "../../../shared/PostDataStructureInterface.ts";
 import {FixedComponent} from "../../mithril-polyfill.ts";
 import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 
 type FormOptions<T extends PostDataStructureInterface> = {
-	endpoint: Endpoints
+	endpoint: T["Endpoint"]
 	onReceive?: (response: T["Response"]) => void,
 	submitLabel?: string,
 	query?: `?${string}`

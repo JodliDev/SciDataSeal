@@ -1,6 +1,7 @@
 import GetDataStructureInterface from "../GetDataStructureInterface.ts";
 
 export default interface GetQuestionnaireInterface extends GetDataStructureInterface {
+	Endpoint: "/getQuestionnaire";
 	Query: {
 		questionnaireId: string;
 	}

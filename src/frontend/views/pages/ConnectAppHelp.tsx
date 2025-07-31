@@ -3,13 +3,13 @@ import m from "mithril";
 import getData from "../../actions/getData.ts";
 import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
-import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
+import {SaveDataGetInterface} from "../../../shared/data/SaveDataInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	const id = query.get("id");
 	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`);
-	const url = window.location.origin + "/api" + ("/saveData" satisfies Endpoints);
+	const url = window.location.origin + "/api" + ("/saveData" satisfies SaveDataGetInterface["Endpoint"]);
 	
 	return {
 		history: [

@@ -1,11 +1,10 @@
 import {ResponseFormat} from "../../../shared/ResponseFormat.ts";
 import express from "express";
-import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
 import createErrorResponse from "../createErrorResponse.ts";
 import GetDataStructureInterface from "../../../shared/GetDataStructureInterface.ts";
 
 export function addGetRoute<T extends GetDataStructureInterface>(
-	path: Endpoints,
+	path: T["Endpoint"],
 	router: express.Router,
 	validate: (query: Partial<T["Query"]>, request: express.Request, response: express.Response) => Promise<T["Response"]>
 ) {

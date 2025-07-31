@@ -1,12 +1,11 @@
 import PostDataStructureInterface from "../../../shared/PostDataStructureInterface.ts";
-import {Endpoints} from "../../../shared/definitions/Endpoints.ts";
 import express from "express";
 import MissingDataException from "../../../shared/exceptions/MissingDataException.ts";
 import {ResponseFormat} from "../../../shared/ResponseFormat.ts";
 import createErrorResponse from "../createErrorResponse.ts";
 
 export function addPostRoute<T extends PostDataStructureInterface>(
-	path: Endpoints,
+	path: T["Endpoint"],
 	router: express.Router,
 	validate: (data: Partial<T["Request"]>, request: express.Request, response: express.Response) => Promise<T["Response"]>
 ) {

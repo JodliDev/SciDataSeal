@@ -2,6 +2,7 @@ import PostDataStructureInterface from "../PostDataStructureInterface.ts";
 import GetDataStructureInterface from "../GetDataStructureInterface.ts";
 
 export interface SaveDataPostInterface extends PostDataStructureInterface {
+	Endpoint: "/saveData";
 	Query: {
 		id?: string;
 		pass?: string;
@@ -10,6 +11,7 @@ export interface SaveDataPostInterface extends PostDataStructureInterface {
 }
 
 export interface SaveDataGetInterface extends GetDataStructureInterface {
+	Endpoint: "/saveData";
 	Query: {
 		id: string;
 		pass?: string;

@@ -1,6 +1,7 @@
 import GetDataStructureInterface from "../GetDataStructureInterface.ts";
 
 export default interface GetBlockchainInterface extends GetDataStructureInterface {
+	Endpoint: "/getBlockchainAccount";
 	Query: {
 		accountId: string;
 	}
