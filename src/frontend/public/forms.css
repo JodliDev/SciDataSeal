@@ -39,61 +39,65 @@ label, .labelLike {
 		font-size: x-small;
 		color: gray;
 	}
-	input {
-		accent-color: var(--color-primary-dark);
+	
+}
+
+input {
+	accent-color: var(--color-primary-dark);
+	width: var(--form-element-width);
+	padding: 5px;
+}
+input[type="file"] {
+	width: unset;
+	min-width: unset;
+}
+input[type="checkbox"], input[type="radio"] {
+	margin: 20px 0 15px 5px;
+}
+.inputLike {
+	min-width: var(--form-element-width);
+	padding: 10px;
+	margin: 5px;
+}
+
+select {
+	min-width: 161px;
+	padding: 5px;
+}
+
+textarea {
+	width: 150px;
+	min-height: 100px;
+	padding: 5px;
+}
+
+button, input[type="submit"] {
+	width: unset;
+	min-width: unset;
+	padding: 5px;
+	margin: -1px 1px 1px -1px;
+	cursor: pointer;
+	border-radius: 10px;
+	box-shadow: 1px 1px 1px var(--color-shadow);
+	
+	border: 1px solid white;
+	background-color: var(--color-primary);
+	color: white;
+	
+	&:hover {
+		background-color: var(--color-primary-dark);
 	}
-	input[type="checkbox"], input[type="radio"] {
-		margin: 20px 0 15px 5px;
+	&:active {
+		margin: 0;
+		box-shadow: unset;
 	}
-	.inputLike {
-		padding: 10px;
-		margin: 5px;
+	&[disabled] {
+		background-color: lightgray;
+		color: white;
+		cursor: unset;
 	}
 }
 
 form {
 	padding: 5px;
-	
-	input[type="text"], input[type="number"], input[type="password"], input[type="datetime-local"], input[type="date"], input[type="time"] {
-		width: var(--form-element-width);
-		padding: 5px;
-	}
-	.inputLike {
-		min-width: var(--form-element-width);
-	}
-	button, input[type="submit"] {
-		padding: 5px;
-		margin: -1px 1px 1px -1px;
-		cursor: pointer;
-		border-radius: 10px;
-		box-shadow: 1px 1px 1px var(--color-shadow);
-		
-		border: 1px solid white;
-		background-color: var(--color-primary);
-		color: white;
-		
-		&:hover {
-			background-color: var(--color-primary-dark);
-		}
-		&:active {
-			margin: 0;
-			box-shadow: unset;
-		}
-		&[disabled] {
-			background-color: lightgray;
-			color: white;
-			cursor: unset;
-		}
-	}
-	
-	select {
-		min-width: 161px;
-		padding: 5px;
-	}
-	
-	textarea {
-		width: 150px;
-		min-height: 100px;
-		padding: 5px;
-	}
 }

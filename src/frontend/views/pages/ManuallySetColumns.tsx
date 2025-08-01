@@ -22,7 +22,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	}
 	
 	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`);
-	const columns: string[] = JSON.parse(questionnaire?.columns || "[]");
+	const columns: string[] = JSON.parse(`[${questionnaire?.columns ?? ""}]`);
 	
 	
 	return {

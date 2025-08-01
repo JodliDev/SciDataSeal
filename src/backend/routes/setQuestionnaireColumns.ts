@@ -9,6 +9,7 @@ import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import getAuthHeader from "../actions/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import {SetQuestionnaireColumnsGetInterface, SetQuestionnaireColumnsPostInterface} from "../../shared/data/SetQuestionnaireColumnsInterface.ts";
+import createCsvLine from "../actions/createCsvLine.ts";
 
 export default function setQuestionnaireColumns(db: DbType): express.Router {
 	const router = express.Router();
@@ -25,7 +26,7 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 				throw new FaultyDataException("columns");
 		}
 		
-		const columnsString = JSON.stringify(columns);
+		const columnsString = createCsvLine(columns);
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
 			.innerJoin("BlockchainAccount", "Questionnaire.blockchainAccountId", "BlockchainAccount.blockchainAccountId")

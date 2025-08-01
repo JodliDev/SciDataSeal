@@ -2,26 +2,99 @@ import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import getData from "../../actions/getData.ts";
 import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
-import {ListQuestionnaireDataPostInterface} from "../../../shared/data/ListQuestionnaireDataInterface.ts";
 import GetBlockchainInterface from "../../../shared/data/GetBlockchainInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
 import ListQuestionnairesInterface from "../../../shared/data/ListQuestionnairesInterface.ts";
 import FeedbackIcon, {FeedbackCallBack} from "../widgets/FeedbackIcon.tsx";
 import css from "./ViewQuestionnaireData.module.css";
+import generateHash from "../../actions/generateHash.ts";
+import createDataBlob from "../../actions/createDataBlob.ts";
+import postData from "../../actions/postData.ts";
+import FloatingMenu from "../widgets/FloatingMenu.tsx";
+import {Change, diffChars} from "diff";
+import {GetQuestionnaireDataPostInterface} from "../../../shared/data/GetQuestionnaireDataInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
-export default PrivatePage(async (query: URLSearchParams) => {
+export default PrivatePage(async () => {
 	const fromListFeedback = new FeedbackCallBack();
-	let data: ListQuestionnaireDataPostInterface["Response"]["data"] | undefined = undefined;
+	const reloadingFeedback = new FeedbackCallBack();
 	
+	let blobUrl: string | undefined = undefined;
+	let dataCharacterCount = 0;
 	let publicKey = "";
 	let dataKey = "";
 	let blockchainType = "";
 	let denotation = 1;
+	let hash = "";
+	let hashTime = 0;
+	let dataForReload = {};
+	let diff: Change[] | undefined = undefined;
+	let isDifferent = false;
 	
-	function onReceive(response: ListQuestionnaireDataPostInterface["Response"]) {
-		data = response?.data;
+	function onBeforeSend(data: Record<string, unknown>): GetQuestionnaireDataPostInterface["Response"] | void {
+		dataForReload = data;
+		let sum = "";
+		for(const key in data as Record<string, unknown>) {
+			sum += data[key];
+		}
+		hash = generateHash(sum).toString();
+		
+		const csv = localStorage.getItem(hash);
+		if(csv) {
+			try {
+				hashTime = parseInt(localStorage.getItem(`${hash}-time`) ?? "0");
+				return {csv: csv};
+			}
+			catch {
+				console.log(234)
+				localStorage.setItem(`${hash}-time`, Date.now().toString());
+			}
+		}
+		else
+			localStorage.setItem(`${hash}-time`, Date.now().toString());
+	}
+	
+	function onReceive(response: GetQuestionnaireDataPostInterface["Response"]) {
+		const csv = response?.csv;
+		dataCharacterCount = csv?.length ?? 0;
+		
+		localStorage.setItem(hash, csv);
+		blobUrl = createDataBlob(csv);
+		m.redraw();
+	}
+	
+	async function reloadData() {
+		diff = undefined;
+		reloadingFeedback.setLoading(true);
+		localStorage.removeItem(hash);
+		const response = await postData<GetQuestionnaireDataPostInterface>("/getQuestionnaireData", dataForReload as GetQuestionnaireDataPostInterface["Request"]);
+		if(response) {
+			hashTime = Date.now();
+			localStorage.setItem(`${hash}-time`, hashTime.toString());
+			onReceive(response);
+			reloadingFeedback.setSuccess(true);
+		}
+		else
+			reloadingFeedback.setSuccess(false);
+	}
+	
+	async function compareFile(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if(!target.files?.length)
+			return;
+		const file = target.files[0];
+		
+		
+		const original = localStorage.getItem(hash);
+		const compare = await file.text();
+		
+		if(!original || !compare)
+			return;
+		
+		diff = diffChars(compare, original);
+		isDifferent = !!diff.find(entry => entry.added || entry.removed);
+		m.redraw();
 	}
 	
 	async function fillQuestionnaire(questionnaireId: number) {
@@ -44,28 +117,53 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		
 		fromListFeedback.setSuccess(true);
 	}
-	
-	const id = query.get("id");
 	const questionnaires = (await getData<ListQuestionnairesInterface>("/listQuestionnaires"))?.questionnaires;
 	
 	return {
 		history: [
 			{label: Lang.get("admin"), page: "Admin"},
-			{label: Lang.get("viewData"), page: "ViewQuestionnaireData", query: `?id=${id}`},
+			{label: Lang.get("viewData"), page: "ViewQuestionnaireData"},
 		],
-		view: () => <div class="vertical hAlignStretched">
-			{data
-				? <table>
-					{data!.map(line =>
-						<tr>{Array.isArray(line)
-							? line.map(column =>
-								<td>{column}</td>
-							)
-							: <td>{line}</td>
-						}</tr>
-					)}
-				</table>
-				: <Form<ListQuestionnaireDataPostInterface> endpoint="/listQuestionnaireData" onReceive={onReceive} submitLabel={Lang.get("load")}>
+		view: () => <div class="vertical hAlignStretched fillSpace">
+			{blobUrl
+				? <div class="vertical hAlignStretched">
+					<div class="textCentered">{Lang.get("infoDataCharacterCount", dataCharacterCount)}</div>
+					<div class="textCentered">{Lang.get("infoDataCacheTime", (new Date(hashTime)).toLocaleString())}</div>
+					<br/>
+					<div class="horizontal">
+						<div class="bigButton clickable" onclick={reloadData}>
+							{Lang.get("reload")}
+							<FeedbackIcon callback={reloadingFeedback}/>
+						</div>
+						<a class="bigButton" href={blobUrl} download="data.csv">{Lang.get("download")}</a>
+						<FloatingMenu class="bigButton clickable" id="compare" menu={(close) =>
+							<div>
+								<label>
+									<small>{Lang.get("fileToCompareWith")}</small>
+									<input type="file" accept="text/csv" onchange={(event: Event) => {close(); compareFile(event);}}/>
+								</label>
+							</div>
+						}>
+							{Lang.get("compare")}
+						</FloatingMenu>
+					</div>
+					{diff && (
+						isDifferent
+							? <pre class={css.differences}>{diff.map(part =>
+								<pre>
+									{part.added
+										? <pre class={css.added}>{m.trust(part.value)}</pre>
+										: part.removed
+											? <pre class={css.removed}>{m.trust(part.value)}</pre>
+											: <pre>{m.trust(part.value)}</pre>
+									}
+								</pre>
+							)}</pre>
+							: <div class={css.differences}>{Lang.get("foundNoChanges")}</div>
+						)
+					}
+				</div>
+				: <Form<GetQuestionnaireDataPostInterface> endpoint="/getQuestionnaireData" submitLabel={Lang.get("load")} onBeforeSend={onBeforeSend} onReceive={onReceive}>
 					<div class={`labelLike ${css.preselectBox}`}>
 						<small>{Lang.get("preselectQuestionnaire")}</small>
 						<div class={`inputLike horizontal wrapContent`}>

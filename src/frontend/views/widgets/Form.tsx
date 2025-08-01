@@ -8,6 +8,7 @@ import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 type FormOptions<T extends PostDataStructureInterface> = {
 	endpoint: T["Endpoint"]
 	onReceive?: (response: T["Response"]) => void,
+	onBeforeSend?: (data: Record<string, unknown>) => T["Response"] | void,
 	submitLabel?: string,
 	query?: `?${string}`
 	headers?: Record<string, string>,
@@ -41,8 +42,8 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 					data[entry[0]] = entry[1];
 			}
 			const uploadData = vNode.attrs.filterData ? vNode.attrs.filterData(data) : data;
-			
-			const response = await postData(vNode.attrs.endpoint, uploadData, {query: vNode.attrs.query, headers: vNode.attrs.headers});
+			const pre = vNode.attrs.onBeforeSend && vNode.attrs.onBeforeSend(uploadData);
+			const response = pre ? pre : await postData(vNode.attrs.endpoint, uploadData, {query: vNode.attrs.query, headers: vNode.attrs.headers});
 			vNode.attrs.onReceive?.(response);
 			feedback.setSuccess(true);
 		}

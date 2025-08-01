@@ -10,6 +10,7 @@ import {SaveDataGetInterface, SaveDataPostInterface} from "../../shared/data/Sav
 import getAuthHeader from "../actions/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import QuestionnaireHasNoColumnsException from "../../shared/exceptions/QuestionnaireHasNoColumnsException.ts";
+import createCsvLine from "../actions/createCsvLine.ts";
 
 export default function saveData(db: DbType): express.Router {
 	const router = express.Router();
@@ -36,7 +37,7 @@ export default function saveData(db: DbType): express.Router {
 			throw new QuestionnaireHasNoColumnsException();
 		
 		const dataArray: string[] = [];
-		const columnObj = JSON.parse(questionnaire.columns);
+		const columnObj = JSON.parse(`[${questionnaire.columns}]`);
 		for(const column of columnObj) {
 			dataArray.push(data.hasOwnProperty(column) ? data[column] : "");
 		}
@@ -44,7 +45,7 @@ export default function saveData(db: DbType): express.Router {
 			throw new MissingDataException();
 		
 		const blockChain = getBlockchain(questionnaire.blockchainType);
-		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.questionnaireId, JSON.stringify(dataArray), pass);
+		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.questionnaireId, createCsvLine(dataArray), pass);
 		
 		await db.insertInto("DataLog")
 			.values({

@@ -1,8 +1,8 @@
 import GetDataStructureInterface from "../GetDataStructureInterface.ts";
 import PostDataStructureInterface from "../PostDataStructureInterface.ts";
 
-export interface ListQuestionnaireDataPostInterface extends PostDataStructureInterface {
-	Endpoint: "/listQuestionnaireData";
+export interface GetQuestionnaireDataPostInterface extends PostDataStructureInterface {
+	Endpoint: "/getQuestionnaireData";
 	Request: {
 		blockchainType: string;
 		publicKey: string;
@@ -10,12 +10,12 @@ export interface ListQuestionnaireDataPostInterface extends PostDataStructureInt
 		dataKey: string;
 	}
 	Response: {
-		data: string[][];
+		csv: string
 	}
 }
 
-export interface ListQuestionnaireDataGetInterface extends GetDataStructureInterface {
-	Endpoint: "/listQuestionnaireData";
+export interface GetQuestionnaireDataGetInterface extends GetDataStructureInterface {
+	Endpoint: "/getQuestionnaireData";
 	Query: {
 		blockchainType: string;
 		publicKey: string;
@@ -23,7 +23,7 @@ export interface ListQuestionnaireDataGetInterface extends GetDataStructureInter
 		dataKey: string;
 	}
 	Response: {
-		data: string[][];
+		csv: string
 	}
 }
 

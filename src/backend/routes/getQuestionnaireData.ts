@@ -1,33 +1,33 @@
 import express from "express";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
-import {ListQuestionnaireDataGetInterface, ListQuestionnaireDataPostInterface} from "../../shared/data/ListQuestionnaireDataInterface.ts";
+import {GetQuestionnaireDataGetInterface, GetQuestionnaireDataPostInterface} from "../../shared/data/GetQuestionnaireDataInterface.ts";
 import getBlockchain from "../actions/authentication/getBlockchain.ts";
 import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 
-export default function listQuestionnaireData(): express.Router {
+export default function getQuestionnaireData(): express.Router {
 	const router = express.Router();
 	
-	async function getData(blockchainType: string, publicKey: string, denotation: number, dataKey: string): Promise<ListQuestionnaireDataPostInterface["Response"] & ListQuestionnaireDataGetInterface["Response"]> {
+	async function getData(blockchainType: string, publicKey: string, denotation: number, dataKey: string): Promise<GetQuestionnaireDataPostInterface["Response"] & GetQuestionnaireDataGetInterface["Response"]> {
 		const blockChain = getBlockchain(blockchainType);
 		const lines = await blockChain.listData(publicKey, denotation, dataKey);
 		
-		const output: string[][] = [];
+		const output: string[] = [];
 		for(const entry of lines) {
 			try {
-				output.push(JSON.parse(entry));
+				output.push(entry);
 			}
 			catch {
-				output.push((entry as any));
+				output.push((entry as any).toString());
 			}
 		}
 		
 		return {
-			data: output
+			csv: output.join("\n"),
 		}
 	}
 	
-	addGetRoute<ListQuestionnaireDataGetInterface>("/listQuestionnaireData", router, async (data) => {
+	addGetRoute<GetQuestionnaireDataGetInterface>("/getQuestionnaireData", router, async (data) => {
 		const denotation = parseInt(data.denotation ?? "0");
 		if(!data.blockchainType || !data.publicKey || !denotation || !data.dataKey)
 			throw new MissingDataException();
@@ -36,7 +36,7 @@ export default function listQuestionnaireData(): express.Router {
 	});
 	
 	
-	addPostRoute<ListQuestionnaireDataPostInterface>("/listQuestionnaireData", router, async (data) => {
+	addPostRoute<GetQuestionnaireDataPostInterface>("/getQuestionnaireData", router, async (data) => {
 		if(!data.blockchainType || !data.publicKey || !data.denotation || !data.dataKey)
 			throw new MissingDataException();
 		

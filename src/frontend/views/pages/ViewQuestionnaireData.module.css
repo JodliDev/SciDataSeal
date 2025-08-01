@@ -9,3 +9,21 @@
 		}
 	}
 }
+.differences {
+	border: 1px solid var(--color-primary);
+	padding: 5px;
+	white-space: wrap;
+	
+	pre {
+		display: inline;
+	}
+	
+	.added {
+		color: darkgreen;
+		background-color: lightgreen;
+	}
+	.removed {
+		color: darkred;
+		background-color: lightcoral;
+	}
+}
