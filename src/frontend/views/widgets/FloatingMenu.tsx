@@ -23,26 +23,21 @@ export default FixedComponent<Attributes>(vNode => {
 	function validatePosition(): void {
 		if(!view)
 			return;
-		const rect = view.getBoundingClientRect()
-		if(rect.left < 0) {
+		const rect = view.getBoundingClientRect();
+		if(rect.left < 5) {
 			view.style.left = "5px";
-			view.style.right = "unset";
 			view.style.transform = "none";
 		}
-		if(rect.right > window.innerWidth) {
+		if(rect.right > window.innerWidth - 5) {
 			view.style.left = "unset";
 			view.style.right = "5px";
 			view.style.transform = "none";
 		}
-		else {
-			view.style.right = "unset"
-		}
 		
-		if(rect.top < 0) {
+		if(rect.top < 5) {
 			view.style.top = "5px";
-			view.style.bottom = "unset";
 		}
-		if(rect.bottom > window.innerHeight) {
+		if(rect.bottom > window.innerHeight - 5) {
 			view.style.top = "unset";
 			view.style.bottom = "5px";
 		}
@@ -87,10 +82,14 @@ export default FixedComponent<Attributes>(vNode => {
 			case "click":
 				view.style.left = `${rect.left + rect.width / 2}px`;
 				view.style.top = `${rect.top + rect.height}px`;
+				view.style.right = "unset";
+				view.style.bottom = "unset";
 				break;
 			case "mouseenter":
 				view.style.left = `${rect.left + rect.width / 2}px`;
 				view.style.top = `${rect.top + rect.height}px`;
+				view.style.right = "unset";
+				view.style.bottom = "unset";
 				break;
 			case "mousemove":
 				view.style.transform = "unset";
@@ -98,7 +97,7 @@ export default FixedComponent<Attributes>(vNode => {
 				break;
 		}
 		
-		view.classList.add(css.DropdownMenu);
+		view.classList.add(css.FloatingMenu);
 		view.classList.add(id);
 		
 		openedMenus[id] = {
@@ -109,9 +108,9 @@ export default FixedComponent<Attributes>(vNode => {
 		document.body.appendChild(view);
 		
 		m.mount(view, {
-			// onupdate(): void {
-			// 	validatePosition();
-			// },
+			onupdate(): void {
+				validatePosition();
+			},
 			view: () => menu(() => closeDropdown())
 		});
 		
@@ -145,9 +144,11 @@ export default FixedComponent<Attributes>(vNode => {
 					onmousemove: (event: MouseEvent) => {
 						if(!view)
 							return;
+						view.style.right = "unset";
+						view.style.bottom = "unset";
 						view.style.left = `${event.clientX + 10}px`;
 						view.style.top = `${event.clientY}px`;
-						validatePosition()
+						validatePosition();
 					}
 				};
 		}
