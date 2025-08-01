@@ -15,7 +15,8 @@ export default function getQuestionnaireData(): express.Router {
 		const output: string[] = [];
 		for(const entry of lines) {
 			try {
-				output.push(entry);
+				const content = `${entry.isHeader ? "\"Time\"" : `"${entry.timestamp}"`},${entry.data}`;
+				output.push(content);
 			}
 			catch {
 				output.push((entry as any).toString());

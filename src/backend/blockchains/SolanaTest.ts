@@ -1,4 +1,4 @@
-import BlockchainInterface from "./BlockchainInterface.ts";
+import BlockchainInterface, {LineData} from "./BlockchainInterface.ts";
 import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction, Transaction} from "@solana/web3.js";
 import {createMemoInstruction} from "@solana/spl-memo";
@@ -9,6 +9,7 @@ import generateStringDenotation from "../actions/generateStringDenotation.ts";
 
 const DATA_MAX_BYTE_LENGTH = 560;
 const CONTINUE_TAG = "~";
+const HEADER_TAG = "~~";
 export default class SolanaTest implements BlockchainInterface {
 	private readonly maxTransactionsPerMessage = 50;
 	
@@ -52,13 +53,13 @@ export default class SolanaTest implements BlockchainInterface {
 		);
 	}
 	
-    async saveMessage(privateKey: string, intDenotation: number, data: string, dataKey: string): Promise<string[]> {
+    async saveMessage(privateKey: string, intDenotation: number, data: string, isHeader: boolean, dataKey: string): Promise<string[]> {
 		if(!data)
 			throw new MissingDataException();
 		
 		//compress:
 		//Thanks to https://stackoverflow.com/a/39800991
-		const compressed = deflateSync(data);
+		const compressed = deflateSync(`${isHeader ? HEADER_TAG : ""}${data}`);
 		const denotation = generateStringDenotation(intDenotation);
 		
 		//encode:
@@ -89,15 +90,15 @@ export default class SolanaTest implements BlockchainInterface {
 		return signatures;
     }
 	
-	public async listData(publicKey: string, intDenotation: number, dataKey: string): Promise<string[]> {
+	public async listData(publicKey: string, intDenotation: number, dataKey: string): Promise<LineData[]> {
 		const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 		const signatures = await connection.getSignaturesForAddress(new PublicKey(publicKey));
 		const denotation = generateStringDenotation(intDenotation);
 		const denotationLength = denotation.length;
 		
-		const output: string[] = [];
+		const output: LineData[] = [];
 		
-		const addLine = (line: string) => {
+		const addLine = (timestamp: number, line: string) => {
 			const ivCiphertext = Buffer.from(line, "base64url");
 			const iv = ivCiphertext.subarray(0, 16);
 			const ciphertext = ivCiphertext.subarray(16);
@@ -105,7 +106,22 @@ export default class SolanaTest implements BlockchainInterface {
 			const decrypted = Buffer.concat([cipher.update(ciphertext), cipher.final()]);
 			
 			const decompressed = inflateSync(decrypted).toString();
-			output.push(decompressed);
+			
+			if(decompressed.startsWith(HEADER_TAG)) {
+				output.push({
+					timestamp: timestamp,
+					data: decompressed.substring(HEADER_TAG.length),
+					isHeader: true
+				});
+			}
+			else {
+				
+				output.push({
+					timestamp: timestamp,
+					data: decompressed,
+					isHeader: false
+				});
+			}
 		}
 		
 		let temp = "";
@@ -121,12 +137,16 @@ export default class SolanaTest implements BlockchainInterface {
 					temp += message.substring(0, message.length - CONTINUE_TAG.length);
 				}
 				else {
-					addLine(temp + message);
+					addLine(sig.blockTime ?? 0, temp + message);
 					temp = "";
 				}
 			}
 			catch(e) {
-				output.push(`Invalid line: ${sig.memo}`);
+				output.push({
+					timestamp: sig.blockTime ?? 0,
+					data: `Invalid line: ${sig.memo}`,
+					isHeader: false
+				});
 			}
 		}
 		

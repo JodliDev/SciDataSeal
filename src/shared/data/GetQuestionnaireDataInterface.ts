@@ -10,7 +10,7 @@ export interface GetQuestionnaireDataPostInterface extends PostDataStructureInte
 		dataKey: string;
 	}
 	Response: {
-		csv: string
+		csv: string;
 	}
 }
 

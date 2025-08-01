@@ -43,7 +43,7 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 			return; //Already the same. We don't need to do anything.
 		
 		const blockChain = getBlockchain(questionnaire.blockchainType);
-		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.blockchainDenotation, columnsString, pass);
+		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.blockchainDenotation, columnsString, true, pass);
 		
 		await db.insertInto("DataLog")
 			.values({

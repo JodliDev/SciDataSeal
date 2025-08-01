@@ -45,7 +45,7 @@ export default function saveData(db: DbType): express.Router {
 			throw new MissingDataException();
 		
 		const blockChain = getBlockchain(questionnaire.blockchainType);
-		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.questionnaireId, createCsvLine(dataArray), pass);
+		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.questionnaireId, createCsvLine(dataArray), false, pass);
 		
 		await db.insertInto("DataLog")
 			.values({
