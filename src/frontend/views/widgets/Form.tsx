@@ -57,7 +57,7 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 	
 	return {
 		view: ({children}: m.Vnode<FormOptions<T>>) => (
-			<form onsubmit={onSubmit} class={`vertical hAlignCenter ${vNode.attrs.class ?? ""}`}>
+			<form {...vNode.attrs} onsubmit={onSubmit} class={`vertical hAlignCenter ${vNode.attrs.class ?? ""}`}>
 				<div class="warn">{errorMessage}</div>
 				<div class="vertical hAlignCenter">
 					{children}

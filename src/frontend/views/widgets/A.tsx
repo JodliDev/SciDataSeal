@@ -17,7 +17,7 @@ export default FixedComponent<Attributes>(() => {
 	return {
 		view: (vNode) => {
 			const {page, query} = vNode.attrs;
-			return <a href={`${page}${query ?? ""}`} class={vNode.attrs.class} onclick={onClick.bind(null, page, query)}>
+			return <a {...vNode.attrs} href={`${page}${query ?? ""}`} onclick={onClick.bind(null, page, query)}>
 				{vNode.children}
 			</a>
 		}

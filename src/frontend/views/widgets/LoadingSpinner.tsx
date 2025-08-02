@@ -9,7 +9,7 @@ interface Attributes {
 export default FixedComponent<Attributes>((vNode) => {
 	return {
 		view: () => (
-			<div class={`${css.LoadingSpinner} ${vNode.attrs.class ?? ""}`}></div>
+			<div {...vNode.attrs} class={`${css.LoadingSpinner} ${vNode.attrs.class ?? ""}`}></div>
 		)
 	}
 });

@@ -45,11 +45,11 @@ export default FixedComponent<FeedbackIconOptions>(vNode => {
 	
 	return {
 		view: () => isLoadingState
-			? <LoadingSpinner class={vNode.attrs.class}/>
+			? <LoadingSpinner {...vNode.attrs}/>
 			: (showIconState
-				? <div class={`${css.FeedbackIcon} ${successState ? css.success : css.failed} ${vNode.attrs.class ?? ""}`}>{
+				? <div {...vNode.attrs} class={`${css.FeedbackIcon} ${successState ? css.success : css.failed} ${vNode.attrs.class ?? ""}`}>{
 					m.trust(successState ? checkCircleFilledSvg : failSvg)
 				}</div>
-				: <div class={`${css.FeedbackIcon} ${css.hidden} ${reserveSpace ? css.reserveSpace : ""} ${vNode.attrs.class ?? ""}`}></div>)
+				: <div {...vNode.attrs} class={`${css.FeedbackIcon} ${css.hidden} ${reserveSpace ? css.reserveSpace : ""} ${vNode.attrs.class ?? ""}`}></div>)
 	}
 });
