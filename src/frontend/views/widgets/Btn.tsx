@@ -1,24 +1,17 @@
 import m from "mithril"
 import css from "./btn.module.css"
 import {FixedComponent} from "../../mithril-polyfill.ts";
-import FloatingMenu from "./FloatingMenu.tsx";
-import addSvg from "../../assets/icons/add.svg?raw";
-import removeSvg from "../../assets/icons/remove.svg?raw";
+import floatingMenu from "../../actions/FloatingMenu.tsx";
+import Icon, {IconAttributes} from "./Icon.tsx";
 
-export const ButtonType = {
-	add: addSvg,
-	remove: removeSvg,
-}
-
-interface BtnAttributes {
-	iconKey: keyof typeof ButtonType,
+interface BtnAttributes extends IconAttributes{
 	onClick?: () => void
 }
 
-const Default = FixedComponent<BtnAttributes>(vNode => {
+const Default = FixedComponent<BtnAttributes>(() => {
 	return {
-		view: () => <div class={`${css.BtnWidget} ${vNode.attrs.iconKey} clickable horizontal hAlignCenter`} onclick={vNode.attrs.onClick}>
-			{m.trust(ButtonType[vNode.attrs.iconKey])}
+		view: (vNode) => <div class={`${css.Btn} ${vNode.attrs.iconKey} clickable horizontal hAlignCenter`} onclick={vNode.attrs.onClick}>
+			<Icon iconKey={vNode.attrs.iconKey}/>
 		</div>
 	}
 });
@@ -26,17 +19,18 @@ const Default = FixedComponent<BtnAttributes>(vNode => {
 interface PopoverAttributes extends BtnAttributes{
 	description: string
 }
-const PopoverBtn = FixedComponent<PopoverAttributes>(vNode => {
+const PopoverBtn = FixedComponent<PopoverAttributes>(() => {
 	return {
-		view: () => <FloatingMenu id="popoverBtn" eventName="mousemove" menu={() => vNode.attrs.description}>
-			<Default iconKey={vNode.attrs.iconKey} onClick={vNode.attrs.onClick}/>
-		</FloatingMenu>
+		view: (vNode) =>
+			<div {...floatingMenu("popoverBtn", () => vNode.attrs.description)}>
+				<Default iconKey={vNode.attrs.iconKey} onClick={vNode.attrs.onClick}/>
+			</div>
 	}
 });
 
 const Empty = FixedComponent<{}>(() => {
 	return {
-		view: () => <div class={`${css.BtnWidget} ${css.empty}`}></div>
+		view: () => <div class={`${css.Btn} ${css.empty}`}></div>
 	}
 });
 

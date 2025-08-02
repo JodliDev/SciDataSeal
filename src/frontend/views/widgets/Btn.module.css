@@ -1,4 +1,4 @@
-.BtnWidget {
+.Btn {
 	&:hover svg {
 		fill: var(--color-primary-light);
 	}
