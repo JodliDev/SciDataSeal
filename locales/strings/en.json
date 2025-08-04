@@ -38,6 +38,8 @@
 	"errorTooShort": "\"%1$s\" needs to consist of at least %2$d characters.",
 	"errorUnknown": "Unknown error",
 	"errorUnauthorized": "Not authorized",
+	"home": "Home",
+	"listUser": "List user",
 	"load": "Load",
 	"noData": "No data",
 	"notFound": "Not found",

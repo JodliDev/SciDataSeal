@@ -9,7 +9,7 @@ import Icon from "../widgets/Icon.tsx";
 export default PrivatePage(async () => {
 	return {
 		history: [
-			{label: Lang.get("admin"), page: "Admin"}
+			{label: Lang.get("home"), page: "Home"}
 		],
 		view: () => <div class="horizontal vAlignCenter hAlignCenter wrapContent">
 			<A page="BlockchainAccount" class="bigButton" {...tooltip(Lang.get("tooltipCreateBlockchainAccount"))}>

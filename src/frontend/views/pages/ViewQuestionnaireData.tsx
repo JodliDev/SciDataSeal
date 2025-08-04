@@ -121,7 +121,7 @@ export default PrivatePage(async () => {
 	
 	return {
 		history: [
-			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("home"), page: "Home"},
 			{label: Lang.get("viewData"), page: "ViewQuestionnaireData"},
 		],
 		view: () => <div class="vertical hAlignStretched fillSpace">

@@ -13,7 +13,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	
 	return {
 		history: [
-			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("home"), page: "Home"},
 			{label: Lang.get("howToConnectMyApp"), page: "ConnectAppHelp", query: `?id=${id}`},
 		],
 		view: () => <div class="vertical">

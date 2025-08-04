@@ -11,7 +11,7 @@ export default PrivatePage(async () => {
 	
 	return {
 		history: [
-			{label: Lang.get("admin"), page: "Admin"},
+			{label: Lang.get("home"), page: "Home"},
 			{label: Lang.get("listBlockchainAccounts"), page: "ListBlockchainAccounts"},
 		],
 		view: () => <div class="horizontal vAlignCenter hAlignCenter wrapContent">

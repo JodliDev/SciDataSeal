@@ -7,7 +7,7 @@ import SessionData from "../../shared/SessionData.ts";
 import {SiteTools} from "../singleton/SiteTools.ts";
 import Login from "./pages/fallback/Login.tsx";
 import Init from "./pages/fallback/Init.tsx";
-import Home from "./pages/fallback/Home.tsx";
+import About from "./pages/fallback/About.tsx";
 import Navigation from "./Navigation.tsx";
 import ErrorPage from "./pages/fallback/ErrorPage.tsx";
 
@@ -38,10 +38,10 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		}
 		if(!newPageName) {
 			if(session.isLoggedIn)
-				pageName = "Admin";
-			else {
 				pageName = "Home";
-				currentPage = Home();
+			else {
+				pageName = "About";
+				currentPage = About();
 				m.redraw();
 				return;
 			}

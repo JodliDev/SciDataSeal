@@ -1,9 +1,9 @@
 import m from "mithril";
 import {PageContent} from "../../../PageComponent.ts";
 
-export default function Home(): PageContent {
+export default function About(): PageContent {
 	return {
 		history: [],
-		view: () =>  <div>Home</div>
+		view: () =>  <div>About</div>
 	};
 }

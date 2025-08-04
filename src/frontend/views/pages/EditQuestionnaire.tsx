@@ -57,12 +57,12 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	return {
 		history: id
 			? [
-				{label: Lang.get("admin"), page: "Admin"},
+				{label: Lang.get("home"), page: "Home"},
 				{label: Lang.get("listQuestionnaires"), page: "ListQuestionnaires"},
 				{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
 			]
 			: [
-				{label: Lang.get("admin"), page: "Admin"},
+				{label: Lang.get("home"), page: "Home"},
 				{label: Lang.get("createQuestionnaire"), page: "Questionnaire"},
 			],
 		view: () =>
