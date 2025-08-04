@@ -45,6 +45,7 @@ export default function editBlockchainAccount(db: DbType): express.Router {
 					privateKey: data.privateKey,
 					publicKey: await blockChain.getPublicKey(data.privateKey),
 				})
+				.where("blockchainAccountId", "=", data.blockchainAccountId)
 				.executeTakeFirst();
 			
 			return {
