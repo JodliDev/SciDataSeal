@@ -1,4 +1,16 @@
-import {Kysely, SqliteDialect} from "kysely";
+import {
+	Kysely,
+	KyselyPlugin,
+	OperationNodeTransformer,
+	PluginTransformQueryArgs,
+	PluginTransformResultArgs,
+	PrimitiveValueListNode,
+	QueryResult,
+	RootOperationNode,
+	SqliteDialect,
+	UnknownRow,
+	ValueNode
+} from "kysely";
 import SQLite from "better-sqlite3";
 import {Options} from "../Options.ts";
 import {CONFIG_FOLDER, SQLITE_FILE_NAME} from "../../shared/definitions/Constants.ts";
@@ -45,7 +57,41 @@ export default async function setupDb(path: string = `${Options.root}/${CONFIG_F
 	});
 	return new Kysely<KyselyTables>({
 		dialect,
+		plugins: [new SqliteBooleanPlugin()]
 	});
+}
+
+//Thanks to https://github.com/kysely-org/kysely/issues/123#issuecomment-2932307221
+export class SqliteBooleanPlugin implements KyselyPlugin {
+	readonly #transformer = new SqliteBooleanTransformer();
+	
+	transformQuery(args: PluginTransformQueryArgs): RootOperationNode {
+		return this.#transformer.transformNode(args.node);
+	}
+	
+	transformResult(args: PluginTransformResultArgs): Promise<QueryResult<UnknownRow>> {
+		return Promise.resolve(args.result);
+	}
+}
+
+class SqliteBooleanTransformer extends OperationNodeTransformer {
+	override transformValue(node: ValueNode): ValueNode {
+		return {
+			...super.transformValue(node),
+			value: this.serialize(node.value),
+		};
+	}
+	
+	transformPrimitiveValueList(node: PrimitiveValueListNode): PrimitiveValueListNode {
+		return {
+			...super.transformPrimitiveValueList(node),
+			values: node.values.map(value => this.serialize(value)),
+		};
+	}
+	
+	private serialize(value: unknown) {
+		return typeof value === "boolean" ? (value ? 1 : 0) : value;
+	}
 }
 
 export type DbType = Kysely<KyselyTables>;
