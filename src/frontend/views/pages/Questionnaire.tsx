@@ -4,6 +4,7 @@ import getData from "../../actions/getData.ts";
 import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import A from "../widgets/A.tsx";
+import {tooltip} from "../../actions/FloatingMenu.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -19,10 +20,18 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		view: () => <div class="horizontal hAlignCenter wrapContent">
 			{questionnaire
 				? <>
-					<A page="ManuallySaveData" query={`?id=${id}`} class="bigButton">{Lang.get("saveData")}</A>
-					<A page="ManuallySetColumns" query={`?id=${id}`} class="bigButton">{Lang.get("setColumns")}</A>
-					<A page="ConnectAppHelp" query={`?id=${id}`} class="bigButton">{Lang.get("howToConnectMyApp")}</A>
-					<A page="EditQuestionnaire" query={`?id=${id}`} class="bigButton">{Lang.get("changeQuestionnaire")}</A>
+					<A page="SaveData" query={`?id=${id}`} class="bigButton" {...tooltip(Lang.get("tooltipSaveData"))}>
+						{Lang.get("saveData")}
+					</A>
+					<A page="SetColumns" query={`?id=${id}`} class="bigButton" {...tooltip(Lang.get("tooltipSetColumns"))}>
+						{Lang.get("setColumns")}
+					</A>
+					<A page="ConnectAppHelp" query={`?id=${id}`} class="bigButton" {...tooltip(Lang.get("tooltipConnectAppHelp"))}>
+						{Lang.get("howToConnectMyApp")}
+					</A>
+					<A page="EditQuestionnaire" query={`?id=${id}`} class="bigButton">
+						{Lang.get("changeQuestionnaireSettings")}
+					</A>
 				</>
 				: <div class="selfAlignCenter">{Lang.get("notFound")}</div>
 			}

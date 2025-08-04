@@ -11,9 +11,9 @@ import css from "./ViewQuestionnaireData.module.css";
 import generateHash from "../../actions/generateHash.ts";
 import createDataBlob from "../../actions/createDataBlob.ts";
 import postData from "../../actions/postData.ts";
-import FloatingMenu from "../widgets/FloatingMenu.tsx";
 import {Change, diffChars} from "diff";
 import {GetQuestionnaireDataPostInterface} from "../../../shared/data/GetQuestionnaireDataInterface.ts";
+import floatingMenu, {tooltip} from "../../actions/FloatingMenu.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
@@ -128,24 +128,27 @@ export default PrivatePage(async () => {
 			{blobUrl
 				? <div class="vertical hAlignStretched">
 					<div class="textCentered">{Lang.get("infoDataCharacterCount", dataCharacterCount)}</div>
-					<div class="textCentered">{Lang.get("infoDataCacheTime", (new Date(hashTime)).toLocaleString())}</div>
+					<div class="textCentered" {...tooltip(Lang.get("tooltipDataCachedTime"))}>
+						{Lang.get("infoDataCacheTime", (new Date(hashTime)).toLocaleString())}
+					</div>
 					<br/>
 					<div class="horizontal">
-						<div class="bigButton clickable" onclick={reloadData}>
+						<div class="bigButton clickable" onclick={reloadData} {...tooltip(Lang.get("tooltipReload"))}>
 							{Lang.get("reload")}
 							<FeedbackIcon callback={reloadingFeedback}/>
 						</div>
 						<a class="bigButton" href={blobUrl} download="data.csv">{Lang.get("download")}</a>
-						<FloatingMenu class="bigButton clickable" id="compare" menu={(close) =>
-							<div>
-								<label>
-									<small>{Lang.get("fileToCompareWith")}</small>
-									<input type="file" accept="text/csv" onchange={(event: Event) => {close(); compareFile(event);}}/>
-								</label>
-							</div>
-						}>
-							{Lang.get("compare")}
-						</FloatingMenu>
+						<div
+							class="bigButton clickable"
+							{...tooltip(Lang.get("tooltipCompare"))}
+							{...floatingMenu("compare", close =>
+								<div>
+									<label>
+										<small>{Lang.get("fileToCompareWith")}</small>
+										<input type="file" accept="text/csv" onchange={(event: Event) => {close(); compareFile(event);}}/>
+									</label>
+								</div>
+							)}>{Lang.get("compare")}</div>
 					</div>
 					{diff && (
 						isDifferent
@@ -164,8 +167,8 @@ export default PrivatePage(async () => {
 					}
 				</div>
 				: <Form<GetQuestionnaireDataPostInterface> endpoint="/getQuestionnaireData" submitLabel={Lang.get("load")} onBeforeSend={onBeforeSend} onReceive={onReceive}>
-					<div class={`labelLike ${css.preselectBox}`}>
-						<small>{Lang.get("preselectQuestionnaire")}</small>
+					<div class={`labelLike ${css.preselectBox}`} {...tooltip(Lang.get("tooltipSelectQuestionnaire"))}>
+						<small>{Lang.get("selectQuestionnaire")}</small>
 						<div class={`inputLike horizontal wrapContent`}>
 							{questionnaires?.map(q =>
 								<span class={`clickable ${css.entry}`} onclick={() => fillQuestionnaire(q.questionnaireId)}>{q.questionnaireName}</span>
@@ -175,12 +178,12 @@ export default PrivatePage(async () => {
 						</div>
 					</div>
 					<div class="horizontal hAlignCenter wrapContent">
-						<label>
+						<label {...tooltip(Lang.get("tooltipBlockchainPrivateKey"))}>
 							<small>{Lang.get("publicKey")}</small>
 							<textarea name="publicKey">{publicKey}</textarea>
 						</label>
 						
-						<label>
+						<label {...tooltip(Lang.get("tooltipDataKey"))}>
 							<small>{Lang.get("dataKey")}</small>
 							<textarea name="dataKey">{dataKey}</textarea>
 						</label>
@@ -195,7 +198,7 @@ export default PrivatePage(async () => {
 							</select>
 						</label>
 						
-						<label>
+						<label {...tooltip(Lang.get("tooltipDenotation"))}>
 							<small>{Lang.get("denotation")}</small>
 							<input type="number" min="1" name="denotation" value={denotation}/>
 						</label>

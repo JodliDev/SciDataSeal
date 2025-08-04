@@ -153,7 +153,7 @@ class FloatingMenu {
 						this.view.style.right = "unset";
 						this.view.style.bottom = "unset";
 						this.view.style.left = `${event.clientX + 10}px`;
-						this.view.style.top = `${event.clientY}px`;
+						this.view.style.top = `${event.clientY + 10}px`;
 						this.validatePosition();
 					}
 				};

@@ -19,7 +19,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: Lang.get("admin"), page: "Admin"},
 			{label: Lang.get("listQuestionnaires"), page: "ListQuestionnaires"},
 			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
-			{label: Lang.get("saveData"), page: "ManuallySaveData", query: `?id=${id}`},
+			{label: Lang.get("saveData"), page: "SaveData", query: `?id=${id}`},
 		],
 		view: () => <Form<SaveDataPostInterface> endpoint="/saveData" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
 			<div class="horizontal hAlignCenter wrapContent">

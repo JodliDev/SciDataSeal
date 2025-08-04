@@ -6,6 +6,7 @@ import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import GetBlockchainInterface from "../../../shared/data/GetBlockchainInterface.ts";
+import {tooltip} from "../../actions/FloatingMenu.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -46,7 +47,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 					<option value="solanaTest" selected="selected">{Lang.get("solanaTest")}</option>
 				</select>
 			</label>
-			<label>
+			<label {...tooltip(Lang.get("tooltipBlockchainPrivateKey"))}>
 				<small>{Lang.get("privateKey")}</small>
 				<textarea name="privateKey">{account.privateKey ?? ""}</textarea>
 			</label>

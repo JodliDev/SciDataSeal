@@ -9,6 +9,7 @@ import ListBlockchainAccountsInterface from "../../../shared/data/ListBlockchain
 import Form from "../widgets/Form.tsx";
 import GetNewDenotation from "../../../shared/data/GetNewDenotation.ts";
 import GenerateRandomString from "../../../shared/data/GenerateRandomString.ts";
+import {tooltip} from "../../actions/FloatingMenu.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -74,22 +75,22 @@ export default PrivatePage(async (query: URLSearchParams) => {
 					<input type="text" name="questionnaireName" value={questionnaire?.questionnaireName}/>
 				</label>
 				<label>
-					<small>{Lang.get("type")}</small>
+					<small>{Lang.get("blockchainAccount")}</small>
 					<select name="blockchainAccountId" value={questionnaire?.blockchainAccountId} onchange={changeAccount} disabled={disableAccountSwitch}>
 						{blockchainResponse?.accounts.map(entry =>
 							<option value={entry.blockchainAccountId}>{entry.blockchainName}</option>
 						)}
 					</select>
 				</label>
-				<label>
+				<label {...tooltip(Lang.get("tooltipDenotation"))}>
 					<small>{Lang.get("denotation")}</small>
 					<input type="number" min="1" name="blockchainDenotation" value={denotation}/>
 				</label>
-				<label>
+				<label {...tooltip(Lang.get("tooltipApiPassword"))}>
 					<small>{Lang.get("apiPassword")}</small>
 					<textarea name="apiPassword">{apiPassword ?? ""}</textarea>
 				</label>
-				<label>
+				<label {...tooltip(Lang.get("tooltipDataKey"))}>
 					<small>{Lang.get("dataKey")}</small>
 					<textarea name="dataKey">{dataKey ?? ""}</textarea>
 				</label>

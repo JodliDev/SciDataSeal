@@ -39,6 +39,7 @@ a, .clickable {
 }
 
 .bigButton {
+	cursor: pointer;
 	box-sizing: border-box;
 	margin: 1%;
 	width: 47%;
@@ -61,5 +62,20 @@ a, .clickable {
 	&:hover {
 		background-color: var(--color-primary-light);
 		color: var(--color-primary-dark);
+		
+		a {
+			color: var(--color-primary-dark);
+		}
+		svg {
+			fill: var(--color-primary-dark);
+		}
+	}
+	
+	a {
+		color: white;
+	}
+	svg {
+		fill: white;
+		transition: fill 300ms;
 	}
 }
