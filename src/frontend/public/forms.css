@@ -52,7 +52,8 @@ input[type="file"] {
 	min-width: unset;
 }
 input[type="checkbox"], input[type="radio"] {
-	margin: 20px 0 15px 5px;
+	margin: 15px 0 15px 5px;
+	width: unset;
 }
 .inputLike {
 	min-width: var(--form-element-width);

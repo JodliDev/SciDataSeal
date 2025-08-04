@@ -4,6 +4,7 @@ import {Lang} from "../../singleton/Lang.ts";
 import A from "../widgets/A.tsx";
 import {tooltip} from "../../actions/FloatingMenu.tsx";
 import Icon from "../widgets/Icon.tsx";
+import {SiteTools} from "../../singleton/SiteTools.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
@@ -32,6 +33,11 @@ export default PrivatePage(async () => {
 				<Icon iconKey="view"/>
 				{Lang.get("viewData")}
 			</A>
+			{!!SiteTools.session.isAdmin &&
+				<A page="ListUser" class="bigButton">
+					<Icon iconKey="list"/>
+					{Lang.get("listUser")}
+				</A>}
 		</div>
 	};
 });

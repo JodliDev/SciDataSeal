@@ -6,6 +6,7 @@ export default interface User {
 	username: string;
 	password: string;
 	lastLogin: number;
+	isAdmin: boolean;
 }
 
 
@@ -15,4 +16,5 @@ export class UserTable implements Insertable<User> {
 	username: string = "";
 	password: string = "";
 	lastLogin: number = 0;
+	isAdmin: boolean = false;
 }

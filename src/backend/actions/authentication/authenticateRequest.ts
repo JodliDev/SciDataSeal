@@ -15,8 +15,9 @@ export default async function authenticateRequest(db: DbType, request: Authentic
 	
 	const session = await db
 		.selectFrom("Session")
-		.select(["userId", "expires"])
-		.where("userId", "=", userId)
+		.innerJoin("User", "User.userId", "Session.userId")
+		.select(["Session.userId", "expires", "isAdmin"])
+		.where("Session.userId", "=", userId)
 		.where("token", "=", sessionToken)
 		.where("expires", ">", Date.now())
 		.limit(1)
@@ -25,6 +26,7 @@ export default async function authenticateRequest(db: DbType, request: Authentic
 	if(session) {
 		request.isLoggedIn = true;
 		request.userId = session.userId;
+		request.isAdmin = session.isAdmin;
 		request.wasAuthenticated = true;
 	}
 }

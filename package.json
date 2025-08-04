@@ -49,7 +49,7 @@
     "express": "^5.1.0",
     "kysely": "^0.28.2",
     "mithril": "^2.3.3",
-    "sqlmorpheus": "^0.2.1",
+    "sqlmorpheus": "^0.2.4",
     "vite-express": "^0.21.1"
   }
 }

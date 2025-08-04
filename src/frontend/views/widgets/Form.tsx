@@ -6,7 +6,7 @@ import {FixedComponent} from "../../mithril-polyfill.ts";
 import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 
 type FormOptions<T extends PostDataStructureInterface> = {
-	endpoint: T["Endpoint"]
+	endpoint: T["Endpoint"],
 	onReceive?: (response: T["Response"]) => void,
 	onBeforeSend?: (data: Record<string, unknown>) => T["Response"] | void,
 	submitLabel?: string,
@@ -56,10 +56,10 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 	}
 	
 	return {
-		view: ({children}: m.Vnode<FormOptions<T>>) => (
+		view: ({children}: m.VnodeDOM<FormOptions<T>>) => (
 			<form {...vNode.attrs} onsubmit={onSubmit} class={`vertical hAlignCenter ${vNode.attrs.class ?? ""}`}>
 				<div class="warn">{errorMessage}</div>
-				<div class="vertical hAlignCenter">
+				<div class="vertical hAlignLeft">
 					{children}
 					<div class="entry horizontal vAlignCenter selfAlignStretch">
 						<div class="fillSpace"></div>

@@ -16,3 +16,7 @@ export default function bindValueToInput<T>(attrValue: T, set: (value: T) => voi
 		onchange: onChange
 	}
 }
+
+export function bindPropertyToInput<T extends Record<string, unknown>>(obj: T, key: keyof T) {
+	return bindValueToInput(obj[key], (value) => obj[key] = value);
+}

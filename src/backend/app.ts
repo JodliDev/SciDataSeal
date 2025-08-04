@@ -24,10 +24,15 @@ import listBlockchainAccounts from "./routes/listBlockchainAccounts.ts";
 import getBlockchainAccount from "./routes/getBlockchainAccount.ts";
 import generateRandomString from "./routes/generateRandomString.ts";
 import getNewDenotation from "./routes/getNewDenotation.ts";
+import AdminMiddleware from "./AdminMiddleware.ts";
+import editUser from "./routes/editUser.ts";
+import listUser from "./routes/listUser.ts";
+import getUser from "./routes/getUser.ts";
 
 async function init() {
 	const db = await setupDb()
 	const authenticateMiddleware = AuthenticateMiddleware(db);
+	const adminMiddleware = AdminMiddleware(db);
 	const webServer = express();
 	const scheduler = new Scheduler(Options.schedulerHourOfDay);
 	await recreateOptionsString(db);
@@ -45,15 +50,18 @@ async function init() {
 		webServer.use("/api", initialize(db));
 	webServer.use("/api", saveData(db));
 	webServer.use("/api", setQuestionnaireColumns(db));
-	webServer.use("/api", authenticateMiddleware, editBlockchainAccount(db));
 	webServer.use("/api", authenticateMiddleware, editQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, listBlockchainAccounts(db));
 	webServer.use("/api", authenticateMiddleware, listQuestionnaires(db));
-	webServer.use("/api", authenticateMiddleware, getBlockchainAccount(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaireData());
 	webServer.use("/api", authenticateMiddleware, generateRandomString());
 	webServer.use("/api", authenticateMiddleware, getNewDenotation(db));
+	webServer.use("/api", adminMiddleware, editBlockchainAccount(db));
+	webServer.use("/api", adminMiddleware, getBlockchainAccount(db));
+	webServer.use("/api", adminMiddleware, editUser(db));
+	webServer.use("/api", adminMiddleware, listUser(db));
+	webServer.use("/api", adminMiddleware, getUser(db));
 	
 	const langProvider = new LangProvider();
 	

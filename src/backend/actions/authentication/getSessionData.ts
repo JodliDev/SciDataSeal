@@ -10,7 +10,8 @@ export default async function getSessionData(db: DbType, request: AuthenticatedR
 	return {
 		wasAuthenticated: request.wasAuthenticated,
 		isLoggedIn: request.isLoggedIn,
-		userId: request.userId
+		userId: request.userId,
+		isAdmin: request.isAdmin,
 	} satisfies SessionData;
 }
 
