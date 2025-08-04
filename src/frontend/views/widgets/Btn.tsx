@@ -6,13 +6,15 @@ import Icon, {IconAttributes} from "./Icon.tsx";
 
 interface BtnAttributes extends IconAttributes{
 	onclick?: () => void,
+	label?: string,
 	class?: string
 }
 
 const Default = FixedComponent<BtnAttributes>(() => {
 	return {
-		view: (vNode) => <div {...vNode.attrs} class={`${css.Btn} ${vNode.attrs.iconKey} ${vNode.attrs.class ?? ""} clickable horizontal hAlignCenter`} onclick={vNode.attrs.onclick}>
+		view: (vNode) => <div {...vNode.attrs} class={`${css.Btn} ${vNode.attrs.iconKey} ${vNode.attrs.class ?? ""} clickable horizontal hAlignCenter vAlignCenter`} onclick={vNode.attrs.onclick}>
 			<Icon iconKey={vNode.attrs.iconKey}/>
+			{!!vNode.attrs.label && vNode.attrs.label}
 		</div>
 	}
 });

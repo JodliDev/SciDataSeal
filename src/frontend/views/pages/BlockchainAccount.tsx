@@ -28,7 +28,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		history: id
 			? [
 				{label: Lang.get("home"), page: "Home"},
-				{label: Lang.get("listBlockchainAccounts"), page: "ListBlockchainAccounts"},
+				{label: Lang.get("blockchainAccounts"), page: "ListBlockchainAccounts"},
 				{label: Lang.get("changeBlockchainAccount"), page: "BlockchainAccount", query: `?id=${id}`},
 			]
 			: [

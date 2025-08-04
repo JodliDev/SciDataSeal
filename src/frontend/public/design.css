@@ -42,7 +42,7 @@ a, .clickable {
 	cursor: pointer;
 	box-sizing: border-box;
 	margin: 1%;
-	width: 47%;
+	width: 30%;
 	min-width: 150px;
 	max-width: 400px;
 	min-height: 75px;

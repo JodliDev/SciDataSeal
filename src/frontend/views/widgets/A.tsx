@@ -17,7 +17,7 @@ export default FixedComponent<Attributes>(() => {
 	return {
 		view: (vNode) => {
 			const {page, query} = vNode.attrs;
-			return <a {...vNode.attrs} href={`${page}${query ?? ""}`} onclick={onClick.bind(null, page, query)}>
+			return <a {...vNode.attrs} href={`${page}${query ?? ""}`} onclick={onClick.bind(null, page, query)} class={`horizontal vAlignCenter ${(vNode.attrs.class ?? "")}`}>
 				{vNode.children}
 			</a>
 		}

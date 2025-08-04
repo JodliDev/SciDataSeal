@@ -61,7 +61,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		history: id
 			? [
 				{label: Lang.get("home"), page: "Home"},
-				{label: Lang.get("listQuestionnaires"), page: "ListQuestionnaires"},
+				{label: Lang.get("questionnaires"), page: "ListQuestionnaires"},
 				{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
 			]
 			: [

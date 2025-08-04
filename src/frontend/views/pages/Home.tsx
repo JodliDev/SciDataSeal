@@ -13,21 +13,13 @@ export default PrivatePage(async () => {
 			{label: Lang.get("home"), page: "Home"}
 		],
 		view: () => <div class="horizontal vAlignCenter hAlignCenter wrapContent">
-			<A page="BlockchainAccount" class="bigButton" {...tooltip(Lang.get("tooltipCreateBlockchainAccount"))}>
-				<Icon iconKey="add"/>
-				{Lang.get("createBlockchainAccount")}
+			<A page="ListBlockchainAccounts" class="bigButton" {...tooltip(Lang.get("tooltipBlockchainAccount"))}>
+				<Icon iconKey="blockchain"/>
+				{Lang.get("blockchainAccounts")}
 			</A>
-			<A page="ListBlockchainAccounts" class="bigButton">
+			<A page="ListQuestionnaires" class="bigButton" {...tooltip(Lang.get("tooltipQuestionnaires"))}>
 				<Icon iconKey="list"/>
-				{Lang.get("listBlockchainAccounts")}
-			</A>
-			<A page="EditQuestionnaire" class="bigButton" {...tooltip(Lang.get("tooltipCreateQuestionnaire"))}>
-				<Icon iconKey="add"/>
-			   {Lang.get("createQuestionnaire")}
-			</A>
-			<A page="ListQuestionnaires" class="bigButton">
-				<Icon iconKey="list"/>
-				{Lang.get("listQuestionnaires")}
+				{Lang.get("questionnaires")}
 			</A>
 			<A page="ViewQuestionnaireData" class="bigButton" {...tooltip(Lang.get("tooltipViewQuestionnaireData"))}>
 				<Icon iconKey="view"/>
@@ -35,7 +27,7 @@ export default PrivatePage(async () => {
 			</A>
 			{!!SiteTools.session.isAdmin &&
 				<A page="ListUser" class="bigButton">
-					<Icon iconKey="list"/>
+					<Icon iconKey="userList"/>
 					{Lang.get("listUser")}
 				</A>}
 		</div>
