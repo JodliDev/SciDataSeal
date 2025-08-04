@@ -38,6 +38,7 @@ export default FixedComponent<FeedbackIconOptions>(vNode => {
 	}
 	callback.setLoading = (isLoading: boolean) => {
 		isLoadingState = isLoading;
+		m.redraw();
 	}
 	callback.isReady = () => {
 		return !isLoadingState && (!showIconState || successState);

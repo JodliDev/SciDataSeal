@@ -26,10 +26,10 @@ export default function editBlockchainAccount(db: DbType): express.Router {
 		
 		const blockChain = getBlockchain(data.blockchainType);
 		
-		if(data.blockchainAccountId) {
+		if(data.id) {
 			const account = await db.selectFrom("BlockchainAccount")
 				.select(["blockchainAccountId"])
-				.where("blockchainAccountId", "=", data.blockchainAccountId)
+				.where("blockchainAccountId", "=", data.id)
 				.where("userId", "=", session.userId)
 				.executeTakeFirst();
 			
@@ -44,11 +44,11 @@ export default function editBlockchainAccount(db: DbType): express.Router {
 					privateKey: data.privateKey,
 					publicKey: await blockChain.getPublicKey(data.privateKey),
 				})
-				.where("blockchainAccountId", "=", data.blockchainAccountId)
+				.where("blockchainAccountId", "=", data.id)
 				.executeTakeFirst();
 			
 			return {
-				blockchainAccountId: data.blockchainAccountId
+				blockchainAccountId: data.id
 			};
 		}
 		else {

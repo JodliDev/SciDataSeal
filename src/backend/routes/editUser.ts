@@ -24,9 +24,9 @@ export default function editUser(db: DbType): express.Router {
 		if(existingUser && existingUser.userId != data.id)
 			throw new TranslatedException("errorUsernameAlreadyExists");
 		
-		if(data.userId) {
+		if(data.id) {
 			const session = await getLoggedInSessionData(db, request);
-			if(session.userId == data.userId)
+			if(session.userId == data.id)
 				throw new TranslatedException("errorCannotChangeOwnUser");
 			const updateData: Record<string, unknown> = {
 				username: data.username,
@@ -38,16 +38,16 @@ export default function editUser(db: DbType): express.Router {
 			await db
 				.updateTable("User")
 				.set(updateData)
-				.where("userId", "=", data.userId)
+				.where("userId", "=", data.id)
 				.executeTakeFirst();
 			
 			return {
-				userId: data.userId
+				userId: data.id
 			};
 		}
 		else {
 			if(!data.password)
-				throw new MissingDataException();
+				throw new TranslatedException("errorMissingData");
 			const insert = await db
 				.insertInto("User")
 				.values({

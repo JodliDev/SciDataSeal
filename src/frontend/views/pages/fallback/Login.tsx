@@ -6,7 +6,7 @@ import {Lang} from "../../../singleton/Lang.ts";
 import {PageContent} from "../../../PageComponent.ts";
 
 export default function Login(): PageContent {
-	const onReceive = (response: LoginInterface["Response"]) => {
+	const onSent = (response: LoginInterface["Response"]) => {
 		SiteTools.session.userId = response.userId;
 		SiteTools.session.isLoggedIn = true;
 		SiteTools.switchPage("Home");
@@ -16,7 +16,7 @@ export default function Login(): PageContent {
 	return {
 		history: [],
 		view: () =>  <div class="fillSpace horizontal hAlignCenter vAlignCenter">
-			<Form<LoginInterface> endpoint="/login" onReceive={onReceive} submitLabel={Lang.get("login")}>
+			<Form<LoginInterface> endpoint="/login" onSent={onSent} submitLabel={Lang.get("login")}>
 				<label>
 					<small>{Lang.get("username")}</small>
 					<input type="text" name="username"/>

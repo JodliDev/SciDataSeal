@@ -3,7 +3,7 @@ import PostDataStructureInterface from "../PostDataStructureInterface.ts";
 export default interface EditQuestionnaireInterface extends PostDataStructureInterface {
 	Endpoint: "/editQuestionnaire";
 	Request: {
-		questionnaireId?: number;
+		id?: number;
 		apiPassword: string;
 		dataKey: string;
 		questionnaireName: string;

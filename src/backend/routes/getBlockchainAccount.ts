@@ -2,8 +2,8 @@ import express from "express";
 import {DbType} from "../database/setupDb.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
-import NotFoundException from "../../shared/exceptions/NotFoundException.ts";
 import GetBlockchainInterface from "../../shared/data/GetBlockchainInterface.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 export default function getBlockchainAccount(db: DbType): express.Router {
 	const router = express.Router();
@@ -20,7 +20,7 @@ export default function getBlockchainAccount(db: DbType): express.Router {
 			.executeTakeFirst();
 		
 		if(!account)
-			throw new NotFoundException();
+			throw new TranslatedException("errorNotFound");
 		
 		return {
 			blockchainAccountId: accountId,

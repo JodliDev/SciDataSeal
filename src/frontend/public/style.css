@@ -12,6 +12,15 @@ body {
 }
 .warn {
 	color: red !important;
+	
+	svg {
+		fill: red !important;
+		transition: fill 300ms;
+		
+		&:hover {
+			fill: darkred !important;
+		}
+	}
 }
 
 .horizontal, .vertical {

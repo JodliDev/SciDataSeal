@@ -10,11 +10,14 @@ import {tooltip} from "../../actions/FloatingMenu.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	async function onReceive(response: EditBlockchainInterface["Response"]) {
-		if(id != response.blockchainAccountId.toString())
+	async function onSent(response: EditBlockchainInterface["Response"]) {
+		if(id != response.blockchainAccountId)
 			SiteTools.switchPage("BlockchainAccount", `?id=${response.blockchainAccountId}`);
 	}
-	const id = query.get("id");
+	function onDeleted() {
+		SiteTools.switchPage("ListBlockchainAccounts");
+	}
+	const id = parseInt(query.get("id") ?? "0");
 	
 	const account: Partial<GetBlockchainInterface["Response"]> = id
 		? (await getData<GetBlockchainInterface>("/getBlockchainAccount", `?accountId=${id}`)) ?? {}
@@ -32,10 +35,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				{label: Lang.get("home"), page: "Home"},
 				{label: Lang.get("createBlockchainAccount"), page: "BlockchainAccount", query: `?id=${id}`},
 			],
-		view: () => <Form<EditBlockchainInterface> endpoint="/editBlockchainAccount" onReceive={onReceive}>
-			{id &&
-				<input type="hidden" name="blockchainAccountId" value={id}/>
-			}
+		view: () => <Form<EditBlockchainInterface> id={id} endpoint="/editBlockchainAccount" deleteEndPoint="/deleteBlockchainAccount" onSent={onSent} onDeleted={onDeleted}>
 			<label>
 				<small>{Lang.get("blockchainName")}</small>
 				<input type="text" name="blockchainName" value={account?.blockchainName ?? ""}/>

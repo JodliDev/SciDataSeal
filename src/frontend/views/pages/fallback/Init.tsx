@@ -13,7 +13,7 @@ export default function Init(): PageContent {
 			password: data.password as string,
 		}
 	}
-	const onReceive = () => {
+	const onSent = () => {
 		window.location.reload();
 	}
 	
@@ -21,7 +21,7 @@ export default function Init(): PageContent {
 		history: [],
 		view: () => <div class="fillSpace vertical hAlignCenter vAlignCenter">
 			<div>{Lang.get("initDescription")}</div>
-			<Form<InitializeInterface> endpoint="/initialize" filterData={filterData} onReceive={onReceive}>
+			<Form<InitializeInterface> endpoint="/initialize" filterData={filterData} onSent={onSent}>
 				<label>
 					<small>{Lang.get("username")}</small>
 					<input type="text" name="username"/>

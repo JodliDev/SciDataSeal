@@ -13,8 +13,11 @@ import {tooltip} from "../../actions/FloatingMenu.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	async function onReceive(response: EditQuestionnaireInterface["Response"]): Promise<void> {
+	async function onSent(response: EditQuestionnaireInterface["Response"]): Promise<void> {
 		SiteTools.switchPage("Questionnaire", `?id=${response.questionnaireId}`);
+	}
+	function onDeleted() {
+		SiteTools.switchPage("ListQuestionnaires");
 	}
 	async function getDenotation(index: number): Promise<number | undefined> {
 		const entry = blockchainResponse?.accounts[index];
@@ -38,7 +41,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	}
 	const blockchainResponse = await getData<ListBlockchainAccountsInterface>("/listBlockchainAccounts");
 	
-	const id = query.get("id");
+	const id = parseInt(query.get("id") ?? "0");
 	const questionnaire: GetQuestionnaireInterface["Response"] | undefined = id
 		? await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`)
 		: undefined;
@@ -66,10 +69,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				{label: Lang.get("createQuestionnaire"), page: "Questionnaire"},
 			],
 		view: () =>
-			<Form<EditQuestionnaireInterface> endpoint="/editQuestionnaire" onReceive={onReceive}>
-				{id &&
-					<input type="hidden" name="questionnaireId" value={id}/>
-				}
+			<Form<EditQuestionnaireInterface> id={id} endpoint="/editQuestionnaire" deleteEndPoint="/deleteQuestionnaire" onSent={onSent} onDeleted={onDeleted}>
 				<label>
 					<small>{Lang.get("questionnaireName")}</small>
 					<input type="text" name="questionnaireName" value={questionnaire?.questionnaireName}/>

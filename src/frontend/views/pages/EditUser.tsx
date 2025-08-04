@@ -11,9 +11,12 @@ import {tooltip} from "../../actions/FloatingMenu.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	async function onReceive(response: EditUserInterface["Response"]): Promise<void> {
+	async function onSent(response: EditUserInterface["Response"]): Promise<void> {
 		if(!id)
 			SiteTools.switchPage("EditUser", `?id=${response.userId}`);
+	}
+	function onDeleted() {
+		SiteTools.switchPage("ListUser");
 	}
 	const filterData = (data: Record<string, unknown>) => {
 		if(!data.password && !data.passwordRepeat)
@@ -29,7 +32,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	}
 	
 	let showPasswordField = false;
-	const id = query.get("id");
+	const id = parseInt(query.get("id") ?? "0");
 	const user: Partial<GetUserInterface["Response"]> = id
 		? await getData<GetUserInterface>("/getUser", `?userId=${id}`) ?? {}
 		: {};
@@ -43,11 +46,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				: {label: Lang.get("createUser"), page: "EditUser"},
 		],
 		view: () =>
-			<Form<EditUserInterface> endpoint="/editUser" filterData={filterData} onReceive={onReceive}>
-				{id &&
-					<input type="hidden" name="userId" value={id}/>
-				}
-				
+			<Form<EditUserInterface> id={id} endpoint="/editUser" deleteEndPoint="/deleteUser" filterData={filterData} onSent={onSent} onDeleted={onDeleted}>
 				<label {...tooltip(Lang.get("tooltipAdminUser"))}>
 					<small>{Lang.get("admin")}</small>
 					<input type="checkbox" name="isAdmin" {...bindPropertyToInput(user, "isAdmin")}/>

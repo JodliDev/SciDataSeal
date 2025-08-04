@@ -55,7 +55,7 @@ export default PrivatePage(async () => {
 			localStorage.setItem(`${hash}-time`, Date.now().toString());
 	}
 	
-	function onReceive(response: GetQuestionnaireDataPostInterface["Response"]) {
+	function onSent(response: GetQuestionnaireDataPostInterface["Response"]) {
 		const csv = response?.csv;
 		dataCharacterCount = csv?.length ?? 0;
 		
@@ -72,7 +72,7 @@ export default PrivatePage(async () => {
 		if(response) {
 			hashTime = Date.now();
 			localStorage.setItem(`${hash}-time`, hashTime.toString());
-			onReceive(response);
+			onSent(response);
 			reloadingFeedback.setSuccess(true);
 		}
 		else
@@ -166,7 +166,7 @@ export default PrivatePage(async () => {
 						)
 					}
 				</div>
-				: <Form<GetQuestionnaireDataPostInterface> endpoint="/getQuestionnaireData" submitLabel={Lang.get("load")} onBeforeSend={onBeforeSend} onReceive={onReceive}>
+				: <Form<GetQuestionnaireDataPostInterface> endpoint="/getQuestionnaireData" submitLabel={Lang.get("load")} onBeforeSend={onBeforeSend} onSent={onSent}>
 					<div class={`labelLike ${css.preselectBox}`} {...tooltip(Lang.get("tooltipSelectQuestionnaire"))}>
 						<small>{Lang.get("selectQuestionnaire")}</small>
 						<div class={`inputLike horizontal wrapContent`}>

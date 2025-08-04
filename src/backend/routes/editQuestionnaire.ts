@@ -30,7 +30,7 @@ export default function editQuestionnaire(db: DbType): express.Router {
 		if(!account)
 			throw new UnauthorizedException();
 		
-		if(data.questionnaireId) {
+		if(data.id) {
 			await db.updateTable("Questionnaire")
 				.set({
 					questionnaireName: data.questionnaireName,
@@ -39,10 +39,10 @@ export default function editQuestionnaire(db: DbType): express.Router {
 					dataKey: data.dataKey,
 					blockchainDenotation: data.blockchainDenotation
 				})
-				.where("questionnaireId", "=", data.questionnaireId)
+				.where("questionnaireId", "=", data.id)
 				.execute();
 			return {
-				questionnaireId: data.questionnaireId
+				questionnaireId: data.id
 			};
 		}
 		else {

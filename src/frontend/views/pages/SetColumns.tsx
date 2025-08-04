@@ -45,14 +45,14 @@ export default PrivatePage(async (query: URLSearchParams) => {
 								class={!column ? "warn" : ""}
 								{...bindValueToInput(column, value => columns[index] = value)}
 							/>
-							<Btn.Default iconKey="remove" onClick={() => removeColumn(index)}/>
+							<Btn.Default iconKey="remove" onclick={() => removeColumn(index)}/>
 						</div>
 					</label>
 				)
 				: <div class="warn">{Lang.get("noColumnsInfo")}</div>
 			}
 			
-			<Btn.Default description="test" iconKey="add" onClick={addColumn}/>
+			<Btn.Default description="test" iconKey="add" onclick={addColumn}/>
 		</Form>
 	};
 });

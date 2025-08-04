@@ -4,10 +4,15 @@ import {Lang} from "../../singleton/Lang.ts";
 import PostDataStructureInterface from "../../../shared/PostDataStructureInterface.ts";
 import {FixedComponent} from "../../mithril-polyfill.ts";
 import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
+import {Btn} from "./Btn.tsx";
+import DeleteInterface from "../../../shared/data/DeleteInterface.ts";
 
 type FormOptions<T extends PostDataStructureInterface> = {
 	endpoint: T["Endpoint"],
-	onReceive?: (response: T["Response"]) => void,
+	id?: number,
+	deleteEndPoint?: DeleteInterface["Endpoint"],
+	onSent?: (response: T["Response"]) => void,
+	onDeleted?: () => void,
 	onBeforeSend?: (data: Record<string, unknown>) => T["Response"] | void,
 	submitLabel?: string,
 	query?: `?${string}`
@@ -20,10 +25,27 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 	let errorMessage: string = "";
 	const feedback = new FeedbackCallBack();
 	
-	const onSubmit = async (event: SubmitEvent) => {
+	async function deleteEntry() {
+		if(!confirm(Lang.get("confirmDeleteEntry")))
+			return;
+		const {id, deleteEndPoint} = vNode.attrs;
+		if(!id || !deleteEndPoint)
+			return;
+		feedback.setLoading(true);
+		try {
+			await postData(deleteEndPoint, {id: id});
+			feedback.setSuccess(true);
+			vNode.attrs.onDeleted?.();
+		}
+		catch(error) {
+			errorMessage = Lang.getError(error);
+			feedback.setSuccess(false);
+		}
+	}
+	
+	async function onSubmit(event: SubmitEvent) {
 		try {
 			feedback.setLoading(true);
-			m.redraw();
 			
 			event.preventDefault();
 			const formData = new FormData(event.target as HTMLFormElement);
@@ -44,15 +66,13 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 			const uploadData = vNode.attrs.filterData ? vNode.attrs.filterData(data) : data;
 			const pre = vNode.attrs.onBeforeSend && vNode.attrs.onBeforeSend(uploadData);
 			const response = pre ? pre : await postData(vNode.attrs.endpoint, uploadData, {query: vNode.attrs.query, headers: vNode.attrs.headers});
-			vNode.attrs.onReceive?.(response);
+			vNode.attrs.onSent?.(response);
 			feedback.setSuccess(true);
 		}
 		catch(error) {
 			errorMessage = Lang.getError(error);
 			feedback.setSuccess(false);
 		}
-		feedback.setLoading(false);
-		m.redraw();
 	}
 	
 	return {
@@ -60,8 +80,15 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 			<form {...vNode.attrs} onsubmit={onSubmit} class={`vertical hAlignCenter ${vNode.attrs.class ?? ""}`}>
 				<div class="warn">{errorMessage}</div>
 				<div class="vertical hAlignLeft">
+					{!!vNode.attrs.id && <input type="hidden" name="id" value={vNode.attrs.id}/>}
 					{children}
 					<div class="entry horizontal vAlignCenter selfAlignStretch">
+						{!!vNode.attrs.deleteEndPoint &&
+							feedback.isReady()
+								? <Btn.PopoverBtn class="warn" iconKey="delete" description={Lang.get("tooltipDeleteEntry")} onclick={deleteEntry}/>
+								: <Btn.Empty/>
+						}
+						
 						<div class="fillSpace"></div>
 						<FeedbackIcon callback={feedback} reserveSpace={true}/>
 						<input type="submit" value={vNode.attrs.submitLabel ?? Lang.get("save")} disabled={!feedback.isReady()}/>

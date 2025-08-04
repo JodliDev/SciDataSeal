@@ -1,16 +1,17 @@
 import m from "mithril"
 import css from "./btn.module.css"
 import {FixedComponent} from "../../mithril-polyfill.ts";
-import floatingMenu from "../../actions/FloatingMenu.tsx";
+import {tooltip} from "../../actions/FloatingMenu.tsx";
 import Icon, {IconAttributes} from "./Icon.tsx";
 
 interface BtnAttributes extends IconAttributes{
-	onClick?: () => void
+	onclick?: () => void,
+	class?: string
 }
 
 const Default = FixedComponent<BtnAttributes>(() => {
 	return {
-		view: (vNode) => <div class={`${css.Btn} ${vNode.attrs.iconKey} clickable horizontal hAlignCenter`} onclick={vNode.attrs.onClick}>
+		view: (vNode) => <div {...vNode.attrs} class={`${css.Btn} ${vNode.attrs.iconKey} ${vNode.attrs.class ?? ""} clickable horizontal hAlignCenter`} onclick={vNode.attrs.onclick}>
 			<Icon iconKey={vNode.attrs.iconKey}/>
 		</div>
 	}
@@ -22,9 +23,7 @@ interface PopoverAttributes extends BtnAttributes{
 const PopoverBtn = FixedComponent<PopoverAttributes>(() => {
 	return {
 		view: (vNode) =>
-			<div {...floatingMenu("popoverBtn", () => vNode.attrs.description)}>
-				<Default iconKey={vNode.attrs.iconKey} onClick={vNode.attrs.onClick}/>
-			</div>
+			<Default {...vNode.attrs} {...tooltip(vNode.attrs.description)} iconKey={vNode.attrs.iconKey} onclick={vNode.attrs.onclick}/>
 	}
 });
 
