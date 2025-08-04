@@ -1,8 +1,7 @@
-import ExceptionInterface from "./ExceptionInterface.ts";
+import TranslatedException from "./TranslatedException.ts";
 
-export default class UnauthorizedException extends Error implements ExceptionInterface {
-	requestStatus: number = 401;
+export default class UnauthorizedException extends TranslatedException {
 	constructor() {
-		super("errorUnauthorized");
+		super("errorUnauthorized", 401);
 	}
 }

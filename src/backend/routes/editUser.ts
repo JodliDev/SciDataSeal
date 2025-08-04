@@ -1,20 +1,18 @@
 import express from "express";
-import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import {DbType} from "../database/setupDb.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import EditUserInterface from "../../shared/data/EditUserInterface.ts";
-import UsernameExistsException from "../../shared/exceptions/UsernameExistsException.ts";
 import encryptPassword from "../actions/authentication/encryptPassword.ts";
 import validateUserData from "../actions/authentication/validateUserData.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
-import CannotChangeOwnUserException from "../../shared/exceptions/CannotChangeOwnUserException.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 export default function editUser(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addPostRoute<EditUserInterface>("/editUser", router, async (data, request) => {
 		if(!data.username)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 		validateUserData(data.username, data.password);
 		
@@ -23,13 +21,13 @@ export default function editUser(db: DbType): express.Router {
 			.where("username", "=", data.username)
 			.executeTakeFirst();
 		
-		if(existingUser && existingUser.userId != data.userId)
-			throw new UsernameExistsException();
+		if(existingUser && existingUser.userId != data.id)
+			throw new TranslatedException("errorUsernameAlreadyExists");
 		
 		if(data.userId) {
 			const session = await getLoggedInSessionData(db, request);
 			if(session.userId == data.userId)
-				throw new CannotChangeOwnUserException();
+				throw new TranslatedException("errorCannotChangeOwnUser");
 			const updateData: Record<string, unknown> = {
 				username: data.username,
 				isAdmin: data.isAdmin ?? false,

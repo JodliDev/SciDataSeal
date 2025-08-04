@@ -3,7 +3,7 @@ import {DbType} from "../database/setupDb.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import GetQuestionnaireInterface from "../../shared/data/GetQuestionnaireInterface.ts";
-import NotFoundException from "../../shared/exceptions/NotFoundException.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 export default function getQuestionnaire(db: DbType): express.Router {
 	const router = express.Router();
@@ -20,7 +20,7 @@ export default function getQuestionnaire(db: DbType): express.Router {
 			.executeTakeFirst();
 		
 		if(!questionnaire)
-			throw new NotFoundException();
+			throw new TranslatedException("errorNotFound");
 		
 		return {
 			questionnaireId: questionnaire.questionnaireId,

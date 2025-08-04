@@ -2,8 +2,8 @@ import express from "express";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import {GetQuestionnaireDataGetInterface, GetQuestionnaireDataPostInterface} from "../../shared/data/GetQuestionnaireDataInterface.ts";
 import getBlockchain from "../actions/authentication/getBlockchain.ts";
-import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 export default function getQuestionnaireData(): express.Router {
 	const router = express.Router();
@@ -31,7 +31,7 @@ export default function getQuestionnaireData(): express.Router {
 	addGetRoute<GetQuestionnaireDataGetInterface>("/getQuestionnaireData", router, async (data) => {
 		const denotation = parseInt(data.denotation ?? "0");
 		if(!data.blockchainType || !data.publicKey || !denotation || !data.dataKey)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 		return getData(data.blockchainType, data.publicKey, denotation, data.dataKey);
 	});
@@ -39,7 +39,7 @@ export default function getQuestionnaireData(): express.Router {
 	
 	addPostRoute<GetQuestionnaireDataPostInterface>("/getQuestionnaireData", router, async (data) => {
 		if(!data.blockchainType || !data.publicKey || !data.denotation || !data.dataKey)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 		return getData(data.blockchainType, data.publicKey, data.denotation, data.dataKey);
 	});

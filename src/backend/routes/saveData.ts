@@ -1,26 +1,24 @@
 import express from "express";
-import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
-import FaultyDataException from "../../shared/exceptions/FaultyDataException.ts";
 import getBlockchain from "../actions/authentication/getBlockchain.ts";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import {SaveDataGetInterface, SaveDataPostInterface} from "../../shared/data/SaveDataInterface.ts";
 import getAuthHeader from "../actions/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
-import QuestionnaireHasNoColumnsException from "../../shared/exceptions/QuestionnaireHasNoColumnsException.ts";
 import createCsvLine from "../actions/createCsvLine.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 export default function saveData(db: DbType): express.Router {
 	const router = express.Router();
 	
 	async function saveData(questionnaireId: number, pass: string, data: Record<string, string>): Promise<void> {
 		if(!isValidBackendString(pass))
-			throw new FaultyDataException("apiPassword");
+			throw new TranslatedException("errorFaultyData", "apiPassword");
 		
 		if(typeof data !== "object")
-			throw new FaultyDataException("data");
+			throw new TranslatedException("errorFaultyData", "data");
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
 			.innerJoin("BlockchainAccount", "Questionnaire.blockchainAccountId", "BlockchainAccount.blockchainAccountId")
@@ -34,7 +32,7 @@ export default function saveData(db: DbType): express.Router {
 			throw new UnauthorizedException();
 		
 		if(!questionnaire.columns)
-			throw new QuestionnaireHasNoColumnsException();
+			throw new TranslatedException("errorQuestionnaireHasNoColumns");
 		
 		const dataArray: string[] = [];
 		const columnObj = JSON.parse(`[${questionnaire.columns}]`);
@@ -42,7 +40,7 @@ export default function saveData(db: DbType): express.Router {
 			dataArray.push(data.hasOwnProperty(column) ? data[column] : "");
 		}
 		if(!dataArray.length)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 		const blockChain = getBlockchain(questionnaire.blockchainType);
 		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.questionnaireId, createCsvLine(dataArray), false, pass);
@@ -62,7 +60,7 @@ export default function saveData(db: DbType): express.Router {
 		const questionnaireId = parseInt(query.id as string);
 		
 		if(!pass || !questionnaireId || !data)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 
 		await saveData(questionnaireId, pass, data as Record<string, string>);
@@ -74,7 +72,7 @@ export default function saveData(db: DbType): express.Router {
 		const pass = getAuthHeader(request) ?? data.pass;
 		
 		if(!data.id || !data.data || !pass)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 		await saveData(parseInt(data.id), pass, JSON.parse(data.data));
 		

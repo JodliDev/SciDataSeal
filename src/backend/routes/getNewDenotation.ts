@@ -2,9 +2,8 @@ import express from "express";
 import {DbType} from "../database/setupDb.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
-import NotFoundException from "../../shared/exceptions/NotFoundException.ts";
 import GetNewDenotation from "../../shared/data/GetNewDenotation.ts";
-import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 export default function getNewDenotation(db: DbType): express.Router {
 	const router = express.Router();
@@ -12,7 +11,7 @@ export default function getNewDenotation(db: DbType): express.Router {
 	addGetRoute<GetNewDenotation>("/getNewDenotation", router, async (data, request) => {
 		const blockChainId = parseInt(data.blockchainAccountId ?? "0");
 		if(!blockChainId)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 		const session = await getLoggedInSessionData(db, request);
 		
@@ -24,7 +23,7 @@ export default function getNewDenotation(db: DbType): express.Router {
 			.executeTakeFirst();
 		
 		if(!response)
-			throw new NotFoundException();
+			throw new TranslatedException("errorNotFound");
 		
 		return {
 			denotation: response.highestDenotation + 1

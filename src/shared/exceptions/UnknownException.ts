@@ -1,5 +1,6 @@
 import ExceptionInterface from "./ExceptionInterface.ts";
-import {LangKey} from "../../frontend/singleton/Lang.ts";
+import strings from "@locales/strings/en.json";
+type LangKey = keyof typeof strings;
 
 export default class UnknownException extends Error implements ExceptionInterface {
 	requestStatus: number = 400;

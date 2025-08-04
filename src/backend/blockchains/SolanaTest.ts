@@ -1,11 +1,10 @@
 import BlockchainInterface, {LineData} from "./BlockchainInterface.ts";
-import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction, Transaction} from "@solana/web3.js";
 import {createMemoInstruction} from "@solana/spl-memo";
 import {createCipheriv, createDecipheriv, randomBytes} from "node:crypto";
 import {deflateSync, inflateSync} from "node:zlib";
-import MessageIsTooLongException from "../../shared/exceptions/MessageIsTooLongException.ts";
 import generateStringDenotation from "../actions/generateStringDenotation.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 const DATA_MAX_BYTE_LENGTH = 560;
 const CONTINUE_TAG = "~";
@@ -55,7 +54,7 @@ export default class SolanaTest implements BlockchainInterface {
 	
     async saveMessage(privateKey: string, intDenotation: number, data: string, isHeader: boolean, dataKey: string): Promise<string[]> {
 		if(!data)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 		//compress:
 		//Thanks to https://stackoverflow.com/a/39800991
@@ -78,7 +77,7 @@ export default class SolanaTest implements BlockchainInterface {
 		const partLength = result.length / neededMessages;
 		
 		if(neededMessages > this.maxTransactionsPerMessage)
-			throw new MessageIsTooLongException();
+			throw new TranslatedException("errorMessageIsTooLong");
 		//upload (and split, if needed) message:
 		const signatures: string[] = [];
 		for(let i = 0; i < neededMessages; ++i) {

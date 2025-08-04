@@ -1,23 +1,21 @@
 import express from "express";
-import MissingDataException from "../../shared/exceptions/MissingDataException.ts";
 import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import EditQuestionnaireInterface from "../../shared/data/EditQuestionnaireInterface.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
-import FaultyDataException from "../../shared/exceptions/FaultyDataException.ts";
-import AlreadyExistsException from "../../shared/exceptions/AlreadyExistsException.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 export default function editQuestionnaire(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addPostRoute<EditQuestionnaireInterface>("/editQuestionnaire", router, async (data, request) => {
 		if(!data.questionnaireName || !data.blockchainAccountId || !data.blockchainDenotation || !data.dataKey || !data.apiPassword)
-			throw new MissingDataException();
+			throw new TranslatedException("errorMissingData");
 		
 		if(!isValidBackendString(data.questionnaireName))
-			throw new FaultyDataException("questionnaireName");
+			throw new TranslatedException("errorFaultyData", "questionnaireName");
 		
 		const session = await getLoggedInSessionData(db, request);
 		
@@ -49,7 +47,7 @@ export default function editQuestionnaire(db: DbType): express.Router {
 		}
 		else {
 			if(data.blockchainDenotation <= account.highestDenotation)
-				throw new AlreadyExistsException("blockchainDenotation");
+				throw new TranslatedException("errorAlreadyExists","blockchainDenotation");
 			
 			await db.updateTable("BlockchainAccount")
 				.set({highestDenotation: data.blockchainDenotation})
