@@ -52,8 +52,9 @@ export default class SolanaTest implements BlockchainInterface {
 	}
 	
     async saveMessage(privateKey: string, intDenotation: number, data: string, isHeader: boolean, dataKey: string): Promise<string[]> {
-		if(!data)
+		if(!data) {
 			throw new TranslatedException("errorMissingData");
+		}
 		
 		const denotation = generateStringDenotation(intDenotation);
 		const result = compressAndEncrypt(`${isHeader ? HEADER_TAG : ""}${data}`, dataKey);
@@ -61,11 +62,12 @@ export default class SolanaTest implements BlockchainInterface {
 		//figure out the necessary length:
 		const textEncoder = new TextEncoder();
 		const neededBytes = textEncoder.encode(result).length;
-		const neededMessages = neededBytes / DATA_MAX_BYTE_LENGTH;
+		const neededMessages = Math.ceil(neededBytes / DATA_MAX_BYTE_LENGTH);
 		const partLength = result.length / neededMessages;
 		
-		if(neededMessages > this.maxTransactionsPerMessage)
+		if(neededMessages > this.maxTransactionsPerMessage) {
 			throw new TranslatedException("errorMessageIsTooLong");
+		}
 		//upload (and split, if needed) message:
 		const signatures: string[] = [];
 		for(let i = 0; i < neededMessages; ++i) {
@@ -86,20 +88,27 @@ export default class SolanaTest implements BlockchainInterface {
 		const output: LineData[] = [];
 		
 		const addLine = (timestamp: number, line: string) => {
-			const decompressed = decompressAndDecrypt(line, dataKey)
-			
-			if(decompressed.startsWith(HEADER_TAG)) {
-				output.push({
-					timestamp: timestamp,
-					data: decompressed.substring(HEADER_TAG.length),
-					isHeader: true
-				});
-			}
-			else {
+			try {
+				const decompressed = decompressAndDecrypt(line, dataKey)
 				
+				if(decompressed.startsWith(HEADER_TAG)) {
+					output.push({
+						timestamp: timestamp,
+						data: decompressed.substring(HEADER_TAG.length),
+						isHeader: true
+					});
+				} else {
+					output.push({
+						timestamp: timestamp,
+						data: decompressed,
+						isHeader: false
+					});
+				}
+			}
+			catch {
 				output.push({
 					timestamp: timestamp,
-					data: decompressed,
+					data: `Cannot decipher: ${line}`,
 					isHeader: false
 				});
 			}
@@ -107,28 +116,24 @@ export default class SolanaTest implements BlockchainInterface {
 		
 		let temp = "";
 		for(const sig of signatures.reverse()) {
-			try {
-				const memo = sig.memo?.match(/\[\d+] (.+)/)?.[1] ?? "";
-				const memoDenotation = memo.substring(0, denotationLength);
-				if(memoDenotation != denotation)
-					continue;
-				const message = memo.substring(denotationLength);
-				
-				if(message.endsWith(CONTINUE_TAG)) {
-					temp += message.substring(0, message.length - CONTINUE_TAG.length);
-				}
-				else {
-					addLine(sig.blockTime ?? 0, temp + message);
-					temp = "";
-				}
+			const memo = sig.memo?.match(/\[\d+] (.+)/)?.[1] ?? "";
+			const memoDenotation = memo.substring(0, denotationLength);
+			if(memoDenotation != denotation) {
+				continue;
 			}
-			catch(e) {
-				output.push({
-					timestamp: sig.blockTime ?? 0,
-					data: `Invalid line: ${sig.memo}`,
-					isHeader: false
-				});
+			const message = memo.substring(denotationLength);
+			
+			if(message.endsWith(CONTINUE_TAG)) {
+				temp += message.substring(0, message.length - CONTINUE_TAG.length);
 			}
+			else {
+				addLine(sig.blockTime ?? 0, temp + message);
+				temp = "";
+			}
+		}
+		
+		if(temp) { //this should never happen
+			addLine(signatures[0].blockTime ?? 0, temp);
 		}
 		
 		return output;
