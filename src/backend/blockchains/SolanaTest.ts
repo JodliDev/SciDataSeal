@@ -1,10 +1,9 @@
 import BlockchainInterface, {LineData} from "./BlockchainInterface.ts";
 import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction, Transaction} from "@solana/web3.js";
 import {createMemoInstruction} from "@solana/spl-memo";
-import {createCipheriv, createDecipheriv, randomBytes} from "node:crypto";
-import {deflateSync, inflateSync} from "node:zlib";
 import generateStringDenotation from "../actions/generateStringDenotation.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
+import {compressAndEncrypt, decompressAndDecrypt} from "../actions/compressAndEncrypt.ts";
 
 const DATA_MAX_BYTE_LENGTH = 560;
 const CONTINUE_TAG = "~";
@@ -56,19 +55,8 @@ export default class SolanaTest implements BlockchainInterface {
 		if(!data)
 			throw new TranslatedException("errorMissingData");
 		
-		//compress:
-		//Thanks to https://stackoverflow.com/a/39800991
-		const compressed = deflateSync(`${isHeader ? HEADER_TAG : ""}${data}`);
 		const denotation = generateStringDenotation(intDenotation);
-		
-		//encode:
-		//Thanks to https://stackoverflow.com/a/78687217
-		const iv = randomBytes(16);
-		const cipher = createCipheriv("aes-256-cbc", Buffer.from(dataKey, "base64url"), iv);
-		const update = cipher.update(compressed);
-		const final = cipher.final();
-		const encrypted = Buffer.concat([iv, update, final]);
-		const result = encrypted.toString("base64");
+		const result = compressAndEncrypt(`${isHeader ? HEADER_TAG : ""}${data}`, dataKey);
 		
 		//figure out the necessary length:
 		const textEncoder = new TextEncoder();
@@ -98,13 +86,7 @@ export default class SolanaTest implements BlockchainInterface {
 		const output: LineData[] = [];
 		
 		const addLine = (timestamp: number, line: string) => {
-			const ivCiphertext = Buffer.from(line, "base64url");
-			const iv = ivCiphertext.subarray(0, 16);
-			const ciphertext = ivCiphertext.subarray(16);
-			const cipher = createDecipheriv("aes-256-cbc", Buffer.from(dataKey, "base64url"), iv);
-			const decrypted = Buffer.concat([cipher.update(ciphertext), cipher.final()]);
-			
-			const decompressed = inflateSync(decrypted).toString();
+			const decompressed = decompressAndDecrypt(line, dataKey)
 			
 			if(decompressed.startsWith(HEADER_TAG)) {
 				output.push({
