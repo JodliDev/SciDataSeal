@@ -1,9 +1,8 @@
-import {ResponseFormat} from "../../shared/ResponseFormat.ts";
-import UnknownException from "../../shared/exceptions/UnknownException.ts";
-import {ResponseType} from "../../shared/ResponseType.ts";
+import {ResponseFormat, ResponseType} from "../../shared/ResponseFormat.ts";
 import ExceptionInterface from "../../shared/exceptions/ExceptionInterface.ts";
 import {Lang} from "../singleton/Lang.ts";
 import TranslatedWithStatusException from "../../shared/exceptions/TranslatedWithStatusException.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 function translateValues(values: ExceptionInterface["values"]): ExceptionInterface["values"] {
 	if(!values)
@@ -29,12 +28,12 @@ export default async function unpackResponse<T extends ResponseType | undefined>
 	
 	if(!response.ok) {
 		if(data.error)
-			throw new UnknownException(data.error?.message, translateValues(data.error?.values));
+			throw new TranslatedException(data.error?.message ?? "errorUnknown", translateValues(data.error?.values));
 		else
 			throw new TranslatedWithStatusException("errorNetwork", 500);
 	}
 	if(!data.ok)
-		throw new UnknownException(data.error?.message, translateValues(data.error?.values));
+		throw new TranslatedException(data.error?.message ?? "errorUnknown", translateValues(data.error?.values));
 	
 	return data.data;
 }
