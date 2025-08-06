@@ -4,6 +4,12 @@ import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import DeleteInterface from "../../shared/data/DeleteInterface.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a POST route for deleting a questionnaire.
+ *
+ * @param db - The database connection.
+ * @throws TranslatedException if id is missing
+ */
 export default function deleteQuestionnaire(db: DbType): express.Router {
 	const router = express.Router();
 	

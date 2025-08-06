@@ -62,6 +62,12 @@ export default async function setupDb(path: string = `${Options.root}/${CONFIG_F
 }
 
 //Thanks to https://github.com/kysely-org/kysely/issues/123#issuecomment-2932307221
+
+/**
+ * A Kysely plugin designed to handle SQLite-specific transformation of boolean values within queries and results.
+ * Uses {@link SqliteBooleanTransformer}
+ * @see https://github.com/kysely-org/kysely/issues/123#issuecomment-2932307221
+ */
 export class SqliteBooleanPlugin implements KyselyPlugin {
 	readonly #transformer = new SqliteBooleanTransformer();
 	
@@ -74,6 +80,15 @@ export class SqliteBooleanPlugin implements KyselyPlugin {
 	}
 }
 
+/**
+ * A transformer class that extends `OperationNodeTransformer` to handle the serialization
+ * of boolean values for SQLite. This class primarily modifies how boolean values are
+ * represented within SQL operations, ensuring they are converted to SQLite-compatible
+ * integer representations (1 or 0).
+ *
+ * Used by {@link SqliteBooleanPlugin}
+ * @see https://github.com/kysely-org/kysely/issues/123#issuecomment-2932307221
+ */
 class SqliteBooleanTransformer extends OperationNodeTransformer {
 	override transformValue(node: ValueNode): ValueNode {
 		return {

@@ -7,6 +7,11 @@ import {getLoggedInSessionData} from "../actions/authentication/getSessionData.t
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a POST route for creating a questionnaire or changing an existing one (if an id was provided)
+ *
+ * @param db - The database connection.
+ */
 export default function editQuestionnaire(db: DbType): express.Router {
 	const router = express.Router();
 	

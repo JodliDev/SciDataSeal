@@ -8,14 +8,31 @@ import {compressAndEncrypt, decompressAndDecrypt} from "../actions/compressAndEn
 const DATA_MAX_BYTE_LENGTH = 560;
 const CONTINUE_TAG = "~";
 const HEADER_TAG = "~~";
+
+/**
+ * This class provides functionality for interacting with the Solana blockchain using their Dev environment.
+ */
 export default class SolanaTest implements BlockchainInterface {
 	private readonly maxTransactionsPerMessage = 50;
 	
+	/**
+	 * Generates a Keypair object from the provided private key.
+	 * Mainly used to generate a public key.
+	 *
+	 * @param privateKey - A hexadecimal string representing the private key.
+	 * @return The generated Keypair object.
+	 */
 	private getKeyPair(privateKey: string): Keypair {
 		const secretKey = Buffer.from(privateKey, "hex");
 		return Keypair.fromSecretKey(secretKey);
 	}
 	
+	/**
+	 * Requests an airdrop for the specified public key and confirms the transaction.
+	 *
+	 * @param connection - The connection object to interact with the Solana cluster.
+	 * @param publicKey - The public key to receive the airdrop.
+	 */
 	private async requestAirdrop(connection: Connection, publicKey: PublicKey): Promise<void> {
 		const airdropSignature = await connection.requestAirdrop(
 			publicKey,
@@ -29,6 +46,13 @@ export default class SolanaTest implements BlockchainInterface {
 		});
 	}
 	
+	/**
+	 * Uploads a message to the Solana blockchain by creating a memo transaction.
+	 *
+	 * @param privateKey The private key used to sign the transaction.
+	 * @param message The message to be uploaded to the blockchain.
+	 * @return A promise that resolves to the transaction signature string after the transaction is confirmed.
+	 */
 	private async uploadMessage(privateKey: string, message: string): Promise<string> {
 		const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 		const keyPair = this.getKeyPair(privateKey);
@@ -51,7 +75,7 @@ export default class SolanaTest implements BlockchainInterface {
 		);
 	}
 	
-    async saveMessage(privateKey: string, intDenotation: number, data: string, isHeader: boolean, dataKey: string): Promise<string[]> {
+	public async saveMessage(privateKey: string, intDenotation: number, data: string, isHeader: boolean, dataKey: string): Promise<string[]> {
 		if(!data) {
 			throw new TranslatedException("errorMissingData");
 		}

@@ -4,6 +4,9 @@ import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import GetUserInterface from "../../shared/data/GetUserInterface.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a GET route for retrieving a user
+ */
 export default function getUser(db: DbType): express.Router {
 	const router = express.Router();
 	

@@ -5,6 +5,9 @@ import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import GetBlockchainInterface from "../../shared/data/GetBlockchainInterface.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a GET route for retrieving a blockchain account
+ */
 export default function getBlockchainAccount(db: DbType): express.Router {
 	const router = express.Router();
 	

@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
+import {afterAll, afterEach, beforeAll, describe, expect, it, Mock, vi} from "vitest";
 import {NextFunction, Request, Response} from "express";
 import isLoggedIn from "../../src/backend/actions/authentication/isLoggedIn.ts";
 import AuthenticateMiddleware from "../../src/backend/AuthenticateMiddleware.ts";
@@ -6,15 +6,23 @@ import {DbType} from "../../src/backend/database/setupDb.ts";
 import createErrorResponse from "../../src/backend/actions/createErrorResponse.ts";
 import UnauthorizedException from "../../src/shared/exceptions/UnauthorizedException.ts";
 
-vi.mock("../../src/backend/actions/authentication/isLoggedIn.ts", () => ({
-	default: vi.fn(),
-}));
-
-vi.mock("../../src/backend/actions/createErrorResponse.ts", () => ({
-	default: vi.fn(),
-}));
 
 describe("AuthenticateMiddleware", () => {
+	beforeAll(() => {
+		vi.mock("../../src/backend/actions/authentication/isLoggedIn.ts", () => ({
+			default: vi.fn(),
+		}));
+		
+		vi.mock("../../src/backend/actions/createErrorResponse.ts", () => ({
+			default: vi.fn(),
+		}));
+	});
+	afterEach(() => {
+		vi.clearAllMocks();
+	});
+	afterAll(() => {
+		vi.resetAllMocks();
+	});
 	const mockDb = {} as DbType;
 	const mockRequest = {} as Request;
 	const mockResponse = {
@@ -25,9 +33,6 @@ describe("AuthenticateMiddleware", () => {
 	
 	const middleware = AuthenticateMiddleware(mockDb);
 	
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
 	
 	it("should call next if user is logged in", async() => {
 		(isLoggedIn as Mock).mockResolvedValue(true);

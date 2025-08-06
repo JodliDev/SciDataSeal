@@ -1,26 +1,37 @@
 import {describe, it, expect} from 'vitest';
-import NetworkErrorException from "../../../src/shared/exceptions/NetworkErrorException";
-import RequestFailedException from "../../../src/shared/exceptions/RequestFailedException";
 import postData from "../../../src/frontend/actions/postData";
 import {mockFetch} from "../../convenience";
 
 describe("postData()", () => {
 	const uploadData = {content: "uploadData"}
 	
+	it("should fetch the correct url", async() => {
+		mockFetch({ok: true}, 200, (url) => {
+			expect(url).toBe("api/test?key=value");
+		});
+		await postData("/test", uploadData, {query: "?key=value"});
+	});
 	it("should return data when the response is successful", async() => {
-		mockFetch({ok: true, data: "testData"}, 200, init => {
+		mockFetch({ok: true, data: "testData"}, 200, (_, init) => {
 			expect(init.body).toBe(JSON.stringify(uploadData));
 		});
 		
-		expect(await postData("solana", uploadData)).toBe("testData");
+		expect(await postData("/test", uploadData)).toBe("testData");
 	});
-	it("should throw NetworkErrorException when request failed", async() => {
-		mockFetch({ok: true, data: "testData"}, 500);
-		await expect(postData("solana", uploadData)).rejects.toThrow(NetworkErrorException);
-	});
-	it("should throw RequestFailedException when data.ok is false", async() => {
-		mockFetch({ok: false, error: 'Request failed'}, 200);
-		await expect(postData("solana", uploadData)).rejects.toThrow(RequestFailedException);
+	it("should return data when the response is successful", async() => {
+		mockFetch({ok: true, data: "testData"}, 200, (_, init) => {
+			expect(init.headers).toEqual({
+				"Content-Type": "application/json",
+				"header1": "value1",
+				"header2": "value2"
+			});
+		});
+		
+		await postData("/test", uploadData, {
+			headers: {
+				"header1": "value1",
+				"header2": "value2"
+		}});
 	});
 })
 

@@ -1,5 +1,9 @@
 import {FrontendOptions} from "../shared/FrontendOptions.ts";
 
+/**
+ * The `OptionsClass` represents a configuration object with predefined and dynamically adjustable
+ * properties that will be populated through environment variables or command-line arguments.
+ */
 class OptionsClass implements FrontendOptions {
 	public readonly mode: "production" | "development" = "development";
 	public readonly port: number = 80;
@@ -31,6 +35,12 @@ class OptionsClass implements FrontendOptions {
 		if(!this.urlPath.endsWith("/"))
 			this.urlPath += "/";
 	}
+	/**
+	 * Sets the value of a specified option.
+	 *
+	 * @param key - The name of the option to be set.
+	 * @param value - The value to assign to the specified option.
+	 */
 	private setValue(key: string, value: string): void {
 		const type = typeof this[key as keyof this];
 		switch(type) {

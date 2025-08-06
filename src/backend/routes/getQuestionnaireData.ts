@@ -5,6 +5,9 @@ import getBlockchain from "../actions/authentication/getBlockchain.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a GET and a POST route for retrieving questionnaire data as a CSV
+ */
 export default function getQuestionnaireData(): express.Router {
 	const router = express.Router();
 	
@@ -14,13 +17,8 @@ export default function getQuestionnaireData(): express.Router {
 		
 		const output: string[] = [];
 		for(const entry of lines) {
-			try {
-				const content = `${entry.isHeader ? "\"Time\"" : `"${entry.timestamp}"`},${entry.data}`;
-				output.push(content);
-			}
-			catch {
-				output.push((entry as any).toString());
-			}
+			const content = `${entry.isHeader ? "\"Time\"" : `"${entry.timestamp}"`},${entry.data}`;
+			output.push(content);
 		}
 		
 		return {

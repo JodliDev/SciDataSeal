@@ -3,6 +3,9 @@ import {DbType} from "../database/setupDb.ts";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import ListUserInterface from "../../shared/data/ListUserInterface.ts";
 
+/**
+ * Creates a GET route for retrieving a list of all users
+ */
 export default function listUser(db: DbType): express.Router {
 	const router = express.Router();
 	

@@ -10,6 +10,10 @@ import {SetQuestionnaireColumnsGetInterface, SetQuestionnaireColumnsPostInterfac
 import createCsvLine from "../actions/createCsvLine.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+
+/**
+ * Creates a POST and a GET route for updating the questionnaire header columns
+ */
 export default function setQuestionnaireColumns(db: DbType): express.Router {
 	const router = express.Router();
 	
@@ -78,7 +82,7 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 		if(!data.id || !data.columns || !pass)
 			throw new TranslatedException("errorMissingData");
 		
-		await setColumns(parseInt(data.id), pass, JSON.parse(data.columns));
+		await setColumns(parseInt(data.id), pass, JSON.parse(decodeURIComponent(data.columns)));
 		
 		return {};
 	});

@@ -7,9 +7,11 @@ import doLogin from "../actions/authentication/doLogin.ts";
 import {recreateOptionsString} from "../../shared/FrontendOptions.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import encryptPassword from "../actions/authentication/encryptPassword.ts";
-import validateUserData from "../actions/authentication/validateUserData.ts";
+import validateUserData from "../actions/validateUserData.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
-
+/**
+ * Creates a POST route for initializing the instance
+ */
 export default function initialize(db: DbType): express.Router {
 	const router = express.Router();
 	

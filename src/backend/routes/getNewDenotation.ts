@@ -5,6 +5,9 @@ import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import GetNewDenotation from "../../shared/data/GetNewDenotation.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a GET route for retrieving an unused (=highest) denotation for a blockchain account
+ */
 export default function getNewDenotation(db: DbType): express.Router {
 	const router = express.Router();
 	

@@ -8,6 +8,9 @@ import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a POST route for login
+ */
 export default function login(db: DbType): express.Router {
 	const router = express.Router();
 	

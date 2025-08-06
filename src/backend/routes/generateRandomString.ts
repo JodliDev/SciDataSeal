@@ -4,6 +4,10 @@ import GenerateRandomString from "../../shared/data/GenerateRandomString.ts";
 import {randomBytes} from "node:crypto";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+
+/**
+ * Creates a GET route for creating a save random string of a given length
+ */
 export default function generateRandomString(): express.Router {
 	const router = express.Router();
 	

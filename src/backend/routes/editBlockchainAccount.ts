@@ -8,6 +8,11 @@ import getBlockchain from "../actions/authentication/getBlockchain.ts";
 import EditBlockchainInterface from "../../shared/data/EditBlockchainInterface.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a POST route for creating a blockchain account or changing an existing one (if an id was provided)
+ *
+ * @param db - The database connection.
+ */
 export default function editBlockchainAccount(db: DbType): express.Router {
 	const router = express.Router();
 	
@@ -45,7 +50,7 @@ export default function editBlockchainAccount(db: DbType): express.Router {
 					publicKey: await blockChain.getPublicKey(data.privateKey),
 				})
 				.where("blockchainAccountId", "=", data.id)
-				.executeTakeFirst();
+				.execute();
 			
 			return {
 				blockchainAccountId: data.id

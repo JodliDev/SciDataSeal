@@ -5,6 +5,12 @@ import DeleteInterface from "../../shared/data/DeleteInterface.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a POST route for deleting a user.
+ *
+ * @param db - The database connection.
+ * @throws TranslatedException if id is missing or user is the current session user
+ */
 export default function deleteUser(db: DbType): express.Router {
 	const router = express.Router();
 	

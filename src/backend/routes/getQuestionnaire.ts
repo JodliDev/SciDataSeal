@@ -5,6 +5,9 @@ import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import GetQuestionnaireInterface from "../../shared/data/GetQuestionnaireInterface.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Creates a GET route for retrieving a questionnaire
+ */
 export default function getQuestionnaire(db: DbType): express.Router {
 	const router = express.Router();
 	

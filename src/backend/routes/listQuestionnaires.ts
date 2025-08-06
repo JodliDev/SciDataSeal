@@ -4,6 +4,9 @@ import {getLoggedInSessionData} from "../actions/authentication/getSessionData.t
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import ListQuestionnairesInterface from "../../shared/data/ListQuestionnairesInterface.ts";
 
+/**
+ * Creates a GET route for retrieving a list of questionnaires for the current user
+ */
 export default function listQuestionnaires(db: DbType): express.Router {
 	const router = express.Router();
 	

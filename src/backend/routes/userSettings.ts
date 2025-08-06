@@ -6,6 +6,10 @@ import TranslatedException from "../../shared/exceptions/TranslatedException.ts"
 import UserSettingsInterface from "../../shared/data/UserSettingsInterface.ts";
 import encryptPassword from "../actions/authentication/encryptPassword.ts";
 
+
+/**
+ * Creates a POST route for changing the password
+ */
 export default function userSettings(db: DbType): express.Router {
 	const router = express.Router();
 	

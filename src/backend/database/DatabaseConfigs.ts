@@ -5,6 +5,9 @@ import Questionnaire, {QuestionnaireTable} from "./tables/Questionnaire.ts";
 import DataLog, {DataLogTable} from "./tables/DataLog.ts";
 import BlockchainAccount, {BlockchainAccountTable} from "./tables/BlockchainAccount.ts";
 
+/**
+ * Used to bind Database tables to Kysely
+ */
 export interface KyselyTables {
 	User: User
 	Session: Session
@@ -12,6 +15,10 @@ export interface KyselyTables {
 	BlockchainAccount: BlockchainAccount
 	DataLog: DataLog
 }
+
+/**
+ * Configuration for SqlMorpheus
+ */
 export const SqlMorpheusConfig = {
 	dialect: "Sqlite",
 	version: 11,

@@ -3,7 +3,14 @@ import {DbType} from "../../database/setupDb.ts";
 import {Cookies} from "../../../shared/definitions/Cookies.ts";
 import isValidBackendString from "../../../shared/actions/isValidBackendString.ts";
 
-export default async function authenticateRequest(db: DbType, request: AuthenticatedRequest) {
+/**
+ * Authenticates an incoming request by validating session information stored in cookies
+ * and updating the request object if the session is valid.
+ *
+ * @param db - The database connection.
+ * @param request - The request object containing cookies and authentication state.
+ */
+export default async function authenticateRequest(db: DbType, request: AuthenticatedRequest): Promise<void> {
 	if(request.wasAuthenticated)
 		return;
 	
