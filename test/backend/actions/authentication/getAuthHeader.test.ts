@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 import {Request} from "express";
-import getAuthHeader from "../../../src/backend/actions/getAuthHeader.ts";
+import getAuthHeader from "../../../../src/backend/actions/authentication/getAuthHeader.ts";
 
 describe("getAuthHeader", () => {
 	it("should return the token when Authorization header is in the correct format", () => {

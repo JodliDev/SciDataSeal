@@ -1,7 +1,7 @@
 import express from "express";
 import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import {GetQuestionnaireDataGetInterface, GetQuestionnaireDataPostInterface} from "../../shared/data/GetQuestionnaireDataInterface.ts";
-import getBlockchain from "../actions/authentication/getBlockchain.ts";
+import getBlockchain from "../actions/getBlockchain.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 

@@ -6,7 +6,7 @@ import saveData from "../../../src/backend/routes/saveData.ts";
 import supertest from "supertest";
 
 describe("saveData", () => {
-	vi.mock("../../../src/backend/actions/authentication/getBlockchain.ts", () => ({
+	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
 		default: vi.fn().mockReturnValue({saveMessage: () => ["signature"]}),
 	}));
 	

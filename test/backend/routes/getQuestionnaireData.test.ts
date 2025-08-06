@@ -2,12 +2,12 @@ import {afterAll, describe, expect, it, vi} from "vitest";
 import request from "supertest";
 import express from "express";
 import getQuestionnaireData from "../../../src/backend/routes/getQuestionnaireData.ts";
-import getBlockchain from "../../../src/backend/actions/authentication/getBlockchain.ts";
+import getBlockchain from "../../../src/backend/actions/getBlockchain.ts";
 import BlockchainInterface from "../../../src/backend/blockchains/BlockchainInterface.ts";
 
 
 describe("getQuestionnaireData", () => {
-	vi.mock("../../../src/backend/actions/authentication/getBlockchain.ts", () => ({
+	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
 		default: vi.fn()
 	}));
 	

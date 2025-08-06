@@ -4,7 +4,7 @@ import UnauthorizedException from "../../shared/exceptions/UnauthorizedException
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
-import getBlockchain from "../actions/authentication/getBlockchain.ts";
+import getBlockchain from "../actions/getBlockchain.ts";
 import EditBlockchainInterface from "../../shared/data/EditBlockchainInterface.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 

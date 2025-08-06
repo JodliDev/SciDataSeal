@@ -1,6 +1,6 @@
-import BlockchainInterface from "../../blockchains/BlockchainInterface.ts";
-import SolanaTest from "../../blockchains/SolanaTest.ts";
-import TranslatedException from "../../../shared/exceptions/TranslatedException.ts";
+import BlockchainInterface from "../blockchains/BlockchainInterface.ts";
+import SolanaTest from "../blockchains/SolanaTest.ts";
+import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 /**
  * Retrieves a blockchain instance based on the specified type string.

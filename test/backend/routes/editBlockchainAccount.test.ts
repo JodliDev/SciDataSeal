@@ -9,7 +9,7 @@ describe("editBlockchainAccount", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({
 		getLoggedInSessionData: vi.fn().mockResolvedValue({userId: 123})
 	}));
-	vi.mock("../../../src/backend/actions/authentication/getBlockchain.ts", () => ({
+	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
 		default: vi.fn().mockReturnValue({getPublicKey: () => "test-public-key"}),
 	}));
 	

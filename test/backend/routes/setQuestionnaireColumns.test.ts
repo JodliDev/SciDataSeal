@@ -6,7 +6,7 @@ import {mockKysely} from "../../convenience.ts";
 
 
 describe("setQuestionnaireColumns", () => {
-	vi.mock("../../../src/backend/actions/authentication/getBlockchain.ts", () => ({
+	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
 		default: vi.fn(() => ({
 			saveMessage: vi.fn(() => Promise.resolve(["someSignature"]))
 		})),
