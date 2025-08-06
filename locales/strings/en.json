@@ -84,5 +84,6 @@
 	"type": "Type",
 	"url": "Url",
 	"username": "Username",
+	"userSettings": "User settings",
 	"viewData": "View data"
 }

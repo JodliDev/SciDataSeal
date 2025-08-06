@@ -4,6 +4,7 @@ import deleteSvg from "../../assets/icons/delete.svg?raw";
 import listSvg from "../../assets/icons/list.svg?raw";
 import removeSvg from "../../assets/icons/remove.svg?raw";
 import userListSvg from "../../assets/icons/userList.svg?raw";
+import userSettingsSvg from "../../assets/icons/userSettings.svg?raw";
 import viewSvg from "../../assets/icons/view.svg?raw";
 import m from "mithril";
 import {FixedComponent} from "../../mithril-polyfill.ts";
@@ -15,6 +16,7 @@ const IconType = {
 	list: listSvg,
 	remove: removeSvg,
 	userList: userListSvg,
+	userSettings: userSettingsSvg,
 	view: viewSvg,
 }
 

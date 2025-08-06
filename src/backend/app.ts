@@ -31,6 +31,7 @@ import getUser from "./routes/getUser.ts";
 import deleteUser from "./routes/deleteUser.ts";
 import deleteBlockchainAccount from "./routes/deleteBlockchainAccount.ts";
 import deleteQuestionnaire from "./routes/deleteQuestionnaire.ts";
+import userSettings from "./routes/userSettings.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -53,6 +54,7 @@ async function init() {
 		webServer.use("/api", initialize(db));
 	webServer.use("/api", saveData(db));
 	webServer.use("/api", setQuestionnaireColumns(db));
+	webServer.use("/api", authenticateMiddleware, userSettings(db));
 	webServer.use("/api", authenticateMiddleware, editQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, deleteQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, listBlockchainAccounts(db));
