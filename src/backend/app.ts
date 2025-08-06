@@ -5,7 +5,6 @@ import {Options} from "./Options.ts";
 import {FRONTEND_FOLDER} from "../shared/definitions/Constants.ts";
 import {Cookies} from "../shared/definitions/Cookies.ts";
 import LangProvider from "./LangProvider.ts";
-import {FrontendOptionsString, recreateOptionsString} from "../shared/FrontendOptions.ts";
 import AuthenticateMiddleware from "./AuthenticateMiddleware.ts";
 import setupDb from "./database/setupDb.ts";
 import getSessionData from "./actions/authentication/getSessionData.ts";
@@ -32,6 +31,7 @@ import deleteUser from "./routes/deleteUser.ts";
 import deleteBlockchainAccount from "./routes/deleteBlockchainAccount.ts";
 import deleteQuestionnaire from "./routes/deleteQuestionnaire.ts";
 import userSettings from "./routes/userSettings.ts";
+import {FrontendOptionsString, recreateOptionsString} from "./actions/recreateOptionsString.ts";
 
 async function init() {
 	const db = await setupDb()

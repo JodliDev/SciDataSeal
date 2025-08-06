@@ -4,11 +4,11 @@ import UnauthorizedException from "../../shared/exceptions/UnauthorizedException
 import InitializeInterface from "../../shared/data/InitializeInterface.ts";
 import {Options} from "../Options.ts";
 import doLogin from "../actions/authentication/doLogin.ts";
-import {recreateOptionsString} from "../../shared/FrontendOptions.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import encryptPassword from "../actions/authentication/encryptPassword.ts";
 import validateUserData from "../actions/validateUserData.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
+import {recreateOptionsString} from "../actions/recreateOptionsString.ts";
 /**
  * Creates a POST route for initializing the instance
  */

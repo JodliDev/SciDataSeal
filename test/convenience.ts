@@ -37,6 +37,10 @@ class MockKysely {
 	where = this.addChain("where");
 	orderBy = this.addChain("orderBy");
 	limit = this.addChain("limit");
+	fn = {
+		countAll: vi.fn(() => this.fn),
+		as: vi.fn(() => this.fn)
+	}
 	
 	executeTakeFirst = vi.fn();
 	execute = vi.fn();
