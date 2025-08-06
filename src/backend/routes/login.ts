@@ -14,7 +14,7 @@ export default function login(db: DbType): express.Router {
 	addPostRoute<LoginInterface>("/login", router, async (data, request, response) => {
 		if(!data.username || !data.password)
 			throw new TranslatedException("errorMissingData");
-		if(isValidBackendString(data.username))
+		if(!isValidBackendString(data.username))
 			throw new TranslatedException("errorFaultyData", "username");
 		
 		const user = await db
