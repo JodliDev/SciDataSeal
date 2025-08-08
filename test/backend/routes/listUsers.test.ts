@@ -2,9 +2,9 @@ import express from "express";
 import request from "supertest";
 import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import {mockKysely} from "../../convenience.ts";
-import listUser from "../../../src/backend/routes/listUser.ts";
+import listUsers from "../../../src/backend/routes/listUsers.ts";
 
-describe("listUser", () => {
+describe("listUsers", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({
 		getLoggedInSessionData: vi.fn().mockResolvedValue({userId: 123})
 	}));
@@ -19,10 +19,10 @@ describe("listUser", () => {
 	const mockDb = mockKysely();
 	const app = express();
 	app.use(express.json());
-	app.use(listUser(mockDb));
+	app.use(listUsers(mockDb));
 	
 	
-	it("should return a list of all user", async() => {
+	it("should return a list of all users", async() => {
 		const mockList = [
 			{userId: 1, username: "Test 1"},
 			{userId: 2, username: "Test 2"},
@@ -31,10 +31,10 @@ describe("listUser", () => {
 			.execute.mockResolvedValue(mockList);
 		
 		const response = await request(app)
-			.get("/listUser");
+			.get("/listUsers");
 		
 		expect(response.ok).toBe(true);
-		expect(response.body.data).toEqual({user: mockList});
+		expect(response.body.data).toEqual({users: mockList});
 	});
 	
 	it("should return an empty list if no questionnaires are found", async() => {
@@ -42,9 +42,9 @@ describe("listUser", () => {
 			.execute.mockResolvedValue([]);
 		
 		const response = await request(app)
-			.get("/listUser");
+			.get("/listUsers");
 		
 		expect(response.ok).toBe(true);
-		expect(response.body.data).toEqual({user: []});
+		expect(response.body.data).toEqual({users: []});
 	});
 });

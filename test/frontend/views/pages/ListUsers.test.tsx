@@ -1,11 +1,11 @@
 import {describe, it, vi, expect, afterEach} from "vitest";
 import {renderPage} from "../../testRender.ts";
-import ListUser from "../../../../src/frontend/views/pages/ListUser.tsx";
+import ListUsers from "../../../../src/frontend/views/pages/ListUsers.tsx";
 
-describe("ListUser", async () => {
+describe("ListUsers", async () => {
 	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
 		default: vi.fn(() => ({
-			user: [
+			users: [
 				{
 					userId: 1,
 					username: "testuser",
@@ -27,7 +27,7 @@ describe("ListUser", async () => {
 	});
 	
 	it("should display all loaded users", async () => {
-		const component = await renderPage(ListUser);
+		const component = await renderPage(ListUsers);
 		
 		const urls = component.dom.querySelectorAll(".bigButton");
 		

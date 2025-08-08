@@ -25,7 +25,7 @@ import generateRandomString from "./routes/generateRandomString.ts";
 import getNewDenotation from "./routes/getNewDenotation.ts";
 import AdminMiddleware from "./AdminMiddleware.ts";
 import editUser from "./routes/editUser.ts";
-import listUser from "./routes/listUser.ts";
+import listUsers from "./routes/listUsers.ts";
 import getUser from "./routes/getUser.ts";
 import deleteUser from "./routes/deleteUser.ts";
 import deleteBlockchainAccount from "./routes/deleteBlockchainAccount.ts";
@@ -67,7 +67,7 @@ async function init() {
 	webServer.use("/api", adminMiddleware, getBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, deleteBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, editUser(db));
-	webServer.use("/api", adminMiddleware, listUser(db));
+	webServer.use("/api", adminMiddleware, listUsers(db));
 	webServer.use("/api", adminMiddleware, getUser(db));
 	webServer.use("/api", adminMiddleware, deleteUser(db));
 	

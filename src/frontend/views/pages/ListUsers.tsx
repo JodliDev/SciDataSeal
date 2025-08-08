@@ -3,17 +3,17 @@ import m from "mithril";
 import getData from "../../actions/getData.ts";
 import A from "../widgets/A.tsx";
 import {Lang} from "../../singleton/Lang.ts";
-import ListUserInterface from "../../../shared/data/ListUserInterface.ts";
+import ListUsersInterface from "../../../shared/data/ListUsersInterface.ts";
 import Icon from "../widgets/Icon.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
-	const response = await getData<ListUserInterface>("/listUser");
+	const response = await getData<ListUsersInterface>("/listUsers");
 	
 	return {
 		history: [
 			{label: Lang.get("home"), page: "Home"},
-			{label: Lang.get("listUser"), page: "ListUser"},
+			{label: Lang.get("listUsers"), page: "ListUsers"},
 		],
 		view: () => <div class="vertical hAlignCenter">
 			<A page="EditUser">
@@ -22,7 +22,7 @@ export default PrivatePage(async () => {
 			</A>
 			<br/>
 			<div class="vertical vAlignCenter hAlignCenter wrapContent selfAlignStretch">
-				{response?.user.map(user =>
+				{response?.users.map(user =>
 					<A class="bigButton" page="EditUser" query={`?id=${user.userId}`}>{user.username}</A> )}
 			</div>
 		</div>

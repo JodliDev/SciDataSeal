@@ -143,7 +143,7 @@ describe("EditUser", async () => {
 		it("should switch page when data was deleted successfully", async () => {
 			let calledSwitchPage = false;
 			SiteTools.init({}, (page) => {
-				expect(page).toBe("ListUser");
+				expect(page).toBe("ListUsers");
 				calledSwitchPage = true;
 			});
 			await createAndPressDelete(123);

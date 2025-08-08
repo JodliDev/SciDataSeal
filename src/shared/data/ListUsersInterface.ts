@@ -1,9 +1,9 @@
 import GetDataStructureInterface from "../GetDataStructureInterface.ts";
 
-export default interface ListUserInterface extends GetDataStructureInterface {
-	Endpoint: "/listUser";
+export default interface ListUsersInterface extends GetDataStructureInterface {
+	Endpoint: "/listUsers";
 	Response: {
-		user: {
+		users: {
 			userId: number,
 			username: string
 		}[];

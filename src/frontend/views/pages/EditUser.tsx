@@ -17,7 +17,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		}
 	}
 	function onDeleted() {
-		SiteTools.switchPage("ListUser");
+		SiteTools.switchPage("ListUsers");
 	}
 	const filterData = (data: Record<string, unknown>) => {
 		if(!data.password && !data.passwordRepeat)
@@ -46,7 +46,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	return {
 		history: [
 			{label: Lang.get("home"), page: "Home"},
-			{label: Lang.get("listUser"), page: "ListUser"},
+			{label: Lang.get("listUsers"), page: "ListUsers"},
 			id
 				? {label: user.username ?? "Not found", page: "EditUser", query: `?id=${id}`}
 				: {label: Lang.get("createUser"), page: "EditUser"},

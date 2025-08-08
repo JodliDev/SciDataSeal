@@ -27,9 +27,9 @@ export default PrivatePage(async () => {
 					{Lang.get("viewData")}
 				</A>
 				{!!SiteTools.session.isAdmin &&
-					<A page="ListUser" class="bigButton">
+					<A page="ListUsers" class="bigButton">
 						<Icon iconKey="userList"/>
-						{Lang.get("listUser")}
+						{Lang.get("listUsers")}
 					</A>}
 			</div>
 			<div class="fillSpace"></div>
