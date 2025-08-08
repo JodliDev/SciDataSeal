@@ -8,9 +8,9 @@ import UserSettingsInterface from "../../../shared/data/UserSettingsInterface.ts
 export default PrivatePage(async () => {
 	const filterData = (data: Record<string, unknown>) => {
 		if(!data.password && !data.passwordRepeat)
-			return data as UserSettingsInterface["Request"];
+			throw new Error(Lang.get("errorMissingData"));
 		if(data.password !== data.passwordRepeat)
-			throw new Error(Lang.get("passwordMismatch"));
+			throw new Error(Lang.get("errorPasswordMismatch"));
 		return {
 			newPassword: data.password as string,
 		}

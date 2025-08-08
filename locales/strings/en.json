@@ -39,6 +39,7 @@
 	"errorNetwork": "Network error",
 	"errorNotFound": "Not found",
 	"errorPageHasError": "Page %1$s had an error and could not be loaded.",
+	"errorPasswordMismatch": "The passwords dont match",
 	"errorQuestionnaireHasNoColumns": "Questionnaire has no columns. Was it initialized?",
 	"errorTooShort": "\"%1$s\" needs to consist of at least %2$d characters.",
 	"errorUsernameAlreadyExists": "Username already exists.",

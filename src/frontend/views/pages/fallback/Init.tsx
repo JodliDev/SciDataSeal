@@ -7,7 +7,7 @@ import {PageContent} from "../../../PageComponent.ts";
 export default function Init(): PageContent {
 	const filterData = (data: Record<string, unknown>) => {
 		if(data.password !== data.passwordRepeat)
-			throw new Error(Lang.get("passwordMismatch"));
+			throw new Error(Lang.get("errorPasswordMismatch"));
 		return {
 			username: data.username as string,
 			password: data.password as string,
