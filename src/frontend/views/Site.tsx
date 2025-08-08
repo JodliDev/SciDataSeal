@@ -10,6 +10,7 @@ import Init from "./pages/fallback/Init.tsx";
 import About from "./pages/fallback/About.tsx";
 import Navigation from "./Navigation.tsx";
 import ErrorPage from "./pages/fallback/ErrorPage.tsx";
+import {getUrlData} from "../actions/getUrlData.ts";
 
 interface DocumentPageState {
 	page: string;
@@ -18,7 +19,7 @@ interface DocumentPageState {
 
 export default function Site({attrs: {session, options}}: Vnode<{session: SessionData, options: FrontendOptions}>) {
 	let currentPage: PageContent = Loading();
-	const {page: homepageName, query: homeQuery} = getUrlData();
+	const {page: homepageName, query: homeQuery} = getUrlData(options);
 	let pageName = homepageName;
 	let currentQuery = homeQuery;
 	
@@ -37,8 +38,9 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 			return;
 		}
 		if(!newPageName) {
-			if(session.isLoggedIn)
+			if(session.isLoggedIn) {
 				pageName = "Home";
+			}
 			else {
 				pageName = "About";
 				currentPage = About();
@@ -62,16 +64,6 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		m.redraw();
 	}
 	
-	function getUrlData() {
-		const homepage = window.location.pathname.substring(options.urlPath.length);
-		const search = window.location.search;
-		
-		return {
-			page: homepage,
-			query: search
-		};
-	}
-	
 	function switchPage(page: string, newQuery?: `?${string}`): void {
 		if(page != pageName || newQuery != currentQuery) {
 			const path = `${page}${newQuery ?? ""}`;
@@ -84,7 +76,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 	SiteTools.init(session, switchPage);
 	
 	async function popstateEvent(event: PopStateEvent) {
-		const state: DocumentPageState = event.state ?? getUrlData();
+		const state: DocumentPageState = event.state ?? getUrlData(options);
 		await loadPage(state?.page ?? homepageName, state?.query ?? homeQuery);
 	}
 	
