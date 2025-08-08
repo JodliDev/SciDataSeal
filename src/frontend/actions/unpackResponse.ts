@@ -1,9 +1,15 @@
 import {ResponseFormat, ResponseType} from "../../shared/ResponseFormat.ts";
 import ExceptionInterface from "../../shared/exceptions/ExceptionInterface.ts";
-import {Lang} from "../singleton/Lang.ts";
+import {Lang, LangKey} from "../singleton/Lang.ts";
 import TranslatedWithStatusException from "../../shared/exceptions/TranslatedWithStatusException.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
+/**
+ * Translates an array of values if they exist in {@link Lang}.
+ *
+ * @param values - An array of values to be translated.
+ * @return - The translated array of values. If no translations are applied, the original array is returned.
+ */
 function translateValues(values: ExceptionInterface["values"]): ExceptionInterface["values"] {
 	if(!values)
 		return values;
@@ -28,12 +34,12 @@ export default async function unpackResponse<T extends ResponseType | undefined>
 	
 	if(!response.ok) {
 		if(data.error)
-			throw new TranslatedException(data.error?.message ?? "errorUnknown", translateValues(data.error?.values));
+			throw new TranslatedException(data.error?.message as LangKey ?? "errorUnknown", ...(translateValues(data.error?.values) || []));
 		else
 			throw new TranslatedWithStatusException("errorNetwork", 500);
 	}
 	if(!data.ok)
-		throw new TranslatedException(data.error?.message ?? "errorUnknown", translateValues(data.error?.values));
+		throw new TranslatedException(data.error?.message as LangKey ?? "errorUnknown", ...(translateValues(data.error?.values) || []));
 	
 	return data.data;
 }

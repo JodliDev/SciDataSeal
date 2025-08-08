@@ -10,6 +10,9 @@ interface BtnAttributes extends IconAttributes{
 	class?: string
 }
 
+/**
+ * A button with an icon and an optional label
+ */
 const Default = FixedComponent<BtnAttributes>(() => {
 	return {
 		view: (vNode) => <div {...vNode.attrs} class={`${css.Btn} ${vNode.attrs.iconKey} ${vNode.attrs.class ?? ""} clickable horizontal hAlignCenter vAlignCenter`} onclick={vNode.attrs.onclick}>
@@ -22,6 +25,10 @@ const Default = FixedComponent<BtnAttributes>(() => {
 interface TooltipAttributes extends BtnAttributes{
 	description: string
 }
+
+/**
+ * A default button with a mouseover tooltip
+ */
 const TooltipBtn = FixedComponent<TooltipAttributes>(() => {
 	return {
 		view: (vNode) =>
@@ -29,6 +36,9 @@ const TooltipBtn = FixedComponent<TooltipAttributes>(() => {
 	}
 });
 
+/**
+ * Empty space in the size of a button
+ */
 const Empty = FixedComponent<{}>(() => {
 	return {
 		view: () => <div class={`${css.Btn} ${css.empty}`}></div>

@@ -17,6 +17,9 @@ interface DocumentPageState {
 	query?: `?${string}`;
 }
 
+/**
+ * Represents the main site component loaded in `src/frontend/index.ts` handling page content rendering and navigation.
+ */
 export default function Site({attrs: {session, options}}: Vnode<{session: SessionData, options: FrontendOptions}>) {
 	let currentPage: PageContent = Loading();
 	const {page: homepageName, query: homeQuery} = getUrlData(options);

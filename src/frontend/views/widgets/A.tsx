@@ -8,6 +8,9 @@ interface Attributes {
 	class?: string
 }
 
+/**
+ * Mimics the behavior of <a> but prevents url calls and uses SiteTools.switchPage instead.
+ */
 export default FixedComponent<Attributes>(() => {
 	const onClick = (page: string, query: `?${string}` | undefined, event: MouseEvent) => {
 		event.preventDefault();

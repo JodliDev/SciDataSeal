@@ -53,7 +53,6 @@
 	"noColumnsInfo": "You need to set columns or no data will be saved",
 	"password": "Password",
 	"passwordAgain": "Password again",
-	"passwordMismatch": "The passwords dont match",
 	"privateKey": "Private key",
 	"publicKey": "Public key",
 	"questionnaireName": "Questionnaire name",

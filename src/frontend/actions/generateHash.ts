@@ -1,3 +1,9 @@
+/**
+ * Generates an integer hash for a given string input.
+ *
+ * @param text - The input string to hash.
+ * @return An integer representing the hash of the input string.
+ */
 export default function generateHash(text: string): number {
 	//Thanks to https://stackoverflow.com/a/7616484
 	let hash = 0;

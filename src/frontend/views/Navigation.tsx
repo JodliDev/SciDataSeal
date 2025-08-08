@@ -8,7 +8,10 @@ interface Attributes {
 	entries: HistoryEntry[]
 }
 
-export default FixedComponent<Attributes>(_ => {
+/**
+ * Main navigation used by `src/frontend/views/Site.tsx`
+ */
+export default FixedComponent<Attributes>(() => {
 	return {
 		view: (vNode) => (
 			<div class={`horizontal vAlignCenter selfAlignStretch ${css.Navigation}`}>{vNode.attrs.entries.map(entry =>

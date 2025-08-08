@@ -29,7 +29,6 @@
     "@vitest/ui": "^3.2.4",
     "happy-dom": "^18.0.1",
     "jsdom": "^26.1.0",
-    "mithril-query": "git+https://github.com/JodliDev/mithril-query",
     "rollup-plugin-node-externals": "^8.0.1",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",

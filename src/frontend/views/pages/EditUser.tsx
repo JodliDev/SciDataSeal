@@ -64,7 +64,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				{!!id &&
 					<label>
 						<div class="horizontal vAlignCenter">
-							<input type="checkbox" onchange={() => {
+							<input class="enablePassword" type="checkbox" onchange={() => {
 								showPasswordField = !showPasswordField;
 								m.redraw();
 							}}/>

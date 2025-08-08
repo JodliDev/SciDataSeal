@@ -1,149 +1,124 @@
-import {describe, it, vi, expect, beforeEach} from "vitest";
+import {describe, expect, it, vi, afterEach, afterAll} from "vitest";
 import Site from "../../../src/frontend/views/Site";
 import {wait} from "../../convenience";
-import mq from "mithril-query"
 import {FrontendOptions} from "../../../src/shared/FrontendOptions";
-import css from "../../../src/frontend/views/widgets/LoadingSpinner.module.css";
+import SessionData from "../../../src/shared/SessionData.ts";
+import {getUrlData} from "../../../src/frontend/actions/getUrlData.ts";
+import {PageBox} from "../../../src/frontend/PageComponent.ts";
+import {SiteTools} from "../../../src/frontend/singleton/SiteTools.ts";
+import {renderComponent} from "../testRender.ts";
 
 describe("Site", () => {
-	beforeEach(() => {
-		vi.resetModules()
-		// vi.resetAllMocks()
-		// vi.restoreAllMocks()
-		
-		TestData.count = 0
+	vi.mock("../../../src/frontend/actions/getUrlData.ts", {spy: true});
+	
+	//use mocks to decrease async loading time:
+	vi.mock("../../../src/frontend/views/pages/Home.tsx", () => ({
+		default: {
+			component: async () => ({history: [], view: () => ""}),
+			isAllowed: () => false,
+		} satisfies PageBox,
+	}));
+	vi.mock("../../../src/frontend/views/pages/Questionnaire.tsx", () => ({
+		default: {
+			component: async () => ({history: [], view: () => ""}),
+			isAllowed: () => true,
+		} satisfies PageBox,
+	}));
+	
+	afterEach(() => {
+		vi.unstubAllGlobals();
+		vi.clearAllMocks();
+	})
+	afterAll(() => {
+		vi.resetAllMocks();
 	});
 	
-	let TestData = {
-		count: 0,
-		resolve: () => {}
-	}
-	vi.doMock("../../../src/frontend/views/pages/Test", async () => {
-		++TestData.count;
-		await new Promise<void>(r => {
-			TestData.resolve = r;
-		});
-		return {
-			default: () => "",
-		};
+	it("should load Init page when isInit = false", () => {
+		const component = renderComponent(Site, {session: {} as SessionData, options: {urlPath: "/", isInit: false} as FrontendOptions});
+		
+		expect(component.dom.querySelector("#init")).toBeDefined();
 	});
 	
-	it("should load the Home page when an empty page is provided", async() => {
-		const out = mq(Site, {homepageName: "", options: {urlPath: "", isInit: true} satisfies FrontendOptions});
+	it("should load the About page when an empty page is provided", () => {
+		const component = renderComponent(Site, {session: {} as SessionData, options: {urlPath: "/", isInit: true} as FrontendOptions});
 		
-		await wait(10);
-		out.redraw();
-		
-		out.should.have("#Home");
+		expect(component.dom.querySelector("#About")).toBeDefined();
 	});
 	
-	it("should load the Home page when a faulty page is provided", async() => {
-		const out = mq(Site, {homepageName: "DoesNotExist", options: {urlPath: "", isInit: true} satisfies FrontendOptions});
+	it("should load the Home page when logged in and an empty page is provided", () => {
+		const component = renderComponent(Site, {session: {isLoggedIn: true} as SessionData, options: {urlPath: "/", isInit: true} as FrontendOptions});
 		
-		out.should.have("#DoesNotExist");
-		
-		await wait(10);
-		out.redraw();
-		
-		out.should.have("#Home");
+		expect(component.dom.querySelector("#Home")).toBeDefined();
 	});
 	
-	it("should show the loading icon while a page is loading", async() => {
-		const out = mq(Site, {homepageName: "Test", options: {urlPath: "", isInit: true} satisfies FrontendOptions});
+	it("should load the Error page when a faulty page is provided", async () => {
+		vi.mocked(getUrlData).mockReturnValue({page: "DoesNotExist", query: ""});
+		const component = renderComponent(Site, {session: {} as SessionData, options: {urlPath: "/", isInit: true} as FrontendOptions});
 		
-		out.should.have(`.${css.LoadingSpinner}`); //default loader
-		expect(TestData.count, "Initial imports of Test").toBe(0);
-		
-		await wait(10);
-		out.redraw();
-		
-		out.should.have(`.${css.LoadingSpinner}`); //loader when loadPage is started
-		
-		TestData.resolve();
-		await wait(10);
-		out.redraw();
-		
-		out.should.not.have(css.LoadingSpinner);
-		out.should.have("#Test");
-		expect(TestData.count, "Imports of Test after loading").toBe(1);
+		expect(component.dom.querySelector("#Error")).toBeDefined();
 	});
 	
+	it("should load the Login page when page is not allowed", async () => {
+		vi.mocked(getUrlData).mockReturnValue({page: "Home", query: ""});
+		const component = renderComponent(Site, {session: {isLoggedIn: false} as SessionData, options: {urlPath: "/", isInit: true} as FrontendOptions});
+		
+		expect(component.dom.querySelector("#Login")).toBeDefined();
+	});
 	
+	it("should show the loading page while a page is loading", async() => {
+		vi.mocked(getUrlData).mockReturnValue({page: "Home", query: ""});
+		const component = renderComponent(Site, {session: {isLoggedIn: true} as SessionData, options: {urlPath: "/", isInit: true} as FrontendOptions});
+		
+		expect(component.dom.querySelector("#Loading")).toBeDefined();
+		
+		await wait(1);
+		component.redraw();
+		
+		expect(component.dom.querySelector("#Loading")).toBeNull();
+		expect(component.dom.querySelector("#Home")).toBeDefined();
+	});
 	
+	it("should load a new page on popstate", () => {
+		const component = renderComponent(Site, {session: {isLoggedIn: true} as SessionData, options: {urlPath: "/", isInit: true} as FrontendOptions});
+		
+		component.redraw();
+		
+		expect(component.dom.querySelector("#Home")).toBeDefined();
+		expect(component.dom.querySelector("#Questionnaire")).toBeNull();
+		
+		const event = new Event("popstate");
+		(event as any).state = {page: "Questionnaire", query: ""};
+		window.dispatchEvent(event);
+		component.redraw();
+		
+		expect(component.dom.querySelector("#Home")).toBeNull();
+		expect(component.dom.querySelector("#Questionnaire")).toBeDefined();
+	});
 	
+	it("should load a new page when switchPage is called", () => {
+		const component = renderComponent(Site, {session: {isLoggedIn: true} as SessionData, options: {urlPath: "/", isInit: true} as FrontendOptions});
+		
+		component.redraw();
+		
+		expect(component.dom.querySelector("#Home")).toBeDefined();
+		expect(component.dom.querySelector("#Questionnaire")).toBeNull();
+		
+		SiteTools.switchPage("Questionnaire");
+		component.redraw();
+		
+		expect(component.dom.querySelector("#Home")).toBeNull();
+		expect(component.dom.querySelector("#Questionnaire")).toBeDefined();
+	});
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	// it("should load the Home page when an empty page is provided", async() => {
-	// 	vi.mock(`../../../src/frontend/views/pages/Home`, {spy: true});
-	// 	const out = mq(Site, {homepageName: "", options: {urlPath: ""} satisfies FrontendOptions});
-	//
-	// 	await wait(10);
-	// 	out.redraw();
-	// 	out.should.have("#Home");
-	// 	expect(Home).toHaveBeenCalled();
-	// });
-	//
-	// it("should show the loading icon while a page is loading", async() => {
-	// 	//artificially delay import of Test:
-	// 	let resolve: () => void = () => {};
-	// 	vi.doMock("../../../src/frontend/views/pages/Test", async () => {
-	// 		await new Promise<void>(r => {
-	// 			resolve = r;
-	// 		});
-	// 		return {
-	// 			default: () => "",
-	// 		};
-	// 	});
-	// 	const out = mq(Site, {homepageName: "Test", options: {urlPath: ""} satisfies FrontendOptions});
-	//
-	// 	out.should.have(`.${css.LoadingSpinner}`); //default loader
-	// 	await wait(10);
-	// 	out.redraw();
-	//
-	// 	out.should.have(`.${css.LoadingSpinner}`); //loader when loadPage is started
-	// 	resolve(); //finish the import
-	// 	await wait(10);
-	// 	out.redraw();
-	//
-	// 	console.log(out.rootEl.innerHTML);
-	// 	out.should.not.have(css.LoadingSpinner);
-	// 	out.should.have("#Test");
-	//
-	// 	vi.doUnmock("../../../src/frontend/views/pages/Test")
-	// });
-	//
-	// it("should load the Home page when a faulty page is provided", async() => {
-	// 	vi.mock(`../../../src/frontend/views/pages/Home`, {spy: true});
-	// 	const out = mq(Site, {homepageName: "DoesNotExist", options: {urlPath: ""} satisfies FrontendOptions});
-	//
-	// 	out.should.have("#DoesNotExist");
-	// 	await wait(10);
-	// 	out.redraw();
-	// 	out.should.have("#Home");
-	// 	expect(Home).toHaveBeenCalled();
-	// });
-	//
-	// it("should load a specific page when a valid page name is provided", async() => {
-	// 	vi.mock(`../../../src/frontend/views/pages/Test`, {spy: true});
-	// 	const out = mq(Site, {homepageName: "Test", options: {urlPath: ""} satisfies FrontendOptions});
-	//
-	// 	//Before loading:
-	// 	out.should.have("#Test");
-	// 	expect(Test).toHaveBeenCalledTimes(0);
-	// 	await wait(10);
-	//
-	// 	out.redraw();
-	//
-	// 	//After loading:
-	// 	console.log(out.rootEl.innerHTML);
-	// 	out.should.have("#Test");
-	// 	expect(Test).toHaveBeenCalled();
-	// });
+	it("should only pushState when page is different", () => {
+		const component = renderComponent(Site, {session: {isLoggedIn: true} as SessionData, options: {urlPath: "/", isInit: true} as FrontendOptions});
+		window.history.pushState = vi.fn();
+		
+		expect(component.dom.querySelector("#Home")).toBeDefined();
+		SiteTools.switchPage("Home");
+		expect(window.history.pushState).not.toHaveBeenCalled();
+		
+		SiteTools.switchPage("Questionnaire");
+		expect(window.history.pushState).toHaveBeenCalledOnce();
+	});
 });

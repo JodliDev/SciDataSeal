@@ -128,13 +128,13 @@ export default PrivatePage(async () => {
 					</div>
 					<br/>
 					<div class="horizontal">
-						<div class="bigButton clickable" onclick={reloadData} {...tooltip(Lang.get("tooltipReload"))}>
+						<div class="reloadBtn bigButton clickable" onclick={reloadData} {...tooltip(Lang.get("tooltipReload"))}>
 							{Lang.get("reload")}
 							<FeedbackIcon callback={reloadingFeedback}/>
 						</div>
 						<a class="bigButton" href={blobUrl} download="data.csv">{Lang.get("download")}</a>
 						<div
-							class="bigButton clickable"
+							class="compareBtn bigButton clickable"
 							{...tooltip(Lang.get("tooltipCompare"))}
 							{...floatingMenu("compare", close =>
 								<div>

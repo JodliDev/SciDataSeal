@@ -17,12 +17,18 @@ interface FeedbackIconOptions {
 	class?: string
 }
 
+const STATE_REMOVAL_DELAY = 2000;
+
+/**
+ * An icon with an external callback to easily visualize loading states (loading, success, failed).
+ * Success and failed states will only be shown for {@link STATE_REMOVAL_DELAY} ms
+ */
 export default FixedComponent<FeedbackIconOptions>(vNode => {
 	const {reserveSpace, callback} = vNode.attrs
 	let isLoadingState = false;
 	let showIconState = false;
 	let successState = false;
-	let timeoutId = 0;
+	let timeoutId: NodeJS.Timeout | number = 0;
 	
 	callback.setSuccess = (success: boolean) => {
 		showIconState = true;
@@ -34,7 +40,7 @@ export default FixedComponent<FeedbackIconOptions>(vNode => {
 		timeoutId = window.setTimeout(() => {
 			showIconState = false;
 			m.redraw();
-		}, 2000);
+		}, STATE_REMOVAL_DELAY);
 	}
 	callback.setLoading = (isLoading: boolean) => {
 		isLoadingState = isLoading;

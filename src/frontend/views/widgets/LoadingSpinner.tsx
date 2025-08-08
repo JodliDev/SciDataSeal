@@ -6,6 +6,9 @@ interface Attributes {
 	class?: string
 }
 
+/**
+ * Shows a loading animation.
+ */
 export default FixedComponent<Attributes>((vNode) => {
 	return {
 		view: () => (

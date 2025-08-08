@@ -12,6 +12,11 @@ interface OutputEvents {
 	onmousemove?: (e: MouseEvent) => void;
 }
 
+/**
+ * Represents a floating menu that can be dynamically displayed and interacted with on the page.
+ * This class manages the opening, closing, and positioning of the menu element, as well as
+ * responding to various user interactions.
+ */
 class FloatingMenu {
 	public static readonly openedMenus: Record<string, FloatingMenu> = {};
 	
@@ -26,6 +31,10 @@ class FloatingMenu {
 		this.options = options;
 	}
 	
+	/**
+	 * Validates and adjusts the position of the view element to ensure that it remains within
+	 * the visible boundaries of the viewport, including adding spacing when necessary.
+	 */
 	private validatePosition(): void {
 		if(!this.view)
 			return;
@@ -71,6 +80,14 @@ class FloatingMenu {
 		this.closeMenu();
 		event.stopPropagation();
 	}
+	
+	/**
+	 * Creates and displays a dropdown menu at the appropriate position based on the provided event's target element.
+	 * Initializes the dropdown's view element, calculates its position on the screen, and mounts the menu.
+	 * Adds event listeners for handling interactions such as closing the dropdown when clicking outside.
+	 *
+	 * @param event - The mouse event that triggers the creation of the dropdown. Used to determine the dropdown's position on the screen.
+	 */
 	private createDropdown(event: MouseEvent): void {
 		if(this.view) {
 			this.closeMenu();
@@ -120,6 +137,13 @@ class FloatingMenu {
 	}
 	
 	
+	/**
+	 * Closes the currently opened menu by performing the following actions:
+	 * - Removes the menu's reference from the list of opened menus.
+	 * - Detaches the associated event listener for clicks outside the menu.
+	 * - Removes the menu's view element from its parent in the DOM if it exists.
+	 * - Clears the reference to the menu's view.
+	 */
 	public closeMenu(): void {
 		delete FloatingMenu.openedMenus[this.id];
 		document.removeEventListener("click", this.clickOutside);
@@ -130,6 +154,12 @@ class FloatingMenu {
 		
 		this.view = null;
 	}
+	
+	/**
+	 * Returns event attributes corresponding to the configured event name.
+	 *
+	 * @return An object containing event handler functions for the specified event type.
+	 */
 	public getAttributes(): OutputEvents {
 		switch(this.options?.eventName) {
 			default:
@@ -165,11 +195,30 @@ class FloatingMenu {
 				};
 		}
 	}
+	
+	/**
+	 * Checks if the current view contains the specified element.
+	 *
+	 * @param otherView - The element to check for containment within the current view.
+	 * @return Returns true if the specified element is contained within the current view, otherwise false.
+	 */
 	public contains(otherView: Element): boolean {
 		return this.view?.contains(otherView) ?? false;
 	}
 }
 
+/**
+ * Creates a floating menu that will be place on above all elements below the element `floatingMenu` is used on.
+ *
+ * Usage example:
+ * ```
+ * <div {...floatingMenu("menu", () => <div>Menu content</div>)}>Button</div>
+ * ```
+ *
+ * @param id - A unique identifier for the floating menu. The id is used only when the menu is opened.
+ * @param menu - A callback function to render the menu. The argument `close` can be used to close the menu prematurely.
+ * @param options - An optional configuration object for the floating menu.
+ */
 export default function floatingMenu(id: string, menu: (close: () => void) => Child, options: Options = {}): OutputEvents {
 	const floatingMenu = FloatingMenu.openedMenus.hasOwnProperty(id)
 		? FloatingMenu.openedMenus[id]
@@ -178,6 +227,27 @@ export default function floatingMenu(id: string, menu: (close: () => void) => Ch
 	return floatingMenu.getAttributes();
 }
 
-export function tooltip(description: string) {
+/**
+ * Displays a tooltip with a given description.
+ * @see floatingMenu
+ *
+ * @param description - The text to display in the tooltip.
+ */
+export function tooltip(description: string): OutputEvents {
 	return floatingMenu(description, () => description, {eventName: "mousemove"});
 }
+
+/**
+ * Closes all menus that are currently opened.
+ * Mostly useful for unit testing.
+ */
+export function closeAllMenus() {
+	for(const key in FloatingMenuFotTesting.openedMenus) {
+		FloatingMenuFotTesting.openedMenus[key].closeMenu();
+	}
+}
+
+/**
+ * Used for unit tests
+ */
+export class FloatingMenuFotTesting extends FloatingMenu {} //used for unit testing

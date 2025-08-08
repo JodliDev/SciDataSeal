@@ -24,6 +24,9 @@ export interface IconAttributes {
 	iconKey: keyof typeof IconType,
 }
 
+/**
+ * Shows a svg icon.
+ */
 export default FixedComponent<IconAttributes>(() => {
 	return {
 		view: (vNode) => m.trust(IconType[vNode.attrs.iconKey])

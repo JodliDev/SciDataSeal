@@ -15,7 +15,7 @@ export default function Login(): PageContent {
 	
 	return {
 		history: [],
-		view: () =>  <div class="fillSpace horizontal hAlignCenter vAlignCenter">
+		view: () =>  <div id="Login" class="fillSpace horizontal hAlignCenter vAlignCenter">
 			<Form<LoginInterface> endpoint="/login" onSent={onSent} submitLabel={Lang.get("login")}>
 				<label>
 					<small>{Lang.get("username")}</small>

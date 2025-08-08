@@ -7,7 +7,7 @@ import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 import {Btn} from "./Btn.tsx";
 import DeleteInterface from "../../../shared/data/DeleteInterface.ts";
 
-type FormOptions<T extends PostDataStructureInterface> = {
+export type FormOptions<T extends PostDataStructureInterface> = {
 	endpoint: T["Endpoint"],
 	id?: number,
 	deleteEndPoint?: DeleteInterface["Endpoint"],
@@ -21,6 +21,10 @@ type FormOptions<T extends PostDataStructureInterface> = {
 	class?: string
 };
 
+/**
+ * Provides a <form> that handles sending data to the backend, handling and returning the response,
+ * and displaying loading states and backend feedback. Also provides an optional delete functionality.
+ */
 function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T>>) {
 	let errorMessage: string = "";
 	const feedback = new FeedbackCallBack();
@@ -106,4 +110,8 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 	};
 }
 
+/**
+ * Provides a <form> that handles sending data to the backend, handling and returning the response,
+ * and displaying loading states and backend feedback. Also provides an optional delete functionality.
+ */
 export default FixedComponent(Form);
