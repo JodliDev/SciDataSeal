@@ -34,25 +34,17 @@ export default PrivatePage(async () => {
 	
 	function onBeforeSend(data: Record<string, unknown>): GetQuestionnaireDataPostInterface["Response"] | void {
 		dataForReload = data;
-		let sum = "";
-		for(const key in data as Record<string, unknown>) {
-			sum += data[key];
-		}
-		hash = generateHash(sum).toString();
+		hash = generateHash(JSON.stringify(data)).toString();
 		
 		const csv = localStorage.getItem(hash);
 		if(csv) {
-			try {
-				hashTime = parseInt(localStorage.getItem(`${hash}-time`) ?? "0");
+			hashTime = parseInt(localStorage.getItem(`${hash}-time`) ?? "0");
+			if(hashTime) {
 				return {csv: csv};
 			}
-			catch {
-				console.log(234)
-				localStorage.setItem(`${hash}-time`, Date.now().toString());
-			}
 		}
-		else
-			localStorage.setItem(`${hash}-time`, Date.now().toString());
+		
+		localStorage.setItem(`${hash}-time`, Date.now().toString());
 	}
 	
 	function onSent(response: GetQuestionnaireDataPostInterface["Response"]) {
