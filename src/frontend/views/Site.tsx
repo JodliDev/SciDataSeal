@@ -65,7 +65,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 	}
 	
 	function switchPage(page: string, newQuery?: `?${string}`): void {
-		if(page != pageName || newQuery != currentQuery) {
+		if(page != pageName || (newQuery ?? "") != currentQuery) {
 			const path = `${page}${newQuery ?? ""}`;
 			window.history.pushState({page: page, query: newQuery} satisfies DocumentPageState, "", path);
 		}
