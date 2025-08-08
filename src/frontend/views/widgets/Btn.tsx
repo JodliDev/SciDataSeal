@@ -1,7 +1,7 @@
 import m from "mithril"
 import css from "./btn.module.css"
 import {FixedComponent} from "../../mithril-polyfill.ts";
-import {tooltip} from "../../actions/FloatingMenu.tsx";
+import {tooltip} from "../../actions/FloatingMenu.ts";
 import Icon, {IconAttributes} from "./Icon.tsx";
 
 interface BtnAttributes extends IconAttributes{

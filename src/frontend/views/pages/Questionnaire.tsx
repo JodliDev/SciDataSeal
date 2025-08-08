@@ -4,7 +4,7 @@ import getData from "../../actions/getData.ts";
 import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import A from "../widgets/A.tsx";
-import {tooltip} from "../../actions/FloatingMenu.tsx";
+import {tooltip} from "../../actions/FloatingMenu.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {

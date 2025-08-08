@@ -7,13 +7,14 @@ import Form from "../widgets/Form.tsx";
 import EditUserInterface from "../../../shared/data/EditUserInterface.ts";
 import GetUserInterface from "../../../shared/data/GetUserInterface.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
-import {tooltip} from "../../actions/FloatingMenu.tsx";
+import {tooltip} from "../../actions/FloatingMenu.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	async function onSent(response: EditUserInterface["Response"]): Promise<void> {
-		if(!id)
+		if(!id) {
 			SiteTools.switchPage("EditUser", `?id=${response.userId}`);
+		}
 	}
 	function onDeleted() {
 		SiteTools.switchPage("ListUser");

@@ -57,12 +57,14 @@ class FloatingMenu {
 	 */
 	private clickOutside = (event: Event) => {
 		const target = event.target as Element;
-		if(this.view?.contains(target))
+		if(this.view?.contains(target)) {
 			return;
+		}
 		if(this.options?.connectedMenus) {
 			for(const name of this.options.connectedMenus) {
-				if(FloatingMenu.openedMenus[name]?.contains(target))
+				if(FloatingMenu.openedMenus[name]?.contains(target)) {
 					return;
+				}
 			}
 		}
 		
@@ -70,8 +72,9 @@ class FloatingMenu {
 		event.stopPropagation();
 	}
 	private createDropdown(event: MouseEvent): void {
-		if(this.view)
+		if(this.view) {
 			this.closeMenu();
+		}
 		this.view = document.createElement("div");
 		
 		const target = event.target as HTMLElement;
@@ -121,8 +124,9 @@ class FloatingMenu {
 		delete FloatingMenu.openedMenus[this.id];
 		document.removeEventListener("click", this.clickOutside);
 		
-		if(this.view?.parentElement != null)
+		if(this.view?.parentElement != null) {
 			this.view.parentElement.removeChild(this.view);
+		}
 		
 		this.view = null;
 	}
@@ -132,10 +136,12 @@ class FloatingMenu {
 			case "click":
 				return {
 					onclick: (event: MouseEvent) => {
-						if(this.view)
+						if(this.view) {
 							this.closeMenu();
-						else
+						}
+						else {
 							this.createDropdown(event);
+						}
 					}
 				};
 			case "mouseenter":

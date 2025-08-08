@@ -9,12 +9,14 @@ import ListBlockchainAccountsInterface from "../../../shared/data/ListBlockchain
 import Form from "../widgets/Form.tsx";
 import GetNewDenotation from "../../../shared/data/GetNewDenotation.ts";
 import GenerateRandomString from "../../../shared/data/GenerateRandomString.ts";
-import {tooltip} from "../../actions/FloatingMenu.tsx";
+import {tooltip} from "../../actions/FloatingMenu.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	async function onSent(response: EditQuestionnaireInterface["Response"]): Promise<void> {
-		SiteTools.switchPage("Questionnaire", `?id=${response.questionnaireId}`);
+		if(id != response.questionnaireId) {
+			SiteTools.switchPage("Questionnaire", `?id=${response.questionnaireId}`);
+		}
 	}
 	function onDeleted() {
 		SiteTools.switchPage("ListQuestionnaires");
@@ -27,8 +29,9 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		}
 	}
 	async function changeAccount(event: Event) {
-		if(id)
+		if(id) {
 			return;
+		}
 		
 		const target = event.target as HTMLSelectElement;
 		disableAccountSwitch = true;

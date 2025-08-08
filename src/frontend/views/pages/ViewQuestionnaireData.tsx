@@ -13,7 +13,7 @@ import createDataBlob from "../../actions/createDataBlob.ts";
 import postData from "../../actions/postData.ts";
 import {Change, diffChars} from "diff";
 import {GetQuestionnaireDataPostInterface} from "../../../shared/data/GetQuestionnaireDataInterface.ts";
-import floatingMenu, {tooltip} from "../../actions/FloatingMenu.tsx";
+import floatingMenu, {tooltip} from "../../actions/FloatingMenu.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
@@ -75,22 +75,25 @@ export default PrivatePage(async () => {
 			onSent(response);
 			reloadingFeedback.setSuccess(true);
 		}
-		else
+		else {
 			reloadingFeedback.setSuccess(false);
+		}
 	}
 	
 	async function compareFile(event: Event) {
 		const target = event.target as HTMLInputElement;
-		if(!target.files?.length)
+		if(!target.files?.length) {
 			return;
+		}
 		const file = target.files[0];
 		
 		
 		const original = localStorage.getItem(hash);
 		const compare = await file.text();
 		
-		if(!original || !compare)
+		if(!original || !compare) {
 			return;
+		}
 		
 		diff = diffChars(compare, original);
 		isDifferent = !!diff.find(entry => entry.added || entry.removed);

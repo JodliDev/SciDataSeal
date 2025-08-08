@@ -6,13 +6,14 @@ import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import GetBlockchainInterface from "../../../shared/data/GetBlockchainInterface.ts";
-import {tooltip} from "../../actions/FloatingMenu.tsx";
+import {tooltip} from "../../actions/FloatingMenu.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	async function onSent(response: EditBlockchainInterface["Response"]) {
-		if(id != response.blockchainAccountId)
+		if(id != response.blockchainAccountId) {
 			SiteTools.switchPage("BlockchainAccount", `?id=${response.blockchainAccountId}`);
+		}
 	}
 	function onDeleted() {
 		SiteTools.switchPage("ListBlockchainAccounts");

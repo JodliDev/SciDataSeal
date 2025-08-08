@@ -2,7 +2,7 @@ import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
 import A from "../widgets/A.tsx";
-import {tooltip} from "../../actions/FloatingMenu.tsx";
+import {tooltip} from "../../actions/FloatingMenu.ts";
 import Icon from "../widgets/Icon.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 
@@ -35,7 +35,6 @@ export default PrivatePage(async () => {
 			<div class="fillSpace"></div>
 			<A page="UserSettings" class="clickable selfAlignEnd">
 				<Icon iconKey="userSettings"/>
-				{/*{Lang.get("viewData")}*/}
 			</A>
 		</>
 	};
