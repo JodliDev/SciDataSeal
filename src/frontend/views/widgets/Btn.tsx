@@ -19,10 +19,10 @@ const Default = FixedComponent<BtnAttributes>(() => {
 	}
 });
 
-interface PopoverAttributes extends BtnAttributes{
+interface TooltipAttributes extends BtnAttributes{
 	description: string
 }
-const PopoverBtn = FixedComponent<PopoverAttributes>(() => {
+const TooltipBtn = FixedComponent<TooltipAttributes>(() => {
 	return {
 		view: (vNode) =>
 			<Default {...vNode.attrs} {...tooltip(vNode.attrs.description)} iconKey={vNode.attrs.iconKey} onclick={vNode.attrs.onclick}/>
@@ -35,4 +35,4 @@ const Empty = FixedComponent<{}>(() => {
 	}
 });
 
-export const Btn = {Default, PopoverBtn, Empty};
+export const Btn = {Default, TooltipBtn: TooltipBtn, Empty};

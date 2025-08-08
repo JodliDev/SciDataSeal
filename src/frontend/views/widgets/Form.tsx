@@ -26,11 +26,13 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 	const feedback = new FeedbackCallBack();
 	
 	async function deleteEntry() {
-		if(!confirm(Lang.get("confirmDeleteEntry")))
+		if(!confirm(Lang.get("confirmDeleteEntry"))) {
 			return;
+		}
 		const {id, deleteEndPoint} = vNode.attrs;
-		if(!id || !deleteEndPoint)
+		if(!id || !deleteEndPoint) {
 			return;
+		}
 		feedback.setLoading(true);
 		try {
 			await postData(deleteEndPoint, {id: id});
@@ -55,13 +57,16 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 				const key = entry[0];
 				if(key.endsWith("[]")) {
 					const realKey = key.substring(0, key.length - 2);
-					if(data.hasOwnProperty(realKey))
+					if(data.hasOwnProperty(realKey)) {
 						(data[realKey] as unknown[]).push(entry[1]);
-					else
+					}
+					else {
 						data[realKey] = [entry[1]];
+					}
 				}
-				else
+				else {
 					data[entry[0]] = entry[1];
+				}
 			}
 			const uploadData = vNode.attrs.filterData ? vNode.attrs.filterData(data) : data;
 			const pre = vNode.attrs.onBeforeSend && vNode.attrs.onBeforeSend(uploadData);
@@ -76,26 +81,28 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 	}
 	
 	return {
-		view: ({children}: m.VnodeDOM<FormOptions<T>>) => (
-			<form {...vNode.attrs} onsubmit={onSubmit} class={`vertical hAlignCenter ${vNode.attrs.class ?? ""}`}>
-				<div class="warn">{errorMessage}</div>
-				<div class="vertical hAlignLeft">
-					{!!vNode.attrs.id && <input type="hidden" name="id" value={vNode.attrs.id}/>}
-					{children}
-					<div class="entry horizontal vAlignCenter selfAlignStretch">
-						{!!vNode.attrs.deleteEndPoint &&
-							feedback.isReady()
-								? <Btn.PopoverBtn class="warn" iconKey="delete" description={Lang.get("tooltipDeleteEntry")} onclick={deleteEntry}/>
+		view: (newVNode: m.VnodeDOM<FormOptions<T>>) => {
+			vNode = newVNode;
+			return (
+				<form {...vNode.attrs} onsubmit={onSubmit} class={`vertical hAlignCenter ${vNode.attrs.class ?? ""}`}>
+					<div class="warn">{errorMessage}</div>
+					<div class="vertical hAlignLeft">
+						{!!vNode.attrs.id && <input type="hidden" name="id" value={vNode.attrs.id}/>}
+						{vNode.children}
+						<div class="entry horizontal vAlignCenter selfAlignStretch">
+							{!!vNode.attrs.deleteEndPoint && feedback.isReady()
+								? <Btn.TooltipBtn class="warn" iconKey="delete" description={Lang.get("tooltipDeleteEntry")} onclick={deleteEntry}/>
 								: <Btn.Empty/>
-						}
-						
-						<div class="fillSpace"></div>
-						<FeedbackIcon callback={feedback} reserveSpace={true}/>
-						<input type="submit" value={vNode.attrs.submitLabel ?? Lang.get("save")} disabled={!feedback.isReady()}/>
+							}
+							
+							<div class="fillSpace"></div>
+							<FeedbackIcon callback={feedback} reserveSpace={true}/>
+							<input type="submit" value={vNode.attrs.submitLabel ?? Lang.get("save")} disabled={!feedback.isReady()}/>
+						</div>
 					</div>
-				</div>
-			</form>
-		)
+				</form>
+			)
+		}
 	};
 }
 
