@@ -23,7 +23,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			<div class="horizontal hAlignCenter wrapContent">
 				{columns.map(column =>
 					<label>
-						<small>{Lang.get("colon", column)}</small>
+						<small>{column}</small>
 						<textarea placeholder={Lang.get("columnData")} name={column}></textarea>
 					</label>
 				)}
