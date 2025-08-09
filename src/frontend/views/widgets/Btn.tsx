@@ -1,6 +1,6 @@
 import m from "mithril"
 import css from "./btn.module.css"
-import {FixedComponent} from "../../mithril-polyfill.ts";
+import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 import Icon, {IconAttributes} from "./Icon.tsx";
 
@@ -13,7 +13,7 @@ interface BtnAttributes extends IconAttributes{
 /**
  * A button with an icon and an optional label
  */
-const Default = FixedComponent<BtnAttributes>(() => {
+const Default = TsClosureComponent<BtnAttributes>(() => {
 	return {
 		view: (vNode) => <div {...vNode.attrs} class={`${css.Btn} ${vNode.attrs.iconKey} ${vNode.attrs.class ?? ""} clickable horizontal hAlignCenter vAlignCenter`} onclick={vNode.attrs.onclick}>
 			<Icon iconKey={vNode.attrs.iconKey}/>
@@ -29,7 +29,7 @@ interface TooltipAttributes extends BtnAttributes{
 /**
  * A default button with a mouseover tooltip
  */
-const TooltipBtn = FixedComponent<TooltipAttributes>(() => {
+const TooltipBtn = TsClosureComponent<TooltipAttributes>(() => {
 	return {
 		view: (vNode) =>
 			<Default {...vNode.attrs} {...tooltip(vNode.attrs.description)} iconKey={vNode.attrs.iconKey} onclick={vNode.attrs.onclick}/>
@@ -39,7 +39,7 @@ const TooltipBtn = FixedComponent<TooltipAttributes>(() => {
 /**
  * Empty space in the size of a button
  */
-const Empty = FixedComponent<{}>(() => {
+const Empty = TsClosureComponent<{}>(() => {
 	return {
 		view: () => <div class={`${css.Btn} ${css.empty}`}></div>
 	}

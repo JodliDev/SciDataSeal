@@ -7,7 +7,7 @@ import userListSvg from "../../assets/icons/userList.svg?raw";
 import userSettingsSvg from "../../assets/icons/userSettings.svg?raw";
 import viewSvg from "../../assets/icons/view.svg?raw";
 import m from "mithril";
-import {FixedComponent} from "../../mithril-polyfill.ts";
+import {TsClosureComponent} from "../../mithril-polyfill.ts";
 
 const IconType = {
 	add: addSvg,
@@ -27,7 +27,7 @@ export interface IconAttributes {
 /**
  * Shows a svg icon.
  */
-export default FixedComponent<IconAttributes>(() => {
+export default TsClosureComponent<IconAttributes>(() => {
 	return {
 		view: (vNode) => m.trust(IconType[vNode.attrs.iconKey])
 	}

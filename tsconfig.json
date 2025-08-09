@@ -8,7 +8,7 @@
 		"skipLibCheck": true,
 		"jsx": "react",
 		"jsxFactory": "m",
-		"jsxFragmentFactory": "m.fragment", //see mithril-polyfill.ts
+		"jsxFragmentFactory": "m.Fragment",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"allowImportingTsExtensions": true,

@@ -1,6 +1,6 @@
 import m from "mithril";
 import {SiteTools} from "../../singleton/SiteTools.ts";
-import {FixedComponent} from "../../mithril-polyfill.ts";
+import {TsClosureComponent} from "../../mithril-polyfill.ts";
 
 interface Attributes {
 	page: string,
@@ -11,7 +11,7 @@ interface Attributes {
 /**
  * Mimics the behavior of <a> but prevents url calls and uses SiteTools.switchPage instead.
  */
-export default FixedComponent<Attributes>(() => {
+export default TsClosureComponent<Attributes>(() => {
 	const onClick = (page: string, query: `?${string}` | undefined, event: MouseEvent) => {
 		event.preventDefault();
 		SiteTools.switchPage(page, query);

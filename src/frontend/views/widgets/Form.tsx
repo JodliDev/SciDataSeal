@@ -2,7 +2,7 @@ import m from "mithril";
 import postData from "../../actions/postData.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import PostDataStructureInterface from "../../../shared/PostDataStructureInterface.ts";
-import {FixedComponent} from "../../mithril-polyfill.ts";
+import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 import {Btn} from "./Btn.tsx";
 import DeleteInterface from "../../../shared/data/DeleteInterface.ts";
@@ -114,4 +114,4 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
  * Provides a <form> that handles sending data to the backend, handling and returning the response,
  * and displaying loading states and backend feedback. Also provides an optional delete functionality.
  */
-export default FixedComponent(Form);
+export default TsClosureComponent(Form);

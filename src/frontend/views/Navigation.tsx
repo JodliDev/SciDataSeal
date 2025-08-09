@@ -1,4 +1,4 @@
-import {FixedComponent} from "../mithril-polyfill.ts";
+import {TsClosureComponent} from "../mithril-polyfill.ts";
 import m from "mithril";
 import css from "./Navigation.module.css";
 import {HistoryEntry} from "../PageComponent.ts";
@@ -11,7 +11,7 @@ interface Attributes {
 /**
  * Main navigation used by `src/frontend/views/Site.tsx`
  */
-export default FixedComponent<Attributes>(() => {
+export default TsClosureComponent<Attributes>(() => {
 	return {
 		view: (vNode) => (
 			<div class={`horizontal vAlignCenter selfAlignStretch ${css.Navigation}`}>{vNode.attrs.entries.map(entry =>

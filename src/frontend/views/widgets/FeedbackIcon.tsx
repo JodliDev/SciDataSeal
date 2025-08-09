@@ -1,7 +1,7 @@
 import m from "mithril";
 import checkCircleFilledSvg from "../../assets/icons/success.svg?raw";
 import failSvg from "../../assets/icons/failed.svg?raw";
-import {FixedComponent} from "../../mithril-polyfill.ts";
+import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import LoadingSpinner from "./LoadingSpinner.tsx";
 import css from "./FeedbackIcon.module.css";
 
@@ -23,7 +23,7 @@ const STATE_REMOVAL_DELAY = 2000;
  * An icon with an external callback to easily visualize loading states (loading, success, failed).
  * Success and failed states will only be shown for {@link STATE_REMOVAL_DELAY} ms
  */
-export default FixedComponent<FeedbackIconOptions>(vNode => {
+export default TsClosureComponent<FeedbackIconOptions>(vNode => {
 	const {reserveSpace, callback} = vNode.attrs
 	let isLoadingState = false;
 	let showIconState = false;
