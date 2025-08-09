@@ -7,14 +7,16 @@ export interface RenderModel {
 	dom: HTMLElement;
 }
 function createModel(rootNode: m.Component): RenderModel {
-	const redraw = () => {
-		m.render(window.document.body, m(rootNode));
-	};
+	const root = window.document.body;
+	
+	function redraw() {
+		m.render(root, m(rootNode));
+	}
 	redraw();
 	
 	return {
 		redraw: redraw,
-		dom: window.document.body
+		dom: root
 	};
 }
 
