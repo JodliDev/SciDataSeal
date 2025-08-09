@@ -14,9 +14,13 @@ interface Attributes {
 export default TsClosureComponent<Attributes>(() => {
 	return {
 		view: (vNode) => (
-			<div class={`horizontal vAlignCenter selfAlignStretch ${css.Navigation}`}>{vNode.attrs.entries.map(entry =>
-				<A class={css.entry} page={entry.page} query={entry.query}>{entry.label}</A>
-			)}</div>
+			<div class={`horizontal hAlignEnd selfAlignStretch ${css.Navigation}`}>
+				<div class={`horizontal ${css.alignBox}`}>
+					{vNode.attrs.entries.map(entry =>
+						<A class={css.entry} page={entry.page} query={entry.query}>{entry.label}</A>
+					)}
+				</div>
+			</div>
 		)
 	}
 });
