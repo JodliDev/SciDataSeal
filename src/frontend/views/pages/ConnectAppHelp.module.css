@@ -1,0 +1,12 @@
+.box {
+	white-space: wrap;
+	word-wrap: anywhere;
+	
+	
+	.data {
+		white-space: wrap;
+		display: inline;
+		padding: 2px 3px;
+		background-color: var(--color-accent-light);
+	}
+}

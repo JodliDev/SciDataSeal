@@ -58,7 +58,7 @@ input[type="checkbox"], input[type="radio"] {
 .inputLike {
 	min-width: var(--form-element-width);
 	padding: 10px;
-	margin: 5px;
+	margin: 0 5px;
 }
 
 select {
