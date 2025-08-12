@@ -162,17 +162,19 @@ export default PrivatePage(async () => {
 					}
 				</div>
 				: <Form<GetQuestionnaireDataPostInterface> endpoint="/getQuestionnaireData" submitLabel={Lang.get("load")} onBeforeSend={onBeforeSend} onSent={onSent}>
-					<div class={`labelLike ${css.preselectBox}`} {...tooltip(Lang.get("tooltipSelectQuestionnaire"))}>
-						<small>{Lang.get("selectQuestionnaire")}</small>
-						<div class={`inputLike horizontal`}>
-							<div class="horizontal wrapContent fillSpace">
-								{questionnaires?.map(q =>
-									<span class={`clickable ${css.entry}`} onclick={() => fillQuestionnaire(q.questionnaireId)}>{q.questionnaireName}</span>
-								)}
+					{!!questionnaires?.length &&
+						<div class={`labelLike ${css.preselectBox}`} {...tooltip(Lang.get("tooltipSelectQuestionnaire"))}>
+							<small>{Lang.get("selectQuestionnaire")}</small>
+							<div class={`inputLike horizontal`}>
+								<div class="horizontal wrapContent fillSpace">
+									{questionnaires?.map(q =>
+										<span class={`clickable ${css.entry}`} onclick={() => fillQuestionnaire(q.questionnaireId)}>{q.questionnaireName}</span>
+									)}
+								</div>
+								<FeedbackIcon callback={fromListFeedback}/>
 							</div>
-							<FeedbackIcon callback={fromListFeedback}/>
 						</div>
-					</div>
+					}
 					<div class="horizontal hAlignCenter wrapContent">
 						<label {...tooltip(Lang.get("tooltipBlockchainPrivateKey"))}>
 							<small>{Lang.get("publicKey")}</small>
