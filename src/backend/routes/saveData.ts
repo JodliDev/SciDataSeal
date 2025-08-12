@@ -27,7 +27,7 @@ export default function saveData(db: DbType): express.Router {
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
 			.innerJoin("BlockchainAccount", "Questionnaire.blockchainAccountId", "BlockchainAccount.blockchainAccountId")
-			.select(["blockchainType", "privateKey", "columns", "questionnaireId", "Questionnaire.userId as userId"])
+			.select(["blockchainType", "privateKey", "columns", "blockchainDenotation", "Questionnaire.userId as userId"])
 			.where("questionnaireId", "=", questionnaireId)
 			.where("apiPassword", "=", pass)
 			.limit(1)
@@ -48,7 +48,7 @@ export default function saveData(db: DbType): express.Router {
 		}
 		
 		const blockChain = getBlockchain(questionnaire.blockchainType);
-		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.questionnaireId, createCsvLine(dataArray), false, pass);
+		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.blockchainDenotation, createCsvLine(dataArray), false, pass);
 		
 		await db.insertInto("DataLog")
 			.values({
