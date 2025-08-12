@@ -2,7 +2,6 @@ import express from "express";
 import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
-import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import getBlockchain from "../actions/getBlockchain.ts";
 import EditBlockchainInterface from "../../shared/data/EditBlockchainInterface.ts";
@@ -16,7 +15,7 @@ import TranslatedException from "../../shared/exceptions/TranslatedException.ts"
 export default function editBlockchainAccount(db: DbType): express.Router {
 	const router = express.Router();
 	
-	addPostRoute<EditBlockchainInterface>("/editBlockchainAccount", router, async (data, request) => {
+	addPostRoute<EditBlockchainInterface>("/editBlockchainAccount", router, async (data) => {
 		if(!data.blockchainName || !data.blockchainType || !data.privateKey)
 			throw new TranslatedException("errorMissingData");
 		
@@ -27,15 +26,12 @@ export default function editBlockchainAccount(db: DbType): express.Router {
 		if(!isValidBackendString(data.privateKey))
 			throw new TranslatedException("errorFaultyData", "privateKey");
 		
-		const session = await getLoggedInSessionData(db, request);
-		
 		const blockChain = getBlockchain(data.blockchainType);
 		
 		if(data.id) {
 			const account = await db.selectFrom("BlockchainAccount")
 				.select(["blockchainAccountId"])
 				.where("blockchainAccountId", "=", data.id)
-				.where("userId", "=", session.userId)
 				.executeTakeFirst();
 			
 			if(!account)
@@ -60,7 +56,6 @@ export default function editBlockchainAccount(db: DbType): express.Router {
 			const insert = await db
 				.insertInto("BlockchainAccount")
 				.values({
-					userId: session.userId,
 					blockchainName: data.blockchainName,
 					blockchainType: data.blockchainType,
 					privateKey: data.privateKey,
