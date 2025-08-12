@@ -44,7 +44,8 @@ export default PrivatePage(async () => {
 			}
 		}
 		
-		localStorage.setItem(`${hash}-time`, Date.now().toString());
+		hashTime = Date.now();
+		localStorage.setItem(`${hash}-time`, hashTime.toString());
 	}
 	
 	function onSent(response: GetQuestionnaireDataPostInterface["Response"]) {
