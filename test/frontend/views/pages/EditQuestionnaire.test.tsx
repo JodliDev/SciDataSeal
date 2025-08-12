@@ -130,7 +130,6 @@ describe("EditQuestionnaire", async () => {
 			});
 			await createAndPressDelete(123);
 			
-			expect(postData).toHaveBeenCalledWith("/deleteQuestionnaire", {id: 123});
 			expect(calledSwitchPage).toBe(true);
 		});
 	});

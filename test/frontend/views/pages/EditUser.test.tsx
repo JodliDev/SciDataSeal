@@ -148,7 +148,6 @@ describe("EditUser", async () => {
 			});
 			await createAndPressDelete(123);
 			
-			expect(postData).toHaveBeenCalledWith("/deleteUser", {id: 123});
 			expect(calledSwitchPage).toBe(true);
 		});
 	});

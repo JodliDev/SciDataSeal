@@ -72,7 +72,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				{label: Lang.get("createQuestionnaire"), page: "Questionnaire"},
 			],
 		view: () =>
-			<Form<EditQuestionnaireInterface> id={id} endpoint="/editQuestionnaire" deleteEndPoint="/deleteQuestionnaire" onSent={onSent} onDeleted={onDeleted}>
+			<Form<EditQuestionnaireInterface> id={id} endpoint="/editQuestionnaire" addDeleteBtnFor={id ? "questionnaire" : undefined} onSent={onSent} onDeleted={onDeleted}>
 				<label>
 					<small>{Lang.get("questionnaireName")}</small>
 					<input type="text" name="questionnaireName" value={questionnaire?.questionnaireName}/>

@@ -140,7 +140,7 @@ describe("Form", () => {
 		
 		it("should call delete endpoint if delete button is triggered", async () => {
 			options.id = 123;
-			options.deleteEndPoint = "/deleteUser"
+			options.addDeleteBtnFor = "user"
 			options.onDeleted = onDeleted
 			const component = createForm();
 			
@@ -149,7 +149,7 @@ describe("Form", () => {
 			
 			await wait(1); //delete is asynchronous
 			
-			expect(postData).toHaveBeenCalledWith("/deleteUser", {id: 123});
+			expect(postData).toHaveBeenCalledWith("/deleteEntry", {id: 123, type: "user"});
 			expect(onDeleted).toHaveBeenCalled();
 		});
 		
@@ -157,7 +157,7 @@ describe("Form", () => {
 			vi.spyOn(window, "confirm").mockReturnValue(false);
 			
 			options.id = 123;
-			options.deleteEndPoint = "/deleteUser";
+			options.addDeleteBtnFor = "user";
 			const component = createForm();
 			
 			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!
@@ -169,7 +169,7 @@ describe("Form", () => {
 		});
 		
 		it("should cancel delete if id is not defined", async() => {
-			options.deleteEndPoint = "/deleteUser";
+			options.addDeleteBtnFor = "user";
 			const component = createForm();
 			
 			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!
@@ -182,7 +182,7 @@ describe("Form", () => {
 		
 		it("should show success after delete if no error happened", async () => {
 			options.id = 123;
-			options.deleteEndPoint = "/deleteUser";
+			options.addDeleteBtnFor = "user";
 			const component = createForm();
 			
 			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!;
@@ -197,7 +197,7 @@ describe("Form", () => {
 			vi.mocked(postData).mockRejectedValue(new Error());
 			
 			options.id = 123;
-			options.deleteEndPoint = "/deleteUser";
+			options.addDeleteBtnFor = "user";
 			const component = createForm();
 			
 			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!;

@@ -52,7 +52,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				: {label: Lang.get("createUser"), page: "EditUser"},
 		],
 		view: () =>
-			<Form<EditUserInterface> id={id} endpoint="/editUser" deleteEndPoint="/deleteUser" filterData={filterData} onSent={onSent} onDeleted={onDeleted}>
+			<Form<EditUserInterface> id={id} endpoint="/editUser" addDeleteBtnFor={id ? "user" : undefined} filterData={filterData} onSent={onSent} onDeleted={onDeleted}>
 				<label {...tooltip(Lang.get("tooltipAdminUser"))}>
 					<small>{Lang.get("admin")}</small>
 					<input type="checkbox" name="isAdmin" {...bindPropertyToInput(user, "isAdmin")}/>

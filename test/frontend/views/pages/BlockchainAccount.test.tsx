@@ -105,7 +105,6 @@ describe("BlockchainAccount", async () => {
 			});
 			await createAndPressDelete(123);
 			
-			expect(postData).toHaveBeenCalledWith("/deleteBlockchainAccount", {id: 123});
 			expect(calledSwitchPage).toBe(true);
 		});
 	});

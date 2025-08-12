@@ -10,7 +10,7 @@ import DeleteInterface from "../../../shared/data/DeleteInterface.ts";
 export type FormOptions<T extends PostDataStructureInterface> = {
 	endpoint: T["Endpoint"],
 	id?: number,
-	deleteEndPoint?: DeleteInterface["Endpoint"],
+	addDeleteBtnFor?: DeleteInterface["Request"]["type"],
 	onSent?: (response: T["Response"]) => void,
 	onDeleted?: () => void,
 	onBeforeSend?: (data: Record<string, unknown>) => T["Response"] | void,
@@ -33,13 +33,13 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 		if(!confirm(Lang.get("confirmDeleteEntry"))) {
 			return;
 		}
-		const {id, deleteEndPoint} = vNode.attrs;
-		if(!id || !deleteEndPoint) {
+		const {id, addDeleteBtnFor} = vNode.attrs;
+		if(!id || !addDeleteBtnFor) {
 			return;
 		}
 		feedback.setLoading(true);
 		try {
-			await postData(deleteEndPoint, {id: id});
+			await postData<DeleteInterface>("/deleteEntry", {id: id, type: addDeleteBtnFor});
 			feedback.setSuccess(true);
 			vNode.attrs.onDeleted?.();
 		}
@@ -94,7 +94,7 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 						{!!vNode.attrs.id && <input type="hidden" name="id" value={vNode.attrs.id}/>}
 						{vNode.children}
 						<div class="entry horizontal vAlignCenter selfAlignStretch">
-							{!!vNode.attrs.deleteEndPoint && feedback.isReady()
+							{!!vNode.attrs.addDeleteBtnFor && feedback.isReady()
 								? <Btn.TooltipBtn class="warn" iconKey="delete" description={Lang.get("tooltipDeleteEntry")} onclick={deleteEntry}/>
 								: <Btn.Empty/>
 							}

@@ -27,11 +27,9 @@ import AdminMiddleware from "./AdminMiddleware.ts";
 import editUser from "./routes/editUser.ts";
 import listUsers from "./routes/listUsers.ts";
 import getUser from "./routes/getUser.ts";
-import deleteUser from "./routes/deleteUser.ts";
-import deleteBlockchainAccount from "./routes/deleteBlockchainAccount.ts";
-import deleteQuestionnaire from "./routes/deleteQuestionnaire.ts";
 import userSettings from "./routes/userSettings.ts";
 import {FrontendOptionsString, recreateOptionsString} from "./actions/recreateOptionsString.ts";
+import deleteEntry from "./routes/deleteEntry.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -56,7 +54,7 @@ async function init() {
 	webServer.use("/api", setQuestionnaireColumns(db));
 	webServer.use("/api", authenticateMiddleware, userSettings(db));
 	webServer.use("/api", authenticateMiddleware, editQuestionnaire(db));
-	webServer.use("/api", authenticateMiddleware, deleteQuestionnaire(db));
+	webServer.use("/api", authenticateMiddleware, deleteEntry(db));
 	webServer.use("/api", authenticateMiddleware, listBlockchainAccounts(db));
 	webServer.use("/api", authenticateMiddleware, listQuestionnaires(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaire(db));
@@ -65,11 +63,9 @@ async function init() {
 	webServer.use("/api", authenticateMiddleware, getNewDenotation(db));
 	webServer.use("/api", adminMiddleware, editBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, getBlockchainAccount(db));
-	webServer.use("/api", adminMiddleware, deleteBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, editUser(db));
 	webServer.use("/api", adminMiddleware, listUsers(db));
 	webServer.use("/api", adminMiddleware, getUser(db));
-	webServer.use("/api", adminMiddleware, deleteUser(db));
 	
 	const langProvider = new LangProvider();
 	
