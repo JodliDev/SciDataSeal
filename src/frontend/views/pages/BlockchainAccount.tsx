@@ -7,12 +7,13 @@ import Form from "../widgets/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import GetBlockchainInterface from "../../../shared/data/GetBlockchainInterface.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
+import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	async function onSent(response: EditBlockchainInterface["Response"]) {
 		if(id != response.blockchainAccountId) {
-			SiteTools.switchPage("BlockchainAccount", `?id=${response.blockchainAccountId}`);
+			SiteTools.switchPage("Home");
 		}
 	}
 	function onDeleted() {
@@ -39,11 +40,11 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		view: () => <Form<EditBlockchainInterface> id={id} endpoint="/editBlockchainAccount" deleteEndPoint="/deleteBlockchainAccount" onSent={onSent} onDeleted={onDeleted}>
 			<label>
 				<small>{Lang.get("blockchainName")}</small>
-				<input type="text" name="blockchainName" value={account?.blockchainName ?? ""}/>
+				<input type="text" name="blockchainName" {...bindPropertyToInput(account, "blockchainName")}/>
 			</label>
 			<label>
 				<small>{Lang.get("type")}</small>
-				<select name="blockchainType" value={account.blockchainType ?? "solana"}>
+				<select name="blockchainType">
 					<option value="solana">{Lang.get("solana")}</option>
 					<option value="solanaTest" selected="selected">{Lang.get("solanaTest")}</option>
 				</select>
