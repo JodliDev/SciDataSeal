@@ -37,7 +37,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				{label: Lang.get("home"), page: "Home"},
 				{label: Lang.get("createBlockchainAccount"), page: "BlockchainAccount", query: `?id=${id}`},
 			],
-		view: () => <Form<EditBlockchainInterface> id={id} endpoint="/editBlockchainAccount" deleteEndPoint="/deleteBlockchainAccount" onSent={onSent} onDeleted={onDeleted}>
+		view: () => <Form<EditBlockchainInterface> id={id} endpoint="/editBlockchainAccount" deleteEndPoint={id ? "/deleteBlockchainAccount" : undefined} onSent={onSent} onDeleted={onDeleted}>
 			<label>
 				<small>{Lang.get("blockchainName")}</small>
 				<input type="text" name="blockchainName" {...bindPropertyToInput(account, "blockchainName")}/>
