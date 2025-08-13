@@ -85,6 +85,28 @@ describe("bindValueToInput", () => {
 		binding.onkeyup(event);
 		expect(mockSet).toHaveBeenCalledWith(true);
 	});
+	
+	it("should call custom events", () => {
+		const mockSet = vi.fn();
+		const mockChange = vi.fn();
+		const mockKeyup = vi.fn();
+		const binding = bindValueToInput("new", mockSet, {change: mockChange, keyup: mockKeyup});
+		
+		binding.onkeyup({
+			type: "keyup",
+			target: {checked: true},
+		} as unknown as InputEvent);
+		expect(mockChange).not.toHaveBeenCalled();
+		expect(mockKeyup).toHaveBeenCalled();
+		
+		mockKeyup.mockClear();
+		binding.onchange({
+			type: "change",
+			target: {value: "new"},
+		} as unknown as InputEvent);
+		expect(mockChange).toHaveBeenCalled();
+		expect(mockKeyup).not.toHaveBeenCalled();
+	});
 });
 
 describe("bindPropertyToInput", () => {
