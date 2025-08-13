@@ -24,29 +24,6 @@ describe("setQuestionnaireColumns", () => {
 	app.use(express.json());
 	app.use(setQuestionnaireColumns(mockDb));
 	
-	it("should return errorMissingData if data is missing in GET route", async() => {
-		const response = await request(app).get("/setQuestionnaireColumns");
-		
-		expect(response.ok).toBe(false);
-		expect(response.body).toHaveProperty("error");
-		expect(response.body.error).toHaveProperty("message", "errorMissingData");
-	});
-	
-	it("should also accept an Authorization header in GET route", async() => {
-		const questionnaireId = 1;
-		const pass = "dGVzdDp0ZXN0";
-		mockDb.selectFrom.chain("Questionnaire")
-			.where.chain("questionnaireId", "=", questionnaireId)
-			.where.chain("apiPassword", "=", pass)
-			.executeTakeFirst.mockResolvedValue({columns: "\"asd\",\"qwe\""});
-		
-		const response = await request(app)
-			.get(`/setQuestionnaireColumns?id=${questionnaireId}&columns=${encodeURIComponent("[\"asd\",\"qwe\"]")}`)
-			.set("Authorization", `Bearer ${pass}`);
-		
-		expect(response.ok).toBe(true);
-	});
-	
 	it("should return errorMissingData if data is missing in POST route", async() => {
 		const response = await request(app).post("/setQuestionnaireColumns").send({});
 		

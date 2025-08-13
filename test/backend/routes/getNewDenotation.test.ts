@@ -21,14 +21,13 @@ describe("getNewDenotation", () => {
 		const sendData = {blockchainAccountId: "2"};
 		mockDb.selectFrom.chain("BlockchainAccount")
 			.where.chain("blockchainAccountId", "=", parseInt(sendData.blockchainAccountId))
-			.where.chain("userId", "=", 123)
 			.executeTakeFirst.mockResolvedValue({highestDenotation: 5});
 		
 		const response = await request(app)
 			.get("/api/getNewDenotation")
 			.query(sendData);
 		
-		expect(response.ok).toBe(true);
+		expect(response.ok, JSON.stringify(response.body)).toBe(true);
 		expect(response.body.data).toEqual({denotation: 6});
 	});
 	

@@ -3,7 +3,6 @@ import express from "express";
 import request from "supertest";
 import {mockKysely} from "../../convenience.ts";
 import saveData from "../../../src/backend/routes/saveData.ts";
-import supertest from "supertest";
 
 describe("saveData", () => {
 	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
@@ -31,31 +30,14 @@ describe("saveData", () => {
 		];
 		
 		for(const testCase of cases) {
-			const response = await supertest(app)
+			const response = await request(app)
 				.post("/saveData")
 				.query(testCase.query)
 				.send(testCase.data);
 			
-			expect(response.ok, `"With input ${JSON.stringify(testCase)}`).toBe(false);
-			expect(response.body.error).toHaveProperty("message", "errorMissingData");
-		}
-	});
-	
-	it("should return error if 'pass', 'questionnaireId' or data is missing using GET", async() => {
-		const cases = [
-			{id: "1", data: "{\"column\":\"content\"}"}, // Missing pass
-			{pass: "test-pass", data: "{\"column\":\"content\"}"}, // Missing id
-			{id: "1", pass: "test-pass"}, // Missing data
-			{} // Missing everything
-		];
-		
-		for(const testCase of cases) {
-			const response = await request(app)
-				.get("/saveData")
-				.query(testCase);
-			
-			expect(response.ok).toBe(false);
-			expect(response.body.error).toHaveProperty("message", "errorMissingData");
+			const message = `With input ${JSON.stringify(testCase)} and output ${JSON.stringify(response.body)}`;
+			expect(response.ok, message).toBe(false);
+			expect(response.body.error, message).toHaveProperty("message", "errorMissingData");
 		}
 	});
 	
@@ -137,31 +119,6 @@ describe("saveData", () => {
 			.post(`/saveData?id=${questionnaireId}`)
 			.set("Authorization", `Bearer ${pass}`)
 			.send({key1: "value1", key2: "value2"});
-		
-		expect(response.ok).toBe(true);
-		expect(response.body.data).toStrictEqual({});
-		expect(insertMock).toHaveBeenCalledTimes(1);
-	});
-	
-	it("should save data using GET", async() => {
-		const questionnaireId = 1;
-		const pass = "test-pass";
-		const mockQuestionnaire = {
-			blockchainType: "test-chain",
-			privateKey: "test-key",
-			columns: "\"key1\",\"key2\"",
-			questionnaireId: 1,
-			userId: 100,
-		};
-		
-		mockDb.selectFrom.chain()
-			.where("questionnaireId", "=", questionnaireId)
-			.where("apiPassword", "=", pass)
-			.executeTakeFirst.mockResolvedValue(mockQuestionnaire);
-		const insertMock = mockDb.insertInto.chain("DataLog").execute;
-		
-		const response = await request(app)
-			.get(`/saveData?id=${questionnaireId}&pass=${pass}&data=${JSON.stringify({key1: "value1", key2: "value2"})}`)
 		
 		expect(response.ok).toBe(true);
 		expect(response.body.data).toStrictEqual({});

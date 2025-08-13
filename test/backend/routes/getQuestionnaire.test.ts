@@ -33,8 +33,8 @@ describe("getQuestionnaire", () => {
 			columns: ["col1", "col2"],
 		};
 		mockDb.selectFrom.chain("Questionnaire")
-			.where.chain("userId", "=", 123)
 			.where.chain("questionnaireId", "=", parseInt(queryData.questionnaireId))
+			.where.chain("userId", "=", 123)
 			.executeTakeFirst.mockResolvedValueOnce(mockQuestionnaire);
 		
 		const response = await request(app)

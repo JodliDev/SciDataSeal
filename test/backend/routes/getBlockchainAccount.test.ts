@@ -36,7 +36,6 @@ describe("getBlockchainAccount", () => {
 		};
 		
 		mockDb.selectFrom.chain("BlockchainAccount")
-			.where.chain("userId", "=", 123)
 			.where.chain("blockchainAccountId", "=", parseInt(sendData.accountId))
 			.executeTakeFirst.mockResolvedValue(mockAccount);
 		

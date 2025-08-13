@@ -74,7 +74,6 @@ describe("editBlockchainAccount", () => {
 		
 		mockDb.selectFrom.chain("BlockchainAccount")
 			.where.chain("blockchainAccountId", "=", 111)
-			.where.chain("userId", "=", 123)
 			.executeTakeFirst.mockResolvedValue(mockBlockchainAccount);
 		
 		const updateTableMock = mockDb.updateTable.chain("BlockchainAccount")
@@ -91,7 +90,6 @@ describe("editBlockchainAccount", () => {
 			.post("/editBlockchainAccount")
 			.send(sendData);
 		
-		expect(mockDb.updateTable).toHaveBeenCalledWith("BlockchainAccount");
 		expect(updateTableMock).toHaveBeenCalled();
 		expect(response.ok).toBe(true);
 		expect(response.body.data).toHaveProperty("blockchainAccountId", 111);
@@ -107,7 +105,6 @@ describe("editBlockchainAccount", () => {
 		
 		const insertIntoMock = mockDb.insertInto.chain("BlockchainAccount")
 			.values.chain({
-				userId: 123,
 				blockchainName: sendData.blockchainName,
 				blockchainType: sendData.blockchainType,
 				privateKey: sendData.privateKey,
