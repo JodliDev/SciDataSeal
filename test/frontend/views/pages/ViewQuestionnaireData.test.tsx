@@ -48,7 +48,7 @@ describe("ViewQuestionnaireData", async () => {
 	it("should show form by default", async () => {
 		const component = await renderPage(ViewQuestionnaireData);
 		
-		expect(component.dom.querySelector("form")).toBeDefined();
+		expect(component.dom.querySelector("form")).not.toBeNull();
 	});
 	
 	describe("Auto fill questionnaire", async () => {
@@ -100,7 +100,7 @@ describe("ViewQuestionnaireData", async () => {
 			const denotationEl = component.dom.querySelector("*[name=denotation]")! as HTMLInputElement;
 			expect(denotationEl.value).toBe("5");
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).not.toBeNull();
 		});
 		
 		it("should not fill form and show failed if no questionnaire can not be loaded", async () => {
@@ -135,7 +135,7 @@ describe("ViewQuestionnaireData", async () => {
 			const denotationEl = component.dom.querySelector("*[name=denotation]")! as HTMLInputElement;
 			expect(denotationEl.value).toBe("1");
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).not.toBeNull();
 		});
 		
 		it("should not fill form and show failed if no blockchain account can not be loaded", async () => {
@@ -170,7 +170,7 @@ describe("ViewQuestionnaireData", async () => {
 			const denotationEl = component.dom.querySelector("*[name=denotation]")! as HTMLInputElement;
 			expect(denotationEl.value).toBe("1");
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).not.toBeNull();
 		});
 	})
 	
@@ -188,7 +188,7 @@ describe("ViewQuestionnaireData", async () => {
 			expect(mockSetItem).toHaveBeenCalledWith("hash-time", expect.any(String));
 			expect(mockSetItem).toHaveBeenCalledWith("hash", "postDataAnswer");
 			
-			expect(component.dom.querySelector("a[href=dataUrl]")).toBeDefined();
+			expect(component.dom.querySelector("a[href=dataUrl]")).not.toBeNull();
 			
 			mockSetItem.mockReset();
 		});
@@ -271,7 +271,7 @@ describe("ViewQuestionnaireData", async () => {
 			btn.dispatchEvent(new Event("click"));
 			await wait(1);
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).not.toBeNull();
 			
 			mockGetItem.mockReset();
 		});
@@ -296,7 +296,7 @@ describe("ViewQuestionnaireData", async () => {
 			btn.dispatchEvent(new Event("click"));
 			await wait(1);
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).not.toBeNull();
 			
 			mockGetItem.mockReset();
 			vi.mocked(postData).mockReset();

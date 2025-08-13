@@ -36,8 +36,18 @@ describe("Form", () => {
 	
 	it("Form should contain child elements", () => {
 		const component = createForm();
-		expect(component.dom.querySelector("input[type=text][name=key][value=value]")).toBeDefined()
-		expect(component.dom.querySelector("input[type=text][name=otherKey][value=otherValue]")).toBeDefined()
+		
+		const input1 = component.dom.querySelector("input[type=text][name=key]") as HTMLInputElement;
+		const input2 = component.dom.querySelector("input[type=text][name=otherKey]") as HTMLInputElement;
+		const inputGroup = component.dom.querySelectorAll("input[type=text][name='array[]']");
+		
+		expect(input1).not.toBeNull();
+		expect(input1.value).toBe("value");
+		expect(input2).not.toBeNull();
+		expect(input2.value).toBe("otherValue");
+		expect(inputGroup.length).toBe(2);
+		expect((inputGroup[0] as HTMLInputElement).value).toBe("first");
+		expect((inputGroup[1] as HTMLInputElement).value).toBe("second");
 	});
 	
 	describe("Submit event", () => {
@@ -109,8 +119,9 @@ describe("Form", () => {
 			element.dispatchEvent(new Event("submit"));
 			
 			await wait(1); //onSubmit is asynchronous
+			component.redraw();
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).not.toBeNull();
 		});
 		
 		it("should show failed after submit if error happened", async  () => {
@@ -120,8 +131,9 @@ describe("Form", () => {
 			element.dispatchEvent(new Event("submit"));
 			
 			await wait(1); //onSubmit is asynchronous
+			component.redraw();
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).not.toBeNull();
 		});
 	});
 	
@@ -187,11 +199,12 @@ describe("Form", () => {
 			element.dispatchEvent(new Event("click"));
 			
 			await wait(1); //delete is asynchronous
+			component.redraw();
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).not.toBeNull();
 		});
 		
-		it("should show failed after delete if error happened", () => {
+		it("should show failed after delete if error happened", async () => {
 			vi.mocked(postData).mockRejectedValue(new Error());
 			
 			options.id = 123;
@@ -201,7 +214,10 @@ describe("Form", () => {
 			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!;
 			element.dispatchEvent(new Event("click"));
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).toBeDefined();
+			await wait(1); //delete is asynchronous
+			component.redraw();
+			
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).not.toBeNull();
 		});
 	})
 	

@@ -14,7 +14,7 @@ describe("FeedbackIcon", () => {
 	});
 	it("should reserveSpace when set in options", () => {
 		const component = renderComponent(FeedbackIcon, {reserveSpace: true, callback: feedback});
-		expect(component.dom.querySelector(`.${cssFeedbackIcon.reserveSpace}`)).toBeDefined();
+		expect(component.dom.querySelector(`.${cssFeedbackIcon.reserveSpace}`)).not.toBeNull();
 	});
 	
 	describe("setLoading", () => {
@@ -24,7 +24,7 @@ describe("FeedbackIcon", () => {
 			feedback.setLoading(true);
 			component.redraw();
 			
-			expect(component.dom.querySelector(`.${cssLoadingSpinner.LoadingSpinner}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssLoadingSpinner.LoadingSpinner}`)).not.toBeNull();
 			
 			feedback.setLoading(false);
 			component.redraw();
@@ -42,7 +42,7 @@ describe("FeedbackIcon", () => {
 			feedback.setSuccess(true);
 			component.redraw();
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).not.toBeNull();
 			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).toBeNull();
 		});
 		
@@ -53,7 +53,7 @@ describe("FeedbackIcon", () => {
 			component.redraw();
 			
 			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).toBeNull();
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).not.toBeNull();
 		});
 		
 		it("should remove success state after timeout", () => {
@@ -63,7 +63,7 @@ describe("FeedbackIcon", () => {
 			feedback.setSuccess(true);
 			component.redraw();
 			
-			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).toBeDefined();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).not.toBeNull();
 			
 			vi.advanceTimersByTime(5000);
 			component.redraw();
