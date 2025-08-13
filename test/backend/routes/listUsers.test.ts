@@ -37,7 +37,7 @@ describe("listUsers", () => {
 		expect(response.body.data).toEqual({users: mockList});
 	});
 	
-	it("should return an empty list if no questionnaires are found", async() => {
+	it("should return an empty list if no users are found", async() => {
 		mockDb.selectFrom.chain("User")
 			.execute.mockResolvedValue([]);
 		
