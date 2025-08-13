@@ -52,9 +52,8 @@ describe("BlockchainAccount", async () => {
 		
 		it("should switch page when data was sent successfully", async () => {
 			let calledSwitchPage = false;
-			SiteTools.init({}, (page, query) => {
-				expect(page).toBe("BlockchainAccount");
-				expect(query).toBe(`?id=123`);
+			SiteTools.init({}, (page) => {
+				expect(page).toBe("Home");
 				calledSwitchPage = true;
 			});
 			await createAndSubmitForm();
