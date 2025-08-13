@@ -29,9 +29,9 @@ export function renderComponent<TAttributes extends m.Attributes>(
 	};
 	return createModel(rootNode);
 }
-export function renderVNode(vNode: m.Vnode<any, any>): RenderModel {
+export function renderVNode(vNode: () => m.Vnode<any, any>): RenderModel {
 	const rootNode = {
-		view: () => vNode,
+		view: () => vNode(),
 	};
 	return createModel(rootNode);
 }

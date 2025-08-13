@@ -26,14 +26,12 @@ describe("Form", () => {
 	
 	let options: FormOptions<any> = {endpoint: "/test"};
 	function createForm() {
-		const formView = m(correctType(Form), options, [
+		return renderVNode(() => m(correctType(Form), options, [
 			m("input", {type: "text", name: "key", value: "value"}),
 			m("input", {type: "text", name: "otherKey", value: "otherValue"}),
 			m("input", {type: "text", name: "array[]", value: "first"}),
 			m("input", {type: "text", name: "array[]", value: "second"}),
-		]);
-		return renderVNode(formView);
-		
+		]));
 	}
 	
 	it("Form should contain child elements", () => {
