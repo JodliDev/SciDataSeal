@@ -12,7 +12,7 @@ import login from "./routes/login.ts";
 import initialize from "./routes/initialize.ts";
 import Scheduler from "./Scheduler.ts";
 import deleteOutdatedSessions from "./actions/authentication/deleteOutdatedSessions.ts";
-import editQuestionnaire from "./routes/editQuestionnaire.ts";
+import setQuestionnaire from "./routes/setQuestionnaire.ts";
 import listQuestionnaires from "./routes/listQuestionnaires.ts";
 import getQuestionnaire from "./routes/getQuestionnaire.ts";
 import saveData from "./routes/saveData.ts";
@@ -30,6 +30,9 @@ import getUser from "./routes/getUser.ts";
 import userSettings from "./routes/userSettings.ts";
 import {FrontendOptionsString, recreateOptionsString} from "./actions/recreateOptionsString.ts";
 import deleteEntry from "./routes/deleteEntry.ts";
+import listStudies from "./routes/listStudies.ts";
+import getStudy from "./routes/getStudy.ts";
+import editStudy from "./routes/editStudy.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -53,14 +56,17 @@ async function init() {
 	webServer.use("/api", saveData(db));
 	webServer.use("/api", setQuestionnaireColumns(db));
 	webServer.use("/api", authenticateMiddleware, userSettings(db));
-	webServer.use("/api", authenticateMiddleware, editQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, deleteEntry(db));
+	webServer.use("/api", authenticateMiddleware, setQuestionnaire(db));
+	webServer.use("/api", authenticateMiddleware, editStudy(db));
 	webServer.use("/api", authenticateMiddleware, listBlockchainAccounts(db));
 	webServer.use("/api", authenticateMiddleware, listQuestionnaires(db));
+	webServer.use("/api", authenticateMiddleware, listStudies(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaireData());
 	webServer.use("/api", authenticateMiddleware, generateRandomString());
 	webServer.use("/api", authenticateMiddleware, getNewDenotation(db));
+	webServer.use("/api", authenticateMiddleware, getStudy(db));
 	webServer.use("/api", adminMiddleware, editBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, getBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, editUser(db));

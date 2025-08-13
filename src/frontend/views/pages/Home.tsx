@@ -18,9 +18,9 @@ export default PrivatePage(async () => {
 					<Icon iconKey="blockchain"/>
 					{Lang.get("blockchainAccounts")}
 				</A>
-				<A page="ListQuestionnaires" class="bigButton" {...tooltip(Lang.get("tooltipQuestionnaires"))}>
+				<A page="ListStudies" class="bigButton" {...tooltip(Lang.get("tooltipStudies"))}>
 					<Icon iconKey="list"/>
-					{Lang.get("questionnaires")}
+					{Lang.get("studies")}
 				</A>
 				<A page="ViewQuestionnaireData" class="bigButton" {...tooltip(Lang.get("tooltipViewQuestionnaireData"))}>
 					<Icon iconKey="view"/>

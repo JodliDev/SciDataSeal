@@ -7,6 +7,7 @@ export default interface GetQuestionnaireInterface extends GetDataStructureInter
 	}
 	Response: {
 		questionnaireId: number;
+		studyId: number;
 		questionnaireName: string;
 		blockchainAccountId: number;
 		blockchainDenotation: number;

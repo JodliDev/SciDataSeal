@@ -1,101 +1,152 @@
 import {PrivatePage} from "../../PageComponent.ts";
-import m from "mithril";
+import m, {Child} from "mithril";
 import getData from "../../actions/getData.ts";
 import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
-import {SaveDataGetInterface} from "../../../shared/data/SaveDataInterface.ts";
 import css from "./ConnectAppHelp.module.css";
 import TabBar from "../widgets/TabView.tsx";
-import {SetQuestionnaireColumnsGetInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
+import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
+import ListQuestionnairesInterface from "../../../shared/data/ListQuestionnairesInterface.ts";
+import {FeedbackCallBack} from "../widgets/FeedbackIcon.tsx";
+import SetQuestionnaireInterface from "../../../shared/data/SetQuestionnaireInterface.ts";
+import {tooltip} from "../../actions/FloatingMenu.ts";
+import {SetQuestionnaireColumnsInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
+import {SaveDataInterface} from "../../../shared/data/SaveDataInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	const id = query.get("id");
-	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`);
-	const saveDataUrl = window.location.origin + "/api" + ("/saveData" satisfies SaveDataGetInterface["Endpoint"]);
-	const setColumnsUrl = window.location.origin + "/api" + ("/setQuestionnaireColumns" satisfies SetQuestionnaireColumnsGetInterface["Endpoint"]);
-	const saveDataExample = '{"column1":"data", "column2":"more data"}';
-	const setColumnsExample = '["column1", "column2"]';
+	function createQuestionnaireMenu(questionnaires: ListQuestionnairesInterface["Response"]["questionnaires"]) {
+		async function onChange(event: Event) {
+			const target = event.target as HTMLSelectElement;
+			feedback.setLoading(true);
+			const q = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${target.value}`);
+			
+			if(q) {
+				questionnaire = q;
+			}
+			feedback.setLoading(false);
+		}
+		
+		return <div class="horizontal vAlignCenter fullLine hAlignEnd">
+			<b>{Lang.getWithColon("questionnaire")}</b>
+			<select onchange={onChange}>
+				{questionnaires.map(questionnaire =>
+					<option value={questionnaire.questionnaireId}>{questionnaire.questionnaireName}</option>
+				)}
+			</select>
+		</div>
+	}
+	
+	function formatData(content: string): Child {
+		return <pre class={css.data}>{content}</pre>;
+	}
+	function formatOptional(content: string, tooltipText?: string): Child {
+		tooltipText = tooltipText ? `${Lang.get("optional")}. ${tooltipText}` : Lang.get("optional");
+		
+		return <pre class={css.optional} {...tooltip(tooltipText)}>{content}</pre>;
+	}
+	
+	const feedback = new FeedbackCallBack();
+	const studyId = parseInt(query.get("studyId") ?? "0");
+	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${studyId}`);
+	const {questionnaires} = (await getData<ListQuestionnairesInterface>("/listQuestionnaires", `?studyId=${studyId}`)) ?? {};
+	const loadedQuestionnaire = (await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${questionnaires?.[0].questionnaireId}`));
+	
+	const createQuestionnaireUrl = window.location.origin + "/api" + ("/setQuestionnaire" satisfies SetQuestionnaireInterface["Endpoint"]);
+	const saveDataUrl = window.location.origin + "/api" + ("/saveData" satisfies SaveDataInterface["Endpoint"]);
+	const setColumnsUrl = window.location.origin + "/api" + ("/setQuestionnaireColumns" satisfies SetQuestionnaireColumnsInterface["Endpoint"]);
+	
+	if(!study || !questionnaires || !loadedQuestionnaire) {
+		return {
+			history: [],
+			view: () => <div class="selfAlignCenter">{Lang.get("notFound")}</div>
+		};
+	}
+	
+	let questionnaire = loadedQuestionnaire;
+	
 	
 	return {
 		history: [
 			{label: Lang.get("home"), page: "Home"},
-			{label: Lang.get("questionnaires"), page: "ListQuestionnaires"},
-			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
-			{label: Lang.get("howToConnectMyApp"), page: "ConnectAppHelp", query: `?id=${id}`},
+			{label: Lang.get("studies"), page: "ListStudies"},
+			{label: study?.studyName ?? "Not found", page: "Study", query: `?id=${studyId}`},
+			{label: Lang.get("howToConnect"), page: "ConnectAppHelp", query: `?studyId=${studyId}`},
 		],
 		view: () => <div class="vertical">
-			{questionnaire
-				? <>
-					<TabBar tabs={[
-						{
-							label: Lang.get("saveData"),
-							view: () =>
-								<div>
-									{Lang.get("tooltipSaveData")}
-									
-									<h3>GET</h3>
-									<div class="labelLike vertical vAlignCenter">
-										<small>{Lang.get("header")}</small>
-										<pre class={`${css.box} inputLike`}>Authorization: {questionnaire.apiPassword}</pre>
-									</div>
-									<div class="labelLike vertical vAlignCenter">
-										<small>{Lang.get("url")}</small>
-										<pre class={`${css.box} inputLike`}>{`${saveDataUrl}?id=${questionnaire.questionnaireId}&data=`}<pre class={css.data}>{saveDataExample}</pre></pre>
-									</div>
-									<h3>POST</h3>
-									<div class="labelLike vertical vAlignCenter">
-										<small>{Lang.get("url")}</small>
-										<pre class={`${css.box} inputLike`}>{saveDataUrl}</pre>
-									</div>
-									<div class="labelLike vertical vAlignCenter">
-										<small>{Lang.get("body")}</small>
-										<pre class={`${css.box} inputLike`}>
-											&#123;
-											<br/>&nbsp;&nbsp;"id": {questionnaire.questionnaireId}
-											<br/>&nbsp;&nbsp;"pass": {questionnaire.apiPassword}
-											<br/>&nbsp;&nbsp;"data": <pre class={css.data}>{saveDataExample}</pre>
-											<br/>&#125;
-										</pre>
-									</div>
-								</div>
-						},
-						{
-							label: Lang.get("setColumns"),
-							view: () =>
-								<div>
-									{Lang.get("tooltipSetColumns")}
-									
-									<h3>GET</h3>
-									<div class="labelLike vertical vAlignCenter">
-										<small>{Lang.get("header")}</small>
-										<pre class={`${css.box} inputLike`}>Authorization: {questionnaire.apiPassword}</pre>
-									</div>
-									<div class="labelLike vertical vAlignCenter">
-										<small>{Lang.get("url")}</small>
-										<pre class={`${css.box} inputLike`}>{`${setColumnsUrl}?id=${questionnaire.questionnaireId}&columns=`}<pre class={css.data}>{setColumnsExample}</pre></pre>
-									</div>
-									<h3>POST</h3>
-									<div class="labelLike vertical vAlignCenter">
-										<small>{Lang.get("url")}</small>
-										<pre class={`${css.box} inputLike`}>{setColumnsUrl}</pre>
-									</div>
-									<div class="labelLike vertical vAlignCenter">
-										<small>{Lang.get("body")}</small>
-										<pre class={`${css.box} inputLike`}>
-											&#123;
-											<br/>&nbsp;&nbsp;"id": {questionnaire.questionnaireId}
-											<br/>&nbsp;&nbsp;"pass": {questionnaire.apiPassword}
-											<br/>&nbsp;&nbsp;"columns": <pre class={css.data}>{setColumnsExample}</pre>
-											<br/>&#125;
-										</pre>
-									</div>
-								</div>
-						}
-					]}/>
-				</>
-				: <div class="selfAlignCenter">{Lang.get("notFound")}</div>
-			}
+			<TabBar tabs={[
+				{
+					label: Lang.get("createQuestionnaire"),
+					tooltip: Lang.get("tooltipCreateQuestionnaire"),
+					view: () =>
+						<div>
+							<h3>POST</h3>
+							<div class="labelLike vertical vAlignCenter">
+								<small>{Lang.get("url")}</small>
+								<pre class={`${css.box} inputLike`}>{createQuestionnaireUrl}</pre>
+							</div>
+							<div class="labelLike vertical vAlignCenter">
+								<small>{Lang.get("body")}</small>
+								<pre class={`${css.box} inputLike`}>
+									&#123;
+									<br/>&nbsp;&nbsp;"studyId": {studyId},
+									<br/>&nbsp;&nbsp;"apiPassword": {study.apiPassword},
+									<br/>&nbsp;&nbsp;"questionnaireName": {formatData('"A questionnaire"')},
+									<br/>&nbsp;&nbsp;{formatOptional('"dataKey": "ThisIsASavePassword"', Lang.get("tooltipDataKey"))}
+									<br/>&#125;
+									</pre>
+							</div>
+						</div>
+				},
+				
+				{
+					label: Lang.get("setColumns"),
+					tooltip: Lang.get("tooltipSetColumns"),
+					view: () =>
+						<div>
+							{createQuestionnaireMenu(questionnaires)}
+							<h3>POST</h3>
+							<div class="labelLike vertical vAlignCenter">
+								<small>{Lang.get("url")}</small>
+								<pre class={`${css.box} inputLike`}>{setColumnsUrl}</pre>
+							</div>
+							<div class="labelLike vertical vAlignCenter">
+								<small>{Lang.get("body")}</small>
+								<pre class={`${css.box} inputLike`}>
+										&#123;
+									<br/>&nbsp;&nbsp;"id": {questionnaire.questionnaireId},
+									<br/>&nbsp;&nbsp;"pass": {questionnaire.apiPassword},
+									<br/>&nbsp;&nbsp;"columns": {formatData('["column1", "column2"]')}
+									<br/>&#125;
+									</pre>
+							</div>
+						</div>
+				},
+				{
+					label: Lang.get("saveData"),
+					tooltip: Lang.get("tooltipSaveData"),
+					view: () =>
+						<div>
+							{createQuestionnaireMenu(questionnaires)}
+							<h3>POST</h3>
+							<div class="labelLike vertical vAlignCenter">
+								<small>{Lang.get("url")}</small>
+								<pre class={`${css.box} inputLike`}>{saveDataUrl}</pre>
+							</div>
+							<div class="labelLike vertical vAlignCenter">
+								<small>POST</small>
+								<pre class={`${css.box} inputLike`}>
+										&#123;
+									<br/>&nbsp;&nbsp;"id": {questionnaire.questionnaireId},
+									<br/>&nbsp;&nbsp;"pass": {questionnaire.apiPassword},
+									<br/>&nbsp;&nbsp;"data": {formatData('{"column1":"data", "column2":"more data"}')}
+										<br/>&#125;
+									</pre>
+							</div>
+						</div>
+						
+				}
+			]}/>
 		</div>
 	};
 });

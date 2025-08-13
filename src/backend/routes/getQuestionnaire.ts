@@ -16,9 +16,9 @@ export default function getQuestionnaire(db: DbType): express.Router {
 		const questionnaireId = parseInt(data.questionnaireId ?? "0");
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
-			.select(["questionnaireId", "questionnaireName", "blockchainDenotation", "blockchainAccountId", "apiPassword", "dataKey", "columns"])
-			.where("userId", "=", session.userId)
+			.select(["questionnaireId", "questionnaireName", "blockchainDenotation", "blockchainAccountId", "studyId", "apiPassword", "dataKey", "columns"])
 			.where("questionnaireId", "=", questionnaireId)
+			.where("userId", "=", session.userId)
 			.limit(1)
 			.executeTakeFirst();
 		
@@ -27,6 +27,7 @@ export default function getQuestionnaire(db: DbType): express.Router {
 		
 		return {
 			questionnaireId: questionnaire.questionnaireId,
+			studyId: questionnaire.studyId,
 			questionnaireName: questionnaire.questionnaireName,
 			blockchainDenotation: questionnaire.blockchainDenotation,
 			blockchainAccountId: questionnaire.blockchainAccountId,

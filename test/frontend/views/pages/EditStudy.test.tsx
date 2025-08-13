@@ -1,0 +1,141 @@
+import {describe, it, vi, expect, afterAll, afterEach, beforeAll, beforeEach} from "vitest";
+import {renderPage} from "../../testRender.ts";
+import {wait} from "../../../convenience.ts";
+import postData from "../../../../src/frontend/actions/postData.ts";
+import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
+import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
+import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
+import EditStudy from "../../../../src/frontend/views/pages/EditStudy.tsx";
+import getData from "../../../../src/frontend/actions/getData.ts";
+import ListBlockchainAccountsInterface from "../../../../src/shared/data/ListBlockchainAccountsInterface.ts";
+
+describe("EditStudy", async () => {
+	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
+		default: vi.fn(() => ({
+			studyId: 123
+		}))
+	}));
+	
+	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
+		default: vi.fn((endpoint) => {
+			if(endpoint == "/getStudy") {
+				return {
+					apiPassword: "pass",
+					studyName: "Name",
+					blockchainAccountId: 34
+				}
+			}
+			else if(endpoint == "/listBlockchainAccounts") {
+				return {
+					accounts: [
+						{
+							blockchainAccountId: 4,
+							blockchainName: "blockchain"
+						},
+						{
+							blockchainAccountId: 5,
+							blockchainName: "blockchain2"
+						}
+					]
+				};
+			}
+		})
+	}));
+	
+	beforeAll(() => {
+		SiteTools.init({}, () => {});
+	});
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+	afterAll(() => {
+		vi.resetAllMocks();
+	});
+	
+	it("Should show error when no blockchain accounts exist", async () => {
+		vi.mocked(getData<ListBlockchainAccountsInterface>).mockResolvedValue({accounts: []});
+
+		const component = await renderPage(EditStudy);
+
+		expect(component.dom.innerText).toContain(Lang.get("errorNoBlockchainAccounts"));
+	});
+	
+	describe("submit data", async () => {
+		afterEach(() => {
+			vi.restoreAllMocks();
+			SiteTools.init({}, () => {});
+		});
+
+
+		async function createAndSubmitForm(id?: number) {
+			const component = await renderPage(EditStudy, id ? `id=${id}` : "");
+			const form = component.dom.querySelector("form")! as HTMLFormElement;
+
+			form.dispatchEvent(new Event("submit"));
+			await wait(1);
+			component.redraw();
+
+			return component;
+		}
+
+		it("should switch page when data was sent successfully", async () => {
+			let calledSwitchPage = false;
+			SiteTools.init({}, (page, query) => {
+				expect(page).toBe("Study");
+				expect(query).toBe(`?id=123`);
+				calledSwitchPage = true;
+			});
+			await createAndSubmitForm();
+
+			expect(postData).toHaveBeenCalled();
+			expect(calledSwitchPage).toBe(true);
+		});
+
+		it("should not switch page when same questionnaire was changed", async () => {
+			let calledSwitchPage = false;
+			SiteTools.init({}, () => {
+				calledSwitchPage = true;
+			});
+			await createAndSubmitForm(123);
+
+			expect(postData).toHaveBeenCalled();
+			expect(calledSwitchPage).toBe(false);
+		});
+	});
+	
+	describe("delete data", () => {
+		beforeEach(() => {
+			vi.spyOn(window, "confirm").mockReturnValue(true);
+			
+		});
+		afterEach(() => {
+			vi.restoreAllMocks();
+		});
+		afterAll(() => {
+			SiteTools.init({}, () => {});
+		});
+		
+		
+		async function createAndPressDelete(id: number) {
+			const component = await renderPage(EditStudy, `id=${id}`);
+			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!
+			element.dispatchEvent(new Event("click"));
+			
+			await wait(1);
+			component.redraw();
+			
+			return component;
+		}
+		
+		it("should switch page when data was deleted successfully", async () => {
+			let calledSwitchPage = false;
+			SiteTools.init({}, (page) => {
+				expect(page).toBe("ListStudies");
+				calledSwitchPage = true;
+			});
+			await createAndPressDelete(123);
+			
+			expect(calledSwitchPage).toBe(true);
+		});
+	});
+});

@@ -4,6 +4,7 @@ import {DatabaseInstructions, PublicMigrations, SqlChanges} from "sqlmorpheus";
 import Questionnaire, {QuestionnaireTable} from "./tables/Questionnaire.ts";
 import DataLog, {DataLogTable} from "./tables/DataLog.ts";
 import BlockchainAccount, {BlockchainAccountTable} from "./tables/BlockchainAccount.ts";
+import Study, {StudyTable} from "./tables/Study.ts";
 
 /**
  * Used to bind Database tables to Kysely
@@ -11,6 +12,7 @@ import BlockchainAccount, {BlockchainAccountTable} from "./tables/BlockchainAcco
 export interface KyselyTables {
 	User: User
 	Session: Session
+	Study: Study
 	Questionnaire: Questionnaire
 	BlockchainAccount: BlockchainAccount
 	DataLog: DataLog
@@ -21,25 +23,18 @@ export interface KyselyTables {
  */
 export const SqlMorpheusConfig = {
 	dialect: "Sqlite",
-	version: 11,
+	version: 13,
 	configPath: `${process.cwd()}/config`,
 	tables: [
 		UserTable,
 		DataLogTable,
 		SessionTable,
 		BlockchainAccountTable,
+		StudyTable,
 		QuestionnaireTable,
 	],
 	throwIfNotAllowed: true,
-	preMigration(migrations: PublicMigrations): SqlChanges | void {
-		migrations.renameColumn(1, UserTable, "userName", "username");
+	preMigration(_: PublicMigrations): SqlChanges | void {
 		
-		// migrations.allowMigration(9, SessionTable, "alterForeignKey");
-		// migrations.allowMigration(9, SessionTable, "recreateTable");
-		// migrations.allowMigration(9, StudyTable, "alterForeignKey");
-		// migrations.allowMigration(9, StudyTable, "recreateTable");
-		// migrations.allowMigration(9, DataLogTable, "alterForeignKey");
-		// migrations.allowMigration(9, DataLogTable, "recreateTable");
-		
-	}
+	},
 } satisfies DatabaseInstructions

@@ -9,4 +9,10 @@
 		padding: 2px 3px;
 		background-color: var(--color-accent-light);
 	}
+	
+	.optional {
+		white-space: wrap;
+		display: inline;
+		color: dimgray;
+	}
 }

@@ -4,10 +4,10 @@ import {wait} from "../../../convenience.ts";
 import postData from "../../../../src/frontend/actions/postData.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
 import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
-import EditQuestionnaire from "../../../../src/frontend/views/pages/EditQuestionnaire.tsx";
+import SetQuestionnaire from "../../../../src/frontend/views/pages/SetQuestionnaire.tsx";
 import getData from "../../../../src/frontend/actions/getData.ts";
 
-describe("EditQuestionnaire", async () => {
+describe("SetQuestionnaire", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
 		default: vi.fn(() => ({
 			questionnaireId: 123
@@ -65,7 +65,7 @@ describe("EditQuestionnaire", async () => {
 		
 		
 		async function createAndSubmitForm(id?: number) {
-			const component = await renderPage(EditQuestionnaire, id ? `id=${id}` : "");
+			const component = await renderPage(SetQuestionnaire, id ? `id=${id}` : "");
 			const form = component.dom.querySelector("form")! as HTMLFormElement;
 			
 			form.dispatchEvent(new Event("submit"));
@@ -112,7 +112,7 @@ describe("EditQuestionnaire", async () => {
 		const confirmMock = vi.spyOn(window, "confirm").mockReturnValue(true);
 		
 		async function createAndPressDelete(id: number) {
-			const component = await renderPage(EditQuestionnaire, `id=${id}`);
+			const component = await renderPage(SetQuestionnaire, `id=${id}`);
 			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!
 			element.dispatchEvent(new Event("click"));
 			
@@ -148,7 +148,7 @@ describe("EditQuestionnaire", async () => {
 		}
 		
 		it("should update denotation when account was changed", async () => {
-			const component = await renderPage(EditQuestionnaire);
+			const component = await renderPage(SetQuestionnaire);
 			
 			let denotationInput = component.dom.querySelector("input[name=blockchainDenotation]")! as HTMLInputElement;
 			expect(denotationInput.value).toBe("10");
@@ -169,7 +169,7 @@ describe("EditQuestionnaire", async () => {
 		});
 		
 		it("should not update denotation if questionnaire id was provided", async () => {
-			const component = await renderPage(EditQuestionnaire, "id=66");
+			const component = await renderPage(SetQuestionnaire, "id=66");
 			let denotationInput = component.dom.querySelector("input[name=blockchainDenotation]")! as HTMLInputElement;
 			expect(denotationInput.value).toBe("4");
 			

@@ -10,14 +10,23 @@ import ListQuestionnairesInterface from "../../shared/data/ListQuestionnairesInt
 export default function listQuestionnaires(db: DbType): express.Router {
 	const router = express.Router();
 	
-	addGetRoute<ListQuestionnairesInterface>("/listQuestionnaires", router, async (_, request) => {
+	addGetRoute<ListQuestionnairesInterface>("/listQuestionnaires", router, async (data, request) => {
 		const session = await getLoggedInSessionData(db, request);
 		
-		const questionnaires = await db.selectFrom("Questionnaire")
-			.select(["questionnaireId", "questionnaireName"])
-			.where("userId", "=", session.userId)
-			.orderBy("questionnaireName")
-			.execute();
+		const studyId = parseInt(data.studyId ?? "0") ?? 0;
+		
+		const questionnaires = data.studyId === undefined
+			? await db.selectFrom("Questionnaire")
+				.select(["questionnaireId", "questionnaireName"])
+				.where("userId", "=", session.userId)
+				.orderBy("questionnaireName")
+				.execute()
+			: await db.selectFrom("Questionnaire")
+				.select(["questionnaireId", "questionnaireName"])
+				.where("studyId", "=", studyId)
+				.where("userId", "=", session.userId)
+				.orderBy("questionnaireName")
+				.execute();
 		
 		return {
 			questionnaires: questionnaires

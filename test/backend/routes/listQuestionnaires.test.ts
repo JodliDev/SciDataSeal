@@ -22,7 +22,7 @@ describe("listQuestionnaires", () => {
 	app.use(listQuestionnaires(mockDb));
 	
 	
-	it("should return a list of questionnaires for the logged-in user", async() => {
+	it("should return a list of all questionnaires for the logged-in user", async() => {
 		const mockList = [
 			{questionnaireId: 1, questionnaireName: "Test 1"},
 			{questionnaireId: 2, questionnaireName: "Test 2"},
@@ -33,6 +33,24 @@ describe("listQuestionnaires", () => {
 		
 		const response = await request(app)
 			.get("/listQuestionnaires");
+		
+		expect(response.ok).toBe(true);
+		expect(response.body.data).toEqual({questionnaires: mockList});
+	});
+	
+	it("should return a list of questionnaires for the logged-in user and the provided study", async() => {
+		const studyId = 7;
+		const mockList = [
+			{questionnaireId: 1, questionnaireName: "Test 1"},
+			{questionnaireId: 2, questionnaireName: "Test 2"},
+		];
+		mockDb.selectFrom.chain("Questionnaire")
+			.where.chain("studyId", "=", studyId)
+			.where.chain("userId", "=", 123)
+			.execute.mockResolvedValue(mockList);
+		
+		const response = await request(app)
+			.get(`/listQuestionnaires?studyId=${studyId}`);
 		
 		expect(response.ok).toBe(true);
 		expect(response.body.data).toEqual({questionnaires: mockList});

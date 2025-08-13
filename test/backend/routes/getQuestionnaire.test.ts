@@ -24,6 +24,7 @@ describe("getQuestionnaire", () => {
 		const queryData = {questionnaireId: "1"};
 		const mockQuestionnaire = {
 			questionnaireId: 1,
+			studyId: 99,
 			questionnaireName: "Sample Questionnaire",
 			blockchainDenotation: "ET",
 			blockchainAccountId: "0x123456789",

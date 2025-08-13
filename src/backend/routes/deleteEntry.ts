@@ -41,6 +41,9 @@ export default function deleteEntry(db: DbType): express.Router {
 			case "questionnaire":
 				await db.deleteFrom("Questionnaire").where("questionnaireId", "=", data.id).limit(1).execute();
 				break;
+			case "study":
+				await db.deleteFrom("Study").where("studyId", "=", data.id).limit(1).execute();
+				break;
 			case "user":
 				if(!session.isAdmin) {
 					throw new UnauthorizedException();
