@@ -1,7 +1,6 @@
 import PostDataStructureInterface from "../PostDataStructureInterface.ts";
-import GetDataStructureInterface from "../GetDataStructureInterface.ts";
 
-export interface SetQuestionnaireColumnsPostInterface extends PostDataStructureInterface {
+export interface SetQuestionnaireColumnsInterface extends PostDataStructureInterface {
 	Endpoint: "/setQuestionnaireColumns";
 	Query: {
 		id?: string;
@@ -10,15 +9,5 @@ export interface SetQuestionnaireColumnsPostInterface extends PostDataStructureI
 	Request: {
 		columns: string[];
 	}
-}
-
-export interface SetQuestionnaireColumnsGetInterface extends GetDataStructureInterface {
-	Endpoint: "/setQuestionnaireColumns";
-	Query: {
-		id: string;
-		pass?: string;
-		columns: string;
-	}
-	Response: {}
 }
 

@@ -3,8 +3,7 @@ import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import getBlockchain from "../actions/getBlockchain.ts";
-import {addGetRoute} from "../actions/routes/addGetRoute.ts";
-import {SaveDataGetInterface, SaveDataPostInterface} from "../../shared/data/SaveDataInterface.ts";
+import {SaveDataInterface} from "../../shared/data/SaveDataInterface.ts";
 import getAuthHeader from "../actions/authentication/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import createCsvLine from "../actions/createCsvLine.ts";
@@ -16,7 +15,18 @@ import TranslatedException from "../../shared/exceptions/TranslatedException.ts"
 export default function saveData(db: DbType): express.Router {
 	const router = express.Router();
 	
-	async function saveData(questionnaireId: number, pass: string, data: Record<string, string>): Promise<void> {
+	addPostRoute<SaveDataInterface>("/saveData", router, async (data, request) => {
+		const query = request.query;
+		const pass = getAuthHeader(request) ?? query.pass as string;
+		const questionnaireId = parseInt(query.id as string);
+		
+		if(!pass || !questionnaireId || !data) {
+			throw new TranslatedException("errorMissingData");
+		}
+		
+
+		// await saveData(questionnaireId, pass, data as Record<string, string>);
+		
 		if(!isValidBackendString(pass)) {
 			throw new TranslatedException("errorFaultyData", "apiPassword");
 		}
@@ -44,7 +54,7 @@ export default function saveData(db: DbType): express.Router {
 		const dataArray: string[] = [];
 		const columnObj = JSON.parse(`[${questionnaire.columns}]`);
 		for(const column of columnObj) {
-			dataArray.push(data.hasOwnProperty(column) ? data[column] : "");
+			dataArray.push(data.hasOwnProperty(column) ? data[column] as string : "");
 		}
 		
 		const blockChain = getBlockchain(questionnaire.blockchainType);
@@ -57,35 +67,10 @@ export default function saveData(db: DbType): express.Router {
 				signature: JSON.stringify(signature),
 			})
 			.execute();
-	}
-	
-	addPostRoute<SaveDataPostInterface>("/saveData", router, async (data, request) => {
-		const query = request.query;
-		const pass = getAuthHeader(request) ?? query.pass as string;
-		const questionnaireId = parseInt(query.id as string);
-		
-		if(!pass || !questionnaireId || !data) {
-			throw new TranslatedException("errorMissingData");
-		}
-		
-
-		await saveData(questionnaireId, pass, data as Record<string, string>);
 		
 		return {}
 	});
 	
-	addGetRoute<SaveDataGetInterface>("/saveData", router, async (data, request) => {
-		const pass = getAuthHeader(request) ?? data.pass;
-		const id = parseInt(data.id ?? "0");
-		
-		if(!id || !data.data || !pass) {
-			throw new TranslatedException("errorMissingData");
-		}
-		
-		await saveData(id, pass, JSON.parse(data.data));
-		
-		return {};
-	});
 	return router;
 }
 

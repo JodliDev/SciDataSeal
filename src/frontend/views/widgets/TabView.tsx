@@ -1,10 +1,12 @@
 import m from "mithril";
 import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import css from "./TabView.module.css";
+import {tooltip} from "../../actions/FloatingMenu.ts";
 
 interface TabContent {
 	label: string;
-	view: () => m.Child
+	tooltip?: string;
+	view: () => m.Child;
 }
 
 interface Attributes {
@@ -28,7 +30,7 @@ export default TsClosureComponent<Attributes>((vNode) => {
 			return <div class={`${css.TabView} vertical`}>
 				<div class={`${css.tabBar} horizontal hAlignCenter wrapContent`}>
 					{vNode.attrs.tabs.map((tab, index) =>
-						<div class={`${css.tab} clickable ${index === current ? css.current : ""}`} onclick={() => onClick(index)}>
+						<div class={`${css.tab} clickable ${index === current ? css.current : ""}`} onclick={() => onClick(index)} {...(tab.tooltip ? tooltip(tab.tooltip) : {})}>
 							{tab.label}
 						</div>
 					)}

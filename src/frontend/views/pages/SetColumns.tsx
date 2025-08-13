@@ -6,7 +6,7 @@ import getData from "../../actions/getData.ts";
 import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import { Btn } from "../widgets/Btn.tsx";
 import bindValueToInput from "../../actions/bindValueToInput.ts";
-import {SetQuestionnaireColumnsPostInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
+import {SetQuestionnaireColumnsInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -32,7 +32,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
 			{label: Lang.get("setColumns"), page: "ManuallySetColumn", query: `?id=${id}`},
 		],
-		view: () => <Form<SetQuestionnaireColumnsPostInterface> endpoint="/setQuestionnaireColumns" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
+		view: () => <Form<SetQuestionnaireColumnsInterface> endpoint="/setQuestionnaireColumns" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
 			{columns.length
 				? columns.map((column, index) =>
 					<label>

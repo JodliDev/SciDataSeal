@@ -3,10 +3,9 @@ import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import getBlockchain from "../actions/getBlockchain.ts";
-import {addGetRoute} from "../actions/routes/addGetRoute.ts";
 import getAuthHeader from "../actions/authentication/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
-import {SetQuestionnaireColumnsGetInterface, SetQuestionnaireColumnsPostInterface} from "../../shared/data/SetQuestionnaireColumnsInterface.ts";
+import {SetQuestionnaireColumnsInterface} from "../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import createCsvLine from "../actions/createCsvLine.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
@@ -17,7 +16,15 @@ import TranslatedException from "../../shared/exceptions/TranslatedException.ts"
 export default function setQuestionnaireColumns(db: DbType): express.Router {
 	const router = express.Router();
 	
-	async function setColumns(questionnaireId: number, pass: string, columns: string[]): Promise<void> {
+	addPostRoute<SetQuestionnaireColumnsInterface>("/setQuestionnaireColumns", router, async (data, request) => {
+		const query = request.query;
+		const pass = getAuthHeader(request) ?? query.pass as string;
+		const questionnaireId = parseInt(query.id as string);
+		const columns = data.columns;
+		
+		if(!pass || !questionnaireId || !columns)
+			throw new TranslatedException("errorMissingData");
+		
 		if(!isValidBackendString(pass))
 			throw new TranslatedException("errorFaultyData", "apiPassword");
 		
@@ -61,31 +68,10 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 			.where("questionnaireId", "=", questionnaireId)
 			.limit(1)
 			.execute();
-	}
-	
-	addPostRoute<SetQuestionnaireColumnsPostInterface>("/setQuestionnaireColumns", router, async (data, request) => {
-		const query = request.query;
-		const pass = getAuthHeader(request) ?? query.pass as string;
-		const questionnaireId = parseInt(query.id as string);
-		
-		if(!pass || !questionnaireId || !data.columns)
-			throw new TranslatedException("errorMissingData");
-
-		await setColumns(questionnaireId, pass, data.columns);
 		
 		return {}
 	});
 	
-	addGetRoute<SetQuestionnaireColumnsGetInterface>("/setQuestionnaireColumns", router, async (data, request) => {
-		const pass = getAuthHeader(request) ?? data.pass;
-		
-		if(!data.id || !data.columns || !pass)
-			throw new TranslatedException("errorMissingData");
-		
-		await setColumns(parseInt(data.id), pass, JSON.parse(decodeURIComponent(data.columns)));
-		
-		return {};
-	});
 	return router;
 }
 
