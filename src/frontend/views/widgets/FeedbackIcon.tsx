@@ -6,9 +6,36 @@ import LoadingSpinner from "./LoadingSpinner.tsx";
 import css from "./FeedbackIcon.module.css";
 
 export class FeedbackCallBack {
-	setSuccess: (success: boolean) => void = () => {}
-	setLoading: (isLoading: boolean) => void = () => {}
-	isReady: () => boolean = () => true
+	private isLoadingState: boolean = false;
+	private showIconState: boolean = false;
+	private successState: boolean = false;
+	private timeoutId: NodeJS.Timeout | number = 0;
+	
+	setSuccess(success: boolean) {
+		this.showIconState = true;
+		this.successState = success;
+		this.isLoadingState = false;
+		m.redraw();
+		
+		window.clearTimeout(this.timeoutId);
+		this.timeoutId = window.setTimeout(() => {
+			this.showIconState = false;
+			m.redraw();
+		}, STATE_REMOVAL_DELAY);
+	}
+	setLoading(isLoading: boolean) {
+		this.isLoadingState = isLoading;
+		m.redraw();
+	}
+	isReady() {
+		return !this.isLoadingState && (!this.showIconState || this.successState);
+	}
+}
+
+interface InternatFeedbackCallBack {
+	isLoadingState: boolean;
+	showIconState: boolean;
+	successState: boolean
 }
 
 interface FeedbackIconOptions {
@@ -24,39 +51,17 @@ const STATE_REMOVAL_DELAY = 2000;
  * Success and failed states will only be shown for {@link STATE_REMOVAL_DELAY} ms
  */
 export default TsClosureComponent<FeedbackIconOptions>(vNode => {
-	const {reserveSpace, callback} = vNode.attrs
-	let isLoadingState = false;
-	let showIconState = false;
-	let successState = false;
-	let timeoutId: NodeJS.Timeout | number = 0;
-	
-	callback.setSuccess = (success: boolean) => {
-		showIconState = true;
-		successState = success;
-		isLoadingState = false;
-		m.redraw();
-		
-		window.clearTimeout(timeoutId);
-		timeoutId = window.setTimeout(() => {
-			showIconState = false;
-			m.redraw();
-		}, STATE_REMOVAL_DELAY);
-	}
-	callback.setLoading = (isLoading: boolean) => {
-		isLoadingState = isLoading;
-		m.redraw();
-	}
-	callback.isReady = () => {
-		return !isLoadingState && (!showIconState || successState);
-	}
-	
 	return {
-		view: () => isLoadingState
-			? <LoadingSpinner {...vNode.attrs}/>
-			: (showIconState
-				? <div {...vNode.attrs} class={`${css.FeedbackIcon} ${successState ? css.success : css.failed} ${vNode.attrs.class ?? ""}`}>{
-					m.trust(successState ? checkCircleFilledSvg : failSvg)
-				}</div>
-				: <div {...vNode.attrs} class={`${css.FeedbackIcon} ${css.hidden} ${reserveSpace ? css.reserveSpace : ""} ${vNode.attrs.class ?? ""}`}></div>)
+		view: () => {
+			const feedback = vNode.attrs.callback as unknown as InternatFeedbackCallBack;
+			
+			return feedback.isLoadingState
+				? <LoadingSpinner {...vNode.attrs}/>
+				: (feedback.showIconState
+					? <div {...vNode.attrs} class={`${css.FeedbackIcon} ${feedback.successState ? css.success : css.failed} ${vNode.attrs.class ?? ""}`}>{
+						m.trust(feedback.successState ? checkCircleFilledSvg : failSvg)
+					}</div>
+					: <div {...vNode.attrs} class={`${css.FeedbackIcon} ${css.hidden} ${vNode.attrs.reserveSpace ? css.reserveSpace : ""} ${vNode.attrs.class ?? ""}`}></div>)
+		}
 	}
 });
