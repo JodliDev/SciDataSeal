@@ -17,6 +17,9 @@ interface Attributes {
 	query?: `?${string}`,
 }
 
+/**
+ * Loads and shows a selectable list of entries for a provided type.
+ */
 export default TsClosureComponent<Attributes>((vNode) => {
 	let currentType = vNode.attrs.type;
 	let currentQuery = vNode.attrs.query;

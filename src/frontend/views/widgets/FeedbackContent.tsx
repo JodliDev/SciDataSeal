@@ -7,6 +7,9 @@ interface Attributes {
 	callback: FeedbackCallBack
 }
 
+/**
+ * Shows a FeedbackIcon while loading instead of the content
+ */
 export default TsClosureComponent<Attributes>(() => {
 	return {
 		view: (vNode) => {

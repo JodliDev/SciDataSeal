@@ -5,6 +5,9 @@ import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import LoadingSpinner from "./LoadingSpinner.tsx";
 import css from "./FeedbackIcon.module.css";
 
+/**
+ * The callback class for FeedbackIcon. Used to control the visible state and redraw the UI when needed.
+ */
 export class FeedbackCallBack {
 	private isLoadingState: boolean = false;
 	private showIconState: boolean = false;

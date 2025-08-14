@@ -13,6 +13,9 @@ interface Attributes {
 	tabs: TabContent[],
 }
 
+/**
+ * A View with a tab row at the top and the selected content below
+ */
 export default TsClosureComponent<Attributes>((vNode) => {
 	const onClick = (index: number) => {
 		current = index;
