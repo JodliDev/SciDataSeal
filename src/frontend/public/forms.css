@@ -24,6 +24,7 @@ label, .labelLike {
 	display: inline-flex;
 	flex-direction: column;
 	align-items: start;
+	gap: 0;
 	
 	> small:first-child {
 		display: block;
@@ -40,6 +41,10 @@ label, .labelLike {
 		color: gray;
 	}
 	
+	pre, span {
+		line-height: 16px;
+		padding: 5px;
+	}
 }
 
 input {
@@ -56,9 +61,16 @@ input[type="checkbox"], input[type="radio"] {
 	width: unset;
 }
 .inputLike {
-	min-width: var(--form-element-width);
-	padding: 10px;
-	margin: 0 5px;
+	min-width: calc(var(--form-element-width) + 10px); /*10px for padding*/
+	margin: 5px;
+	
+	select, input, textarea {
+		width: unset;
+		min-width: unset;
+		border: none;
+		margin: 0;
+		flex: 1 1 auto;
+	}
 }
 
 select {

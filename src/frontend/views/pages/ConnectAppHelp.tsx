@@ -80,11 +80,11 @@ export default PrivatePage(async (query: URLSearchParams) => {
 					view: () =>
 						<div>
 							<h3>POST</h3>
-							<div class="labelLike vertical vAlignCenter">
+							<div class="labelLike">
 								<small>{Lang.get("url")}</small>
 								<pre class={`${css.box} inputLike`}>{createQuestionnaireUrl}</pre>
 							</div>
-							<div class="labelLike vertical vAlignCenter">
+							<div class="labelLike">
 								<small>{Lang.get("body")}</small>
 								<pre class={`${css.box} inputLike`}>
 									&#123;
@@ -105,11 +105,11 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						<div>
 							{createQuestionnaireMenu(questionnaires)}
 							<h3>POST</h3>
-							<div class="labelLike vertical vAlignCenter">
+							<div class="labelLike">
 								<small>{Lang.get("url")}</small>
 								<pre class={`${css.box} inputLike`}>{setColumnsUrl}</pre>
 							</div>
-							<div class="labelLike vertical vAlignCenter">
+							<div class="labelLike">
 								<small>{Lang.get("body")}</small>
 								<pre class={`${css.box} inputLike`}>
 										&#123;
@@ -128,11 +128,11 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						<div>
 							{createQuestionnaireMenu(questionnaires)}
 							<h3>POST</h3>
-							<div class="labelLike vertical vAlignCenter">
+							<div class="labelLike">
 								<small>{Lang.get("url")}</small>
 								<pre class={`${css.box} inputLike`}>{saveDataUrl}</pre>
 							</div>
-							<div class="labelLike vertical vAlignCenter">
+							<div class="labelLike">
 								<small>POST</small>
 								<pre class={`${css.box} inputLike`}>
 										&#123;
