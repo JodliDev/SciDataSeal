@@ -48,7 +48,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						</div>
 					</label>
 				)
-				: <div class="warn">{Lang.get("noColumnsInfo")}</div>
+				: <div class="warn">{Lang.get("warnNoColumns")}</div>
 			}
 			
 			<Btn.Default description="test" iconKey="add" onclick={addColumn}/>

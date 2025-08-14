@@ -18,15 +18,17 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
 			{label: Lang.get("saveData"), page: "SaveData", query: `?id=${id}`},
 		],
-		view: () => <Form<SaveDataInterface> endpoint="/saveData" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
-			<div class="horizontal hAlignCenter wrapContent">
-				{columns.map(column =>
-					<label>
-						<small>{column}</small>
-						<textarea placeholder={Lang.get("columnData")} name={column}></textarea>
-					</label>
-				)}
-			</div>
-		</Form>
+		view: () => !!columns.length
+			? <Form<SaveDataInterface> endpoint="/saveData" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
+				<div class="horizontal hAlignCenter wrapContent">
+					{columns.map(column =>
+						<label>
+							<small>{column}</small>
+							<textarea placeholder={Lang.get("columnData")} name={column}></textarea>
+						</label>
+					)}
+				</div>
+			</Form>
+			: <div class="warn textCentered">{Lang.get("warnNoColumns")}</div>
 	};
 });

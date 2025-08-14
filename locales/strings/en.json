@@ -53,7 +53,6 @@
 	"load": "Load",
 	"noData": "No data",
 	"notFound": "Not found",
-	"noColumnsInfo": "You need to set columns or no data will be saved",
 	"optional": "Optional",
 	"password": "Password",
 	"passwordAgain": "Password again",
@@ -97,5 +96,6 @@
 	"userSettings": "User settings",
 	"viewData": "View data",
 	"warnChangingDenotation": "Changing the denotation will result in already existing data from the blockchain wallet not being accessible anymore. If there already is data saved in the wallet under this denotation, it will show up in the data for this questionnaire.",
-	"warnChangingBlockchainAccount": "Changing the blockchain account will result in already existing data from the former blockchain wallet not being accessible anymore (existing data will not be transferred to the new blockchain account)."
+	"warnChangingBlockchainAccount": "Changing the blockchain account will result in already existing data from the former blockchain wallet not being accessible anymore (existing data will not be transferred to the new blockchain account).",
+	"warnNoColumns": "You need to set columns or no data will be saved."
 }
