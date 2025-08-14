@@ -10,6 +10,7 @@ import settingsSvg from "../../assets/icons/settings.svg?raw";
 import userListSvg from "../../assets/icons/userList.svg?raw";
 import userSettingsSvg from "../../assets/icons/userSettings.svg?raw";
 import viewSvg from "../../assets/icons/view.svg?raw";
+import warnSvg from "../../assets/icons/warn.svg?raw";
 import m from "mithril";
 import {TsClosureComponent} from "../../mithril-polyfill.ts";
 
@@ -26,6 +27,7 @@ const IconType = {
 	userList: userListSvg,
 	userSettings: userSettingsSvg,
 	view: viewSvg,
+	warn: warnSvg,
 }
 
 export interface IconAttributes {
