@@ -13,26 +13,23 @@ import initialize from "./routes/initialize.ts";
 import Scheduler from "./Scheduler.ts";
 import deleteOutdatedSessions from "./actions/authentication/deleteOutdatedSessions.ts";
 import setQuestionnaire from "./routes/setQuestionnaire.ts";
-import listQuestionnaires from "./routes/listQuestionnaires.ts";
 import getQuestionnaire from "./routes/getQuestionnaire.ts";
 import saveData from "./routes/saveData.ts";
 import setQuestionnaireColumns from "./routes/setQuestionnaireColumns.ts";
 import getQuestionnaireData from "./routes/getQuestionnaireData.ts";
 import editBlockchainAccount from "./routes/editBlockchainAccount.ts";
-import listBlockchainAccounts from "./routes/listBlockchainAccounts.ts";
 import getBlockchainAccount from "./routes/getBlockchainAccount.ts";
 import generateRandomString from "./routes/generateRandomString.ts";
 import getNewDenotation from "./routes/getNewDenotation.ts";
 import AdminMiddleware from "./AdminMiddleware.ts";
 import editUser from "./routes/editUser.ts";
-import listUsers from "./routes/listUsers.ts";
 import getUser from "./routes/getUser.ts";
 import userSettings from "./routes/userSettings.ts";
 import {FrontendOptionsString, recreateOptionsString} from "./actions/recreateOptionsString.ts";
 import deleteEntry from "./routes/deleteEntry.ts";
-import listStudies from "./routes/listStudies.ts";
 import getStudy from "./routes/getStudy.ts";
 import editStudy from "./routes/editStudy.ts";
+import listEntries from "./routes/listEntries.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -59,9 +56,7 @@ async function init() {
 	webServer.use("/api", authenticateMiddleware, deleteEntry(db));
 	webServer.use("/api", authenticateMiddleware, setQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, editStudy(db));
-	webServer.use("/api", authenticateMiddleware, listBlockchainAccounts(db));
-	webServer.use("/api", authenticateMiddleware, listQuestionnaires(db));
-	webServer.use("/api", authenticateMiddleware, listStudies(db));
+	webServer.use("/api", authenticateMiddleware, listEntries(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaireData());
 	webServer.use("/api", authenticateMiddleware, generateRandomString());
@@ -70,7 +65,6 @@ async function init() {
 	webServer.use("/api", adminMiddleware, editBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, getBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, editUser(db));
-	webServer.use("/api", adminMiddleware, listUsers(db));
 	webServer.use("/api", adminMiddleware, getUser(db));
 	
 	const langProvider = new LangProvider();

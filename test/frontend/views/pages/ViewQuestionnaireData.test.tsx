@@ -79,8 +79,8 @@ describe("ViewQuestionnaireData", async () => {
 						blockchainType: "solana"
 					};
 				}
-				else if(endpoint == "/listQuestionnaires") {
-					return {questionnaires: [{questionnaireName: "testQuestionnaire"}]};
+				else if(endpoint == "/listEntries") {
+					return {list: [{label: "testQuestionnaire"}]};
 				}
 				return undefined;
 			})
@@ -114,8 +114,8 @@ describe("ViewQuestionnaireData", async () => {
 						blockchainType: "solana"
 					};
 				}
-				else if(endpoint == "/listQuestionnaires") {
-					return {questionnaires: [{questionnaireName: "testQuestionnaire"}]};
+				else if(endpoint == "/listEntries") {
+					return {list: [{label: "testQuestionnaire"}]};
 				}
 				return undefined;
 			})
@@ -149,8 +149,8 @@ describe("ViewQuestionnaireData", async () => {
 				else if(endpoint == "/getBlockchainAccount") {
 					return undefined;
 				}
-				else if(endpoint == "/listQuestionnaires") {
-					return {questionnaires: [{questionnaireName: "testQuestionnaire"}]};
+				else if(endpoint == "/listEntries") {
+					return {list: [{label: "testQuestionnaire"}]};
 				}
 				return undefined;
 			})
@@ -270,6 +270,7 @@ describe("ViewQuestionnaireData", async () => {
 			const btn = component.dom.querySelector(".reloadBtn")!;
 			btn.dispatchEvent(new Event("click"));
 			await wait(1);
+			component.redraw();
 			
 			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).not.toBeNull();
 			
@@ -295,6 +296,7 @@ describe("ViewQuestionnaireData", async () => {
 			const btn = component.dom.querySelector(".reloadBtn")!;
 			btn.dispatchEvent(new Event("click"));
 			await wait(1);
+			component.redraw();
 			
 			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).not.toBeNull();
 			

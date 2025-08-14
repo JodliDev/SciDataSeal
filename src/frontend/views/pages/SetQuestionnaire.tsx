@@ -5,12 +5,12 @@ import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInte
 import {Lang} from "../../singleton/Lang.ts";
 import SetQuestionnaireInterface from "../../../shared/data/SetQuestionnaireInterface.ts";
 import {SiteTools} from "../../singleton/SiteTools.ts";
-import ListBlockchainAccountsInterface from "../../../shared/data/ListBlockchainAccountsInterface.ts";
 import Form from "../widgets/Form.tsx";
 import GetNewDenotation from "../../../shared/data/GetNewDenotation.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
+import listData from "../../actions/listData.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -23,9 +23,9 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		SiteTools.switchPage("ListQuestionnaires");
 	}
 	async function getDenotation(index: number): Promise<number | undefined> {
-		const entry = blockchainResponse?.accounts[index];
+		const entry = blockchainAccounts?.[index];
 		if(entry) {
-			const response = await getData<GetNewDenotation>("/getNewDenotation", `?blockchainAccountId=${entry.blockchainAccountId}`);
+			const response = await getData<GetNewDenotation>("/getNewDenotation", `?blockchainAccountId=${entry.id}`);
 			return response?.denotation;
 		}
 	}
@@ -38,14 +38,14 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		disableAccountSwitch = true;
 		m.redraw();
 		const accountId = parseInt(target.value);
-		const index = blockchainResponse?.accounts.findIndex(entry => entry.blockchainAccountId == accountId)
+		const index = blockchainAccounts?.findIndex(entry => entry.id == accountId)
 		questionnaire.blockchainDenotation = await getDenotation(index ?? 0);
 		disableAccountSwitch = false;
 		m.redraw();
 	}
 	
 	const id = parseInt(query.get("id") ?? "0");
-	const blockchainResponse = await getData<ListBlockchainAccountsInterface>("/listBlockchainAccounts");
+	const blockchainAccounts = await listData("blockchainAccounts");
 	const questionnaire: Partial<GetQuestionnaireInterface["Response"]> = id
 		? await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`) ?? {}
 		: {};
@@ -85,8 +85,8 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				<label>
 					<small>{Lang.get("blockchainAccount")}</small>
 					<select name="blockchainAccountId" disabled={disableAccountSwitch} {...bindPropertyToInput(questionnaire, "blockchainAccountId", {change: changeAccount})}>
-						{blockchainResponse?.accounts.map(entry =>
-							<option value={entry.blockchainAccountId}>{entry.blockchainName}</option>
+						{blockchainAccounts?.map(entry =>
+							<option value={entry.id}>{entry.label}</option>
 						)}
 					</select>
 				</label>

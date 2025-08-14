@@ -8,8 +8,8 @@ import {tooltip} from "../../actions/FloatingMenu.ts";
 import EditStudyInterface from "../../../shared/data/EditStudyInterface.ts";
 import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
 import GenerateRandomString from "../../../shared/data/GenerateRandomString.ts";
-import ListBlockchainAccountsInterface from "../../../shared/data/ListBlockchainAccountsInterface.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
+import listData from "../../actions/listData.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -26,7 +26,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	const study: Partial<GetStudyInterface["Response"]> = id
 		? (await getData<GetStudyInterface>("/getStudy", `?studyId=${id}`)) ?? {}
 		: {};
-	const blockchainResponse = await getData<ListBlockchainAccountsInterface>("/listBlockchainAccounts");
+	const blockchainAccounts = await listData("blockchainAccounts");
 	
 	let apiPassword = study?.apiPassword;
 	
@@ -46,7 +46,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				{label: Lang.get("createStudy"), page: "EditStudy", query: `?id=${id}`},
 			],
 		view: () =>
-			blockchainResponse?.accounts.length
+			!!blockchainAccounts?.length
 				? <Form<EditStudyInterface> id={id} endpoint="/editStudy" addDeleteBtnFor={id ? "study" : undefined} onSent={onSent} onDeleted={onDeleted}>
 					<label>
 						<small>{Lang.get("studyName")}</small>
@@ -59,8 +59,8 @@ export default PrivatePage(async (query: URLSearchParams) => {
 					<label>
 						<small>{Lang.get("blockchainAccount")}</small>
 						<select name="blockchainAccountId" {...bindPropertyToInput(study, "blockchainAccountId")}>
-							{blockchainResponse?.accounts.map(entry =>
-								<option value={entry.blockchainAccountId}>{entry.blockchainName}</option>
+							{blockchainAccounts?.map(entry =>
+								<option value={entry.id}>{entry.label}</option>
 							)}
 						</select>
 					</label>

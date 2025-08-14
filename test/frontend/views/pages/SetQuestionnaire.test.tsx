@@ -13,7 +13,18 @@ describe("SetQuestionnaire", async () => {
 			questionnaireId: 123
 		}))
 	}));
-	
+	vi.mock("../../../../src/frontend/actions/listData.ts", () => ({
+		default: vi.fn(() => [
+			{
+				id: 4,
+				label: "blockchain"
+			},
+			{
+				id: 5,
+				label: "blockchain2"
+			}
+		])
+	}));
 	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
 		default: vi.fn((endpoint) => {
 			if(endpoint == "/getQuestionnaire") {
@@ -23,26 +34,12 @@ describe("SetQuestionnaire", async () => {
 					blockchainDenotation: 4,
 					apiPassword: "pass",
 					dataKey: "key"
-				}
-			}
-			else if(endpoint == "/listBlockchainAccounts") {
-				return {
-					accounts: [
-						{
-							blockchainAccountId: 4,
-							blockchainName: "blockchain"
-						},
-						{
-							blockchainAccountId: 5,
-							blockchainName: "blockchain2"
-						}
-					]
 				};
 			}
 			else if(endpoint == "/getNewDenotation") {
 				return {
 					denotation: 10
-				}
+				};
 			}
 		})
 	}));

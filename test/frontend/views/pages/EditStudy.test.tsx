@@ -6,8 +6,7 @@ import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
 import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
 import EditStudy from "../../../../src/frontend/views/pages/EditStudy.tsx";
-import getData from "../../../../src/frontend/actions/getData.ts";
-import ListBlockchainAccountsInterface from "../../../../src/shared/data/ListBlockchainAccountsInterface.ts";
+import listData from "../../../../src/frontend/actions/listData.ts";
 
 describe("EditStudy", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
@@ -15,7 +14,6 @@ describe("EditStudy", async () => {
 			studyId: 123
 		}))
 	}));
-	
 	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
 		default: vi.fn((endpoint) => {
 			if(endpoint == "/getStudy") {
@@ -25,20 +23,20 @@ describe("EditStudy", async () => {
 					blockchainAccountId: 34
 				}
 			}
-			else if(endpoint == "/listBlockchainAccounts") {
-				return {
-					accounts: [
-						{
-							blockchainAccountId: 4,
-							blockchainName: "blockchain"
-						},
-						{
-							blockchainAccountId: 5,
-							blockchainName: "blockchain2"
-						}
-					]
-				};
-			}
+		})
+	}));
+	vi.mock("../../../../src/frontend/actions/listData.ts", () => ({
+		default: vi.fn(() => {
+			return [
+				{
+					id: 4,
+					label: "blockchain"
+				},
+				{
+					id: 5,
+					label: "blockchain2"
+				}
+			];
 		})
 	}));
 	
@@ -53,7 +51,7 @@ describe("EditStudy", async () => {
 	});
 	
 	it("Should show error when no blockchain accounts exist", async () => {
-		vi.mocked(getData<ListBlockchainAccountsInterface>).mockResolvedValue({accounts: []});
+		vi.mocked(listData).mockResolvedValue([]);
 
 		const component = await renderPage(EditStudy);
 

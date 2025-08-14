@@ -1,39 +1,19 @@
-import {describe, it, vi, expect, afterEach} from "vitest";
+import {describe, it, vi, expect, afterAll} from "vitest";
 import {renderPage} from "../../testRender.ts";
 import ListStudies from "../../../../src/frontend/views/pages/ListStudies.tsx";
+import listData from "../../../../src/frontend/actions/listData.ts";
 
 describe("ListStudies", async () => {
-	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
-		default: vi.fn(() => ({
-			studies: [
-				{
-					studyId: 1,
-					studyName: "testName1",
-				},
-				{
-					studyId: 5,
-					studyName: "testName2",
-				},
-				{
-					studyId: 6,
-					studyName: "testName3",
-				}
-			],
-		}))
+	vi.mock("../../../../src/frontend/actions/listData.ts", () => ({
+		default: vi.fn()
 	}));
 	
-	afterEach(() => {
+	afterAll(() => {
 		vi.resetAllMocks();
 	});
 	
-	it("should display all loaded questionnaires", async () => {
-		const component = await renderPage(ListStudies);
-		
-		const urls = component.dom.querySelectorAll(".bigButton");
-		
-		expect(urls.length).toBe(3);
-		expect((urls[0] as HTMLLinkElement).innerText).toBe("testName1");
-		expect((urls[1] as HTMLLinkElement).innerText).toBe("testName2");
-		expect((urls[2] as HTMLLinkElement).innerText).toBe("testName3");
+	it("should load correct list", async () => {
+		await renderPage(ListStudies);
+		expect(listData).toHaveBeenCalledWith("studies", undefined);
 	});
 });

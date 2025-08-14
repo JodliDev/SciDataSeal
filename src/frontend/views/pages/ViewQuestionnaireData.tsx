@@ -5,7 +5,6 @@ import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInte
 import GetBlockchainInterface from "../../../shared/data/GetBlockchainInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
-import ListQuestionnairesInterface from "../../../shared/data/ListQuestionnairesInterface.ts";
 import FeedbackIcon, {FeedbackCallBack} from "../widgets/FeedbackIcon.tsx";
 import css from "./ViewQuestionnaireData.module.css";
 import generateHash from "../../actions/generateHash.ts";
@@ -14,6 +13,7 @@ import postData from "../../actions/postData.ts";
 import {Change, diffChars} from "diff";
 import {GetQuestionnaireDataPostInterface} from "../../../shared/data/GetQuestionnaireDataInterface.ts";
 import floatingMenu, {tooltip} from "../../actions/FloatingMenu.ts";
+import listData from "../../actions/listData.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
@@ -113,7 +113,7 @@ export default PrivatePage(async () => {
 		
 		fromListFeedback.setSuccess(true);
 	}
-	const questionnaires = (await getData<ListQuestionnairesInterface>("/listQuestionnaires"))?.questionnaires;
+	const questionnaires = await listData("questionnaires");
 	
 	return {
 		history: [
@@ -169,7 +169,7 @@ export default PrivatePage(async () => {
 							<div class={`inputLike horizontal`}>
 								<div class="horizontal wrapContent fillSpace">
 									{questionnaires?.map(q =>
-										<span class={`clickable ${css.entry}`} onclick={() => fillQuestionnaire(q.questionnaireId)}>{q.questionnaireName}</span>
+										<span class={`clickable ${css.entry}`} onclick={() => fillQuestionnaire(q.id)}>{q.label}</span>
 									)}
 								</div>
 								<FeedbackIcon callback={fromListFeedback}/>

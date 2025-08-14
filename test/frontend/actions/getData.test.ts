@@ -1,8 +1,11 @@
-import {describe, it, expect} from 'vitest';
+import {describe, it, expect, afterAll, vi} from 'vitest';
 import getData from "../../../src/frontend/actions/getData";
 import {mockFetch} from "../../convenience";
 
-describe("getData()", () => {
+describe("getData", () => {
+	afterAll(() => {
+		vi.restoreAllMocks();
+	});
 	it("should fetch the correct url", async() => {
 		mockFetch({ok: true}, 200, (url) => {
 			expect(url).toBe("api/test?key=value");

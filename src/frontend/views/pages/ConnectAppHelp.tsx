@@ -6,16 +6,17 @@ import {Lang} from "../../singleton/Lang.ts";
 import css from "./ConnectAppHelp.module.css";
 import TabBar from "../widgets/TabView.tsx";
 import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
-import ListQuestionnairesInterface from "../../../shared/data/ListQuestionnairesInterface.ts";
 import {FeedbackCallBack} from "../widgets/FeedbackIcon.tsx";
 import SetQuestionnaireInterface from "../../../shared/data/SetQuestionnaireInterface.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 import {SetQuestionnaireColumnsInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import {SaveDataInterface} from "../../../shared/data/SaveDataInterface.ts";
+import listData from "../../actions/listData.ts";
+import ListEntriesInterface from "../../../shared/data/ListEntriesInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	function createQuestionnaireMenu(questionnaires: ListQuestionnairesInterface["Response"]["questionnaires"]) {
+	function createQuestionnaireMenu(questionnaires: ListEntriesInterface<"questionnaires">["Response"]["list"]) {
 		async function onChange(event: Event) {
 			const target = event.target as HTMLSelectElement;
 			feedback.setLoading(true);
@@ -31,7 +32,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			<b>{Lang.getWithColon("questionnaire")}</b>
 			<select onchange={onChange}>
 				{questionnaires.map(questionnaire =>
-					<option value={questionnaire.questionnaireId}>{questionnaire.questionnaireName}</option>
+					<option value={questionnaire.id}>{questionnaire.label}</option>
 				)}
 			</select>
 		</div>
@@ -49,8 +50,8 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	const feedback = new FeedbackCallBack();
 	const studyId = parseInt(query.get("studyId") ?? "0");
 	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${studyId}`);
-	const {questionnaires} = (await getData<ListQuestionnairesInterface>("/listQuestionnaires", `?studyId=${studyId}`)) ?? {};
-	const loadedQuestionnaire = (await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${questionnaires?.[0].questionnaireId}`));
+	const questionnaires = (await listData("questionnaires", `?studyId=${studyId}`));
+	const loadedQuestionnaire = (await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${questionnaires?.[0].id}`));
 	
 	const createQuestionnaireUrl = window.location.origin + "/api" + ("/setQuestionnaire" satisfies SetQuestionnaireInterface["Endpoint"]);
 	const saveDataUrl = window.location.origin + "/api" + ("/saveData" satisfies SaveDataInterface["Endpoint"]);

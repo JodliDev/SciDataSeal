@@ -1,30 +1,20 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
-import getData from "../../actions/getData.ts";
-import A from "../widgets/A.tsx";
-import ListBlockchainAccountsInterface from "../../../shared/data/ListBlockchainAccountsInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
-import Icon from "../widgets/Icon.tsx";
+import ListEntries from "../widgets/ListEntries.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
-	const response = await getData<ListBlockchainAccountsInterface>("/listBlockchainAccounts");
-	
 	return {
 		history: [
 			{label: Lang.get("home"), page: "Home"},
 			{label: Lang.get("blockchainAccounts"), page: "ListBlockchainAccounts"},
 		],
-		view: () => <div class="vertical hAlignCenter">
-			<A page="BlockchainAccount">
-				<Icon iconKey="add"/>
-				{Lang.get("createBlockchainAccount")}
-			</A>
-			<br/>
-			<div class="horizontal vAlignCenter hAlignCenter wrapContent selfAlignStretch">
-				{response?.accounts.map(entry =>
-					<A class="bigButton" page="BlockchainAccount" query={`?id=${entry.blockchainAccountId}`}>{entry.blockchainName}</A> )}
-			</div>
-		</div>
+		view: () => <ListEntries
+			type="blockchainAccounts"
+			addLabel={Lang.get("createBlockchainAccount")}
+			addTarget="BlockchainAccount"
+			target="BlockchainAccount"
+		/>
 	};
 });
