@@ -1,7 +1,7 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import getData from "../../actions/getData.ts";
-import EditBlockchainInterface from "../../../shared/data/EditBlockchainInterface.ts";
+import SetBlockchainInterface from "../../../shared/data/SetBlockchainInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
@@ -11,7 +11,7 @@ import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	async function onSent(response: EditBlockchainInterface["Response"]) {
+	async function onSent(response: SetBlockchainInterface["Response"]) {
 		if(id != response.blockchainAccountId) {
 			SiteTools.switchPage("Home");
 		}
@@ -37,7 +37,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				{label: Lang.get("home"), page: "Home"},
 				{label: Lang.get("createBlockchainAccount"), page: "BlockchainAccount", query: `?id=${id}`},
 			],
-		view: () => <Form<EditBlockchainInterface> id={id} endpoint="/editBlockchainAccount" addDeleteBtnFor={id ? "blockchainAccount" : undefined} onSent={onSent} onDeleted={onDeleted}>
+		view: () => <Form<SetBlockchainInterface> id={id} endpoint="/setBlockchainAccount" addDeleteBtnFor={id ? "blockchainAccount" : undefined} onSent={onSent} onDeleted={onDeleted}>
 			<label>
 				<small>{Lang.get("blockchainName")}</small>
 				<input type="text" name="blockchainName" {...bindPropertyToInput(account, "blockchainName")}/>

@@ -13,7 +13,7 @@ export default PrivatePage(async () => {
 		view: () => <ListEntries
 			type="studies"
 			addLabel={Lang.get("createStudy")}
-			addTarget="EditStudy"
+			addTarget="SetStudy"
 			target="Study"
 		/>
 	};

@@ -2,9 +2,9 @@ import express from "express";
 import request from "supertest";
 import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import {mockKysely} from "../../convenience.ts";
-import editStudy from "../../../src/backend/routes/editStudy.ts";
+import setStudy from "../../../src/backend/routes/setStudy.ts";
 
-describe("editStudy", () => {
+describe("setStudy", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({
 		getLoggedInSessionData: vi.fn().mockResolvedValue({isLoggedIn: true, userId: 123})
 	}));
@@ -19,17 +19,17 @@ describe("editStudy", () => {
 	const mockDb = mockKysely();
 	const app = express();
 	app.use(express.json());
-	app.use("/", editStudy(mockDb));
+	app.use("/", setStudy(mockDb));
 	
 	it("should return an error when required fields are missing", async() => {
-		const response = await request(app).post("/editStudy").send({});
+		const response = await request(app).post("/setStudy").send({});
 		expect(response.ok).toBe(false);
 		expect(response.body.error).toHaveProperty("message", "errorMissingData");
 	});
 	
 	it("should return an error when providing an invalid studyName", async() => {
 		const response = await request(app)
-			.post("/editStudy")
+			.post("/setStudy")
 			.send({
 				studyName: "testData$",
 				blockchainAccountId: 1,
@@ -59,7 +59,7 @@ describe("editStudy", () => {
 			.execute;
 		
 		const response = await request(app)
-			.post("/editStudy")
+			.post("/setStudy")
 			.send(sendData);
 		
 		expect(response.ok).toBe(true);
@@ -84,7 +84,7 @@ describe("editStudy", () => {
 			.executeTakeFirst.mockResolvedValue({insertId: 42});
 		
 		const response = await request(app)
-			.post("/editStudy")
+			.post("/setStudy")
 			.send(sendData);
 		
 		expect(response.ok).toBe(true);

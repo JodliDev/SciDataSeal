@@ -4,17 +4,17 @@ import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
-import EditStudyInterface from "../../shared/data/EditStudyInterface.ts";
+import SetStudyInterface from "../../shared/data/SetStudyInterface.ts";
 
 /**
  * Creates a POST route for creating a study or changing an existing one (if an id was provided)
  *
  * @param db - The database connection.
  */
-export default function editStudy(db: DbType): express.Router {
+export default function setStudy(db: DbType): express.Router {
 	const router = express.Router();
 	
-	addPostRoute<EditStudyInterface>("/editStudy", router, async (data, request) => {
+	addPostRoute<SetStudyInterface>("/setStudy", router, async (data, request) => {
 		if(!data.studyName || !data.apiPassword || !data.blockchainAccountId)
 			throw new TranslatedException("errorMissingData");
 		

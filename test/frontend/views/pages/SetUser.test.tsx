@@ -4,10 +4,10 @@ import {wait} from "../../../convenience.ts";
 import postData from "../../../../src/frontend/actions/postData.ts";
 import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
-import EditUser from "../../../../src/frontend/views/pages/EditUser.tsx";
+import SetUser from "../../../../src/frontend/views/pages/SetUser.tsx";
 import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
 
-describe("EditUser", async () => {
+describe("SetUser.tsx", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
 		default: vi.fn(() => ({
 			userId: 123
@@ -38,7 +38,7 @@ describe("EditUser", async () => {
 		
 		
 		async function createAndSubmitForm(password: string, passwordRepeat: string, id?: number) {
-			const component = await renderPage(EditUser, id ? `id=${id}` : "");
+			const component = await renderPage(SetUser, id ? `id=${id}` : "");
 			const form = component.dom.querySelector("form")! as HTMLFormElement;
 			
 			if(id && password) {
@@ -66,7 +66,7 @@ describe("EditUser", async () => {
 		it("should send data without password if no password was provided", async () => {
 			await createAndSubmitForm("", "");
 			
-			expect(postData).toHaveBeenCalledWith("/editUser",
+			expect(postData).toHaveBeenCalledWith("/setUser",
 				{
 					username: expect.anything(),
 					isAdmin: expect.anything()
@@ -84,7 +84,7 @@ describe("EditUser", async () => {
 		it("should send correct data to backend", async () => {
 			await createAndSubmitForm("qwe", "qwe", 123);
 			
-			expect(postData).toHaveBeenCalledWith("/editUser",
+			expect(postData).toHaveBeenCalledWith("/setUser",
 				{
 					userId: expect.anything(),
 					username: expect.anything(),
@@ -96,7 +96,7 @@ describe("EditUser", async () => {
 		it("should switch page when data was sent successfully", async () => {
 			let calledSwitchPage = false;
 			SiteTools.init({}, (page, query) => {
-				expect(page).toBe("EditUser");
+				expect(page).toBe("SetUser");
 				expect(query).toBe(`?id=123`);
 				calledSwitchPage = true;
 			});
@@ -130,7 +130,7 @@ describe("EditUser", async () => {
 		const confirmMock = vi.spyOn(window, "confirm").mockReturnValue(true);
 		
 		async function createAndPressDelete(id: number) {
-			const component = await renderPage(EditUser, `id=${id}`);
+			const component = await renderPage(SetUser, `id=${id}`);
 			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!
 			element.dispatchEvent(new Event("click"));
 			

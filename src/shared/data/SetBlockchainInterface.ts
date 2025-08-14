@@ -1,7 +1,7 @@
 import PostDataStructureInterface from "../PostDataStructureInterface.ts";
 
-export default interface EditBlockchainInterface extends PostDataStructureInterface {
-	Endpoint: "/editBlockchainAccount";
+export default interface SetBlockchainInterface extends PostDataStructureInterface {
+	Endpoint: "/setBlockchainAccount";
 	Request: {
 		id?: number;
 		blockchainName: string;

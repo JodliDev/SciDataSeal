@@ -13,8 +13,8 @@ export default PrivatePage(async () => {
 		view: () => <ListEntries
 			type="users"
 			addLabel={Lang.get("createUser")}
-			addTarget="EditUser"
-			target="EditUser"
+			addTarget="SetUser"
+			target="SetUser"
 		/>
 	};
 });

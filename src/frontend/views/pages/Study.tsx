@@ -29,7 +29,7 @@ export default PrivatePage(async (query) => {
 						<Icon iconKey="connectApp"/>
 						{Lang.get("howToConnect")}
 					</A>
-					<A page="EditStudy" query={`?id=${id}`} class="bigButton">
+					<A page="SetStudy" query={`?id=${id}`} class="bigButton">
 						<Icon iconKey="settings"/>
 						{Lang.get("changeSettings")}
 					</A>

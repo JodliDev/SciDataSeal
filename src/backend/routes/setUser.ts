@@ -1,7 +1,7 @@
 import express from "express";
 import {DbType} from "../database/setupDb.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
-import EditUserInterface from "../../shared/data/EditUserInterface.ts";
+import SetUserInterface from "../../shared/data/SetUserInterface.ts";
 import encryptPassword from "../actions/authentication/encryptPassword.ts";
 import validateUserData from "../actions/validateUserData.ts";
 import {getLoggedInSessionData} from "../actions/authentication/getSessionData.ts";
@@ -14,10 +14,10 @@ import TranslatedException from "../../shared/exceptions/TranslatedException.ts"
  *
  * @param db - The database connection.
  */
-export default function editUser(db: DbType): express.Router {
+export default function setUser(db: DbType): express.Router {
 	const router = express.Router();
 	
-	addPostRoute<EditUserInterface>("/editUser", router, async (data, request) => {
+	addPostRoute<SetUserInterface>("/setUser", router, async (data, request) => {
 		if(!data.username) {
 			throw new TranslatedException("errorMissingData");
 		}

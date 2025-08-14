@@ -4,7 +4,7 @@ import UnauthorizedException from "../../shared/exceptions/UnauthorizedException
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import getBlockchain from "../actions/getBlockchain.ts";
-import EditBlockchainInterface from "../../shared/data/EditBlockchainInterface.ts";
+import SetBlockchainInterface from "../../shared/data/SetBlockchainInterface.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 
 /**
@@ -12,10 +12,10 @@ import TranslatedException from "../../shared/exceptions/TranslatedException.ts"
  *
  * @param db - The database connection.
  */
-export default function editBlockchainAccount(db: DbType): express.Router {
+export default function setBlockchainAccount(db: DbType): express.Router {
 	const router = express.Router();
 	
-	addPostRoute<EditBlockchainInterface>("/editBlockchainAccount", router, async (data) => {
+	addPostRoute<SetBlockchainInterface>("/setBlockchainAccount", router, async (data) => {
 		if(!data.blockchainName || !data.blockchainType || !data.privateKey)
 			throw new TranslatedException("errorMissingData");
 		

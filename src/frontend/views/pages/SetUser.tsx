@@ -4,16 +4,16 @@ import getData from "../../actions/getData.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import Form from "../widgets/Form.tsx";
-import EditUserInterface from "../../../shared/data/EditUserInterface.ts";
+import SetUserInterface from "../../../shared/data/SetUserInterface.ts";
 import GetUserInterface from "../../../shared/data/GetUserInterface.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	async function onSent(response: EditUserInterface["Response"]): Promise<void> {
+	async function onSent(response: SetUserInterface["Response"]): Promise<void> {
 		if(!id) {
-			SiteTools.switchPage("EditUser", `?id=${response.userId}`);
+			SiteTools.switchPage("SetUser", `?id=${response.userId}`);
 		}
 	}
 	function onDeleted() {
@@ -48,11 +48,11 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: Lang.get("home"), page: "Home"},
 			{label: Lang.get("listUsers"), page: "ListUsers"},
 			id
-				? {label: user.username ?? "Not found", page: "EditUser", query: `?id=${id}`}
-				: {label: Lang.get("createUser"), page: "EditUser"},
+				? {label: user.username ?? "Not found", page: "SetUser", query: `?id=${id}`}
+				: {label: Lang.get("createUser"), page: "SetUser"},
 		],
 		view: () =>
-			<Form<EditUserInterface> id={id} endpoint="/editUser" addDeleteBtnFor={id ? "user" : undefined} filterData={filterData} onSent={onSent} onDeleted={onDeleted}>
+			<Form<SetUserInterface> id={id} endpoint="/setUser" addDeleteBtnFor={id ? "user" : undefined} filterData={filterData} onSent={onSent} onDeleted={onDeleted}>
 				<label {...tooltip(Lang.get("tooltipAdminUser"))}>
 					<small>{Lang.get("admin")}</small>
 					<input type="checkbox" name="isAdmin" {...bindPropertyToInput(user, "isAdmin")}/>

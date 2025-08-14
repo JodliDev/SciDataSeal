@@ -2,9 +2,9 @@ import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import request from "supertest";
 import express from "express";
 import {mockKysely} from "../../convenience.ts";
-import editUser from "../../../src/backend/routes/editUser.ts";
+import setUser from "../../../src/backend/routes/setUser.ts";
 
-describe("editUser", () => {
+describe("setUser", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({
 		getLoggedInSessionData: vi.fn().mockResolvedValue({userId: 123})
 	}));
@@ -19,11 +19,11 @@ describe("editUser", () => {
 	const dbMock = mockKysely();
 	const app = express();
 	app.use(express.json());
-	app.use(editUser(dbMock));
+	app.use(setUser(dbMock));
 	
 	it("should throw error if username is missing", async() => {
 		const response = await request(app)
-			.post("/editUser")
+			.post("/setUser")
 			.send({password: "securePassword"});
 		
 		expect(response.ok).toBe(false);
@@ -38,7 +38,7 @@ describe("editUser", () => {
 			.executeTakeFirst.mockResolvedValueOnce({userId: 2});
 		
 		const response = await request(app)
-			.post("/editUser")
+			.post("/setUser")
 			.send(sendData);
 		
 		expect(response.ok).toBe(false);
@@ -58,7 +58,7 @@ describe("editUser", () => {
 			.executeTakeFirst.mockResolvedValueOnce({userId: 123});
 		
 		const response = await request(app)
-			.post("/editUser")
+			.post("/setUser")
 			.send(sendData);
 		
 		expect(response.ok).toBe(false);
@@ -79,7 +79,7 @@ describe("editUser", () => {
 			.executeTakeFirst.mockResolvedValue({insertId: 123});
 		
 		const response = await request(app)
-			.post("/editUser")
+			.post("/setUser")
 			.send(sendData);
 		
 		expect(response.ok).toBe(true);
@@ -101,7 +101,7 @@ describe("editUser", () => {
 			.executeTakeFirst.mockResolvedValue({insertId: 123});
 		
 		const response = await request(app)
-			.post("/editUser")
+			.post("/setUser")
 			.send(sendData);
 		
 		expect(response.ok).toBe(false);
@@ -126,7 +126,7 @@ describe("editUser", () => {
 			.executeTakeFirst;
 		
 		const response = await request(app)
-			.post("/editUser")
+			.post("/setUser")
 			.send({
 				id: 2,
 				username: "updatedUser",
@@ -160,7 +160,7 @@ describe("editUser", () => {
 			.executeTakeFirst;
 		
 		const response = await request(app)
-			.post("/editUser")
+			.post("/setUser")
 			.send({
 				id: 2,
 				username: "updatedUser",

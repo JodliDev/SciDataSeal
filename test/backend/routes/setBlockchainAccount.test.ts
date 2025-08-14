@@ -2,10 +2,10 @@ import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import request from "supertest";
 import express from "express";
 import {mockKysely} from "../../convenience.ts";
-import editBlockchainAccount from "../../../src/backend/routes/editBlockchainAccount.ts";
+import setBlockchainAccount from "../../../src/backend/routes/setBlockchainAccount.ts";
 
 
-describe("editBlockchainAccount", () => {
+describe("setBlockchainAccount", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({
 		getLoggedInSessionData: vi.fn().mockResolvedValue({userId: 123})
 	}));
@@ -24,11 +24,11 @@ describe("editBlockchainAccount", () => {
 	const mockDb = mockKysely();
 	const app = express();
 	app.use(express.json());
-	app.use("/", editBlockchainAccount(mockDb));
+	app.use("/", setBlockchainAccount(mockDb));
 	
 	it("should return error when required fields are missing", async() => {
 		const response = await request(app)
-			.post("/editBlockchainAccount")
+			.post("/setBlockchainAccount")
 			.send({});
 		
 		expect(response.ok).toBe(false);
@@ -37,7 +37,7 @@ describe("editBlockchainAccount", () => {
 	
 	it("should return error for invalid blockchainName", async() => {
 		const response = await request(app)
-			.post("/editBlockchainAccount")
+			.post("/setBlockchainAccount")
 			.send({
 				blockchainName: "Block%chain",
 				blockchainType: "solana",
@@ -51,7 +51,7 @@ describe("editBlockchainAccount", () => {
 	
 	it("should return error for invalid privateKey", async() => {
 		const response = await request(app)
-			.post("/editBlockchainAccount")
+			.post("/setBlockchainAccount")
 			.send({
 				blockchainName: "Test Blockchain",
 				blockchainType: "solana",
@@ -87,7 +87,7 @@ describe("editBlockchainAccount", () => {
 			.execute;
 		
 		const response = await request(app)
-			.post("/editBlockchainAccount")
+			.post("/setBlockchainAccount")
 			.send(sendData);
 		
 		expect(updateTableMock).toHaveBeenCalled();
@@ -114,7 +114,7 @@ describe("editBlockchainAccount", () => {
 			.executeTakeFirst.mockResolvedValue({insertId: newId});
 		
 		const response = await request(app)
-			.post("/editBlockchainAccount")
+			.post("/setBlockchainAccount")
 			.send(sendData);
 		
 		expect(response.ok).toBe(true);
@@ -127,7 +127,7 @@ describe("editBlockchainAccount", () => {
 			.executeTakeFirst.mockResolvedValue(null);
 		
 		const response = await request(app)
-			.post("/editBlockchainAccount")
+			.post("/setBlockchainAccount")
 			.send({
 				id: 999,
 				blockchainName: "Invalid Update",

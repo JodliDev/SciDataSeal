@@ -1,7 +1,7 @@
 import PostDataStructureInterface from "../PostDataStructureInterface.ts";
 
-export default interface EditStudyInterface extends PostDataStructureInterface {
-	Endpoint: "/editStudy";
+export default interface SetStudyInterface extends PostDataStructureInterface {
+	Endpoint: "/setStudy";
 	Request: {
 		id?: number;
 		studyName: string;

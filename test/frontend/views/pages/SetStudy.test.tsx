@@ -5,10 +5,10 @@ import postData from "../../../../src/frontend/actions/postData.ts";
 import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
 import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
-import EditStudy from "../../../../src/frontend/views/pages/EditStudy.tsx";
+import SetStudy from "../../../../src/frontend/views/pages/SetStudy.tsx";
 import listData from "../../../../src/frontend/actions/listData.ts";
 
-describe("EditStudy", async () => {
+describe("SetStudy.tsx", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
 		default: vi.fn(() => ({
 			studyId: 123
@@ -53,7 +53,7 @@ describe("EditStudy", async () => {
 	it("Should show error when no blockchain accounts exist", async () => {
 		vi.mocked(listData).mockResolvedValue([]);
 
-		const component = await renderPage(EditStudy);
+		const component = await renderPage(SetStudy);
 
 		expect(component.dom.innerText).toContain(Lang.get("errorNoBlockchainAccounts"));
 	});
@@ -66,7 +66,7 @@ describe("EditStudy", async () => {
 
 
 		async function createAndSubmitForm(id?: number) {
-			const component = await renderPage(EditStudy, id ? `id=${id}` : "");
+			const component = await renderPage(SetStudy, id ? `id=${id}` : "");
 			const form = component.dom.querySelector("form")! as HTMLFormElement;
 
 			form.dispatchEvent(new Event("submit"));
@@ -115,7 +115,7 @@ describe("EditStudy", async () => {
 		
 		
 		async function createAndPressDelete(id: number) {
-			const component = await renderPage(EditStudy, `id=${id}`);
+			const component = await renderPage(SetStudy, `id=${id}`);
 			const element = component.dom.querySelector(`.${cssButton.Btn}.delete`)!
 			element.dispatchEvent(new Event("click"));
 			

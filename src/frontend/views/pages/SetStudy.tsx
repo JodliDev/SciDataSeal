@@ -5,7 +5,7 @@ import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
-import EditStudyInterface from "../../../shared/data/EditStudyInterface.ts";
+import SetStudyInterface from "../../../shared/data/SetStudyInterface.ts";
 import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
 import GenerateRandomString from "../../../shared/data/GenerateRandomString.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
@@ -13,7 +13,7 @@ import listData from "../../actions/listData.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	async function onSent(response: EditStudyInterface["Response"]) {
+	async function onSent(response: SetStudyInterface["Response"]) {
 		if(id != response.studyId) {
 			SiteTools.switchPage("Study", `?id=${response.studyId}`);
 		}
@@ -39,15 +39,15 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			? [
 				{label: Lang.get("home"), page: "Home"},
 				{label: Lang.get("studies"), page: "ListStudies"},
-				{label: Lang.get("editStudy"), page: "EditStudy", query: `?id=${id}`},
+				{label: Lang.get("changeStudy"), page: "SetStudy", query: `?id=${id}`},
 			]
 			: [
 				{label: Lang.get("home"), page: "Home"},
-				{label: Lang.get("createStudy"), page: "EditStudy", query: `?id=${id}`},
+				{label: Lang.get("createStudy"), page: "SetStudy", query: `?id=${id}`},
 			],
 		view: () =>
 			!!blockchainAccounts?.length
-				? <Form<EditStudyInterface> id={id} endpoint="/editStudy" addDeleteBtnFor={id ? "study" : undefined} onSent={onSent} onDeleted={onDeleted}>
+				? <Form<SetStudyInterface> id={id} endpoint="/setStudy" addDeleteBtnFor={id ? "study" : undefined} onSent={onSent} onDeleted={onDeleted}>
 					<label>
 						<small>{Lang.get("studyName")}</small>
 						<input type="text" name="studyName" {...bindPropertyToInput(study, "studyName")}/>
