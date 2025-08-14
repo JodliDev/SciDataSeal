@@ -44,7 +44,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			</label>
 			<label>
 				<small>{Lang.get("type")}</small>
-				<select name="blockchainType">
+				<select name="blockchainType" {...bindPropertyToInput(account, "blockchainType")}>
 					<option value="solana">{Lang.get("solana")}</option>
 					<option value="solanaTest" selected="selected">{Lang.get("solanaTest")}</option>
 				</select>

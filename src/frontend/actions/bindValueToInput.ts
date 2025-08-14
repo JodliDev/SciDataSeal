@@ -23,11 +23,16 @@ export default function bindValueToInput<T>(attrValue: T, set: (value: T) => voi
 	const attr = typeof attrValue == "boolean" ? "checked" : "value";
 	
 	const onChange = (e: InputEvent) => {
-		if(eventOptions?.[e.type as keyof EventOptions]) {
-			eventOptions![e.type as keyof EventOptions]!(e);
-		}
+		eventOptions?.[e.type as keyof EventOptions]?.(e);
+		
 		const element = e.target as HTMLInputElement;
 		set(toValue(element[attr!] as string) as T);
+		
+		if(element.tagName == "SELECT") {
+			// In Firefox the selected value of a select element will default to the last option when the value changes while it still has focus.
+			// So we make sure to remove the focus after we changed the value:
+			element.blur();
+		}
 	}
 	
 	return {
