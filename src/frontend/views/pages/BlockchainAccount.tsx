@@ -1,13 +1,13 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
-import getData from "../../actions/getData.ts";
 import SetBlockchainInterface from "../../../shared/data/SetBlockchainInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
-import GetBlockchainInterface from "../../../shared/data/GetBlockchainInterface.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
+import getEntry from "../../actions/getEntry.ts";
+import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -21,8 +21,8 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	}
 	const id = parseInt(query.get("id") ?? "0");
 	
-	const account: Partial<GetBlockchainInterface["Response"]> = id
-		? (await getData<GetBlockchainInterface>("/getBlockchainAccount", `?accountId=${id}`)) ?? {}
+	const account: Partial<GetEntryInterface<"blockchainAccount">["Response"]> = id
+		? (await getEntry("blockchainAccount", id)) ?? {}
 		: {};
 	
 	

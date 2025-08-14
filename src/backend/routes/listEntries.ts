@@ -14,7 +14,7 @@ export default function listEntries(db: DbType): express.Router {
 	
 	addGetRoute<ListEntriesInterface<keyof ListDefinitions>>("/listEntries", router, async (data, request) => {
 		
-		async function getData<T extends keyof ListDefinitions>(data: Partial<ListEntriesInterface<T>["Query"]>): Promise<ListEntriesInterface<T>["Response"]["list"]> {
+		async function getDataList<T extends keyof ListDefinitions>(data: Partial<ListEntriesInterface<T>["Query"]>): Promise<ListEntriesInterface<T>["Response"]["list"]> {
 			const session = await getLoggedInSessionData(db, request);
 			
 			
@@ -66,7 +66,7 @@ export default function listEntries(db: DbType): express.Router {
 		}
 		
 		return {
-			list: await getData(data)
+			list: await getDataList(data)
 		}
 	});
 	return router;

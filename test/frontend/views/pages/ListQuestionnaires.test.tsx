@@ -1,10 +1,10 @@
 import {describe, it, vi, expect, afterAll} from "vitest";
 import {renderPage} from "../../testRender.ts";
 import ListQuestionnaires from "../../../../src/frontend/views/pages/ListQuestionnaires.tsx";
-import listData from "../../../../src/frontend/actions/listData.ts";
+import listEntries from "../../../../src/frontend/actions/listEntries.ts";
 
 describe("ListQuestionnaires", async () => {
-	vi.mock("../../../../src/frontend/actions/listData.ts", () => ({
+	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
 		default: vi.fn()
 	}));
 	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
@@ -17,6 +17,6 @@ describe("ListQuestionnaires", async () => {
 	
 	it("should load correct list", async () => {
 		await renderPage(ListQuestionnaires, "?studyId=9");
-		expect(listData).toHaveBeenCalledWith("questionnaires", "?studyId=9");
+		expect(listEntries).toHaveBeenCalledWith("questionnaires", "?studyId=9");
 	});
 });

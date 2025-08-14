@@ -1,18 +1,16 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m, {Child} from "mithril";
-import getData from "../../actions/getData.ts";
-import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import css from "./ConnectAppHelp.module.css";
 import TabBar from "../widgets/TabView.tsx";
-import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
 import {FeedbackCallBack} from "../widgets/FeedbackIcon.tsx";
 import SetQuestionnaireInterface from "../../../shared/data/SetQuestionnaireInterface.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 import {SetQuestionnaireColumnsInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import {SaveDataInterface} from "../../../shared/data/SaveDataInterface.ts";
-import listData from "../../actions/listData.ts";
+import listEntries from "../../actions/listEntries.ts";
 import ListEntriesInterface from "../../../shared/data/ListEntriesInterface.ts";
+import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -20,7 +18,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		async function onChange(event: Event) {
 			const target = event.target as HTMLSelectElement;
 			feedback.setLoading(true);
-			const q = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${target.value}`);
+			const q = await getEntry("questionnaire", parseInt(target.value));
 			
 			if(q) {
 				questionnaire = q;
@@ -49,9 +47,9 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	
 	const feedback = new FeedbackCallBack();
 	const studyId = parseInt(query.get("studyId") ?? "0");
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${studyId}`);
-	const questionnaires = (await listData("questionnaires", `?studyId=${studyId}`));
-	const loadedQuestionnaire = (await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${questionnaires?.[0].id}`));
+	const study = await getEntry("study", studyId);
+	const questionnaires = (await listEntries("questionnaires", `?studyId=${studyId}`));
+	const loadedQuestionnaire = (await getEntry("questionnaire", questionnaires?.[0].id ?? 0));
 	
 	const createQuestionnaireUrl = window.location.origin + "/api" + ("/setQuestionnaire" satisfies SetQuestionnaireInterface["Endpoint"]);
 	const saveDataUrl = window.location.origin + "/api" + ("/saveData" satisfies SaveDataInterface["Endpoint"]);

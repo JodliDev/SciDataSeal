@@ -6,10 +6,11 @@ import Form from "../widgets/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 import SetStudyInterface from "../../../shared/data/SetStudyInterface.ts";
-import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
 import GenerateRandomString from "../../../shared/data/GenerateRandomString.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
-import listData from "../../actions/listData.ts";
+import listEntries from "../../actions/listEntries.ts";
+import getEntry from "../../actions/getEntry.ts";
+import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -23,10 +24,10 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	}
 	const id = parseInt(query.get("id") ?? "0");
 	
-	const study: Partial<GetStudyInterface["Response"]> = id
-		? (await getData<GetStudyInterface>("/getStudy", `?studyId=${id}`)) ?? {}
+	const study: Partial<GetEntryInterface<"study">["Response"]> = id
+		? (await getEntry("study", id)) ?? {}
 		: {};
-	const blockchainAccounts = await listData("blockchainAccounts");
+	const blockchainAccounts = await listEntries("blockchainAccounts");
 	
 	let apiPassword = study?.apiPassword;
 	

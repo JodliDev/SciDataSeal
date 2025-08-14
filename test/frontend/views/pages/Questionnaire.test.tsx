@@ -19,7 +19,7 @@ describe("Questionnaire", async () => {
 		const id = 1;
 		await renderPage(Questionnaire, `id=${id}`);
 		
-		expect(getData).toHaveBeenCalledWith("/getQuestionnaire", `?questionnaireId=${id}`);
+		expect(getData).toHaveBeenCalledWith("/getEntry", `?type=questionnaire&id=${id}`);
 	});
 	
 	it("should show message if questionnaire could not be loaded", async () => {

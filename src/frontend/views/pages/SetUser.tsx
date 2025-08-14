@@ -1,13 +1,13 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
-import getData from "../../actions/getData.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import Form from "../widgets/Form.tsx";
 import SetUserInterface from "../../../shared/data/SetUserInterface.ts";
-import GetUserInterface from "../../../shared/data/GetUserInterface.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
+import getEntry from "../../actions/getEntry.ts";
+import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -39,8 +39,8 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	
 	let showPasswordField = false;
 	const id = parseInt(query.get("id") ?? "0");
-	const user: Partial<GetUserInterface["Response"]> = id
-		? await getData<GetUserInterface>("/getUser", `?userId=${id}`) ?? {}
+	const user: Partial<GetEntryInterface<"user">["Response"]> = id
+		? await getEntry("user", id) ?? {}
 		: {};
 	
 	return {

@@ -1,10 +1,10 @@
 import {describe, it, vi, expect, afterAll} from "vitest";
 import {renderPage} from "../../testRender.ts";
 import ListBlockchainAccounts from "../../../../src/frontend/views/pages/ListBlockchainAccounts.tsx";
-import listData from "../../../../src/frontend/actions/listData.ts";
+import listEntries from "../../../../src/frontend/actions/listEntries.ts";
 
 describe("ListBlockchainAccounts", async () => {
-	vi.mock("../../../../src/frontend/actions/listData.ts", () => ({
+	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
 		default: vi.fn()
 	}));
 	
@@ -14,6 +14,6 @@ describe("ListBlockchainAccounts", async () => {
 	
 	it("should load correct list", async () => {
 		await renderPage(ListBlockchainAccounts);
-		expect(listData).toHaveBeenCalledWith("blockchainAccounts", undefined);
+		expect(listEntries).toHaveBeenCalledWith("blockchainAccounts", undefined);
 	});
 });

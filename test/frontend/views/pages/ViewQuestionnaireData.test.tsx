@@ -8,7 +8,8 @@ import css from "../../../../src/frontend/views/pages/ViewQuestionnaireData.modu
 import cssFeedbackIcon from "../../../../src/frontend/views/widgets/FeedbackIcon.module.css";
 import {closeAllMenus} from "../../../../src/frontend/actions/FloatingMenu.ts";
 import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
-import getData from "../../../../src/frontend/actions/getData.ts";
+import getEntry from "../../../../src/frontend/actions/getEntry.ts";
+import {GetDefinitions} from "../../../../src/shared/data/GetEntryInterface.ts";
 
 describe("ViewQuestionnaireData", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
@@ -20,6 +21,14 @@ describe("ViewQuestionnaireData", async () => {
 		default: vi.fn(() => ({
 			questionnaires: []
 		}))
+	}));
+	vi.mock("../../../../src/frontend/actions/getEntry.ts", () => ({
+		default: vi.fn(() => ({}))
+	}));
+	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
+		default: vi.fn(() => [
+			{label: "testQuestionnaire"}
+		])
 	}));
 	vi.mock("../../../../src/frontend/actions/createDataBlob.ts", () => ({
 		default: vi.fn(() => "dataUrl")
@@ -66,24 +75,23 @@ describe("ViewQuestionnaireData", async () => {
 		}
 		
 		it("should fill form with questionnaire data and show success", async () => {
-			vi.mocked(getData).mockImplementation(async (endpoint) => {
-				if(endpoint == "/getQuestionnaire") {
+			vi.mocked(getEntry).mockImplementation(async (type) => {
+				if(type == "questionnaire") {
 					return {
 						apiPassword: "mockPassword",
 						blockchainDenotation: 5
-					};
+					} as GetDefinitions["questionnaire"]["Response"];
 				}
-				else if(endpoint == "/getBlockchainAccount") {
+				else if(type == "blockchainAccount") {
 					return {
 						publicKey: "mockPublicKey",
 						blockchainType: "solana"
-					};
+					} as GetDefinitions["blockchainAccount"]["Response"];
 				}
-				else if(endpoint == "/listEntries") {
-					return {list: [{label: "testQuestionnaire"}]};
+				else {
+					return undefined;
 				}
-				return undefined;
-			})
+			});
 			
 			const component = await renderPage(ViewQuestionnaireData);
 			await loadQuestionnaire(component);
@@ -104,21 +112,20 @@ describe("ViewQuestionnaireData", async () => {
 		});
 		
 		it("should not fill form and show failed if no questionnaire can not be loaded", async () => {
-			vi.mocked(getData).mockImplementation(async (endpoint) => {
-				if(endpoint == "/getQuestionnaire") {
+			vi.mocked(getEntry).mockImplementation(async (type) => {
+				if(type == "questionnaire") {
 					return undefined;
 				}
-				else if(endpoint == "/getBlockchainAccount") {
+				else if(type == "blockchainAccount") {
 					return {
 						publicKey: "mockPublicKey",
 						blockchainType: "solana"
-					};
+					} as GetDefinitions["blockchainAccount"]["Response"];
 				}
-				else if(endpoint == "/listEntries") {
-					return {list: [{label: "testQuestionnaire"}]};
+				else {
+					return undefined;
 				}
-				return undefined;
-			})
+			});
 			
 			const component = await renderPage(ViewQuestionnaireData);
 			await loadQuestionnaire(component);
@@ -139,21 +146,20 @@ describe("ViewQuestionnaireData", async () => {
 		});
 		
 		it("should not fill form and show failed if no blockchain account can not be loaded", async () => {
-			vi.mocked(getData).mockImplementation(async (endpoint) => {
-				if(endpoint == "/getQuestionnaire") {
+			vi.mocked(getEntry).mockImplementation(async (type) => {
+				if(type == "questionnaire") {
 					return {
 						apiPassword: "mockPassword",
 						blockchainDenotation: 5
-					};
+					} as GetDefinitions["questionnaire"]["Response"];
 				}
-				else if(endpoint == "/getBlockchainAccount") {
+				else if(type == "blockchainAccount") {
 					return undefined;
 				}
-				else if(endpoint == "/listEntries") {
-					return {list: [{label: "testQuestionnaire"}]};
+				else {
+					return undefined;
 				}
-				return undefined;
-			})
+			});
 			
 			const component = await renderPage(ViewQuestionnaireData);
 			await loadQuestionnaire(component);

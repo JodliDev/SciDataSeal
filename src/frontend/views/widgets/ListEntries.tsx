@@ -3,7 +3,7 @@ import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import ListEntriesInterface, {ListDefinitions} from "../../../shared/data/ListEntriesInterface.ts";
 import A from "./A.tsx";
 import Icon from "./Icon.tsx";
-import listData from "../../actions/listData.ts";
+import listEntries from "../../actions/listEntries.ts";
 import {FeedbackCallBack} from "./FeedbackIcon.tsx";
 import FeedbackContent from "./FeedbackContent.tsx";
 
@@ -23,7 +23,7 @@ export default TsClosureComponent<Attributes>((vNode) => {
 	const feedback = new FeedbackCallBack();
 	async function load() {
 		feedback.setLoading(true);
-		list = await listData(currentType, currentQuery) ?? [];
+		list = await listEntries(currentType, currentQuery) ?? [];
 		feedback.setLoading(false);
 		m.redraw();
 	}

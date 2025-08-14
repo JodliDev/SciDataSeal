@@ -19,7 +19,7 @@ describe("Study", async () => {
 		const id = 1;
 		await renderPage(Study, `id=${id}`);
 		
-		expect(getData).toHaveBeenCalledWith("/getStudy", `?studyId=${id}`);
+		expect(getData).toHaveBeenCalledWith("/getEntry", `?type=study&id=${id}`);
 	});
 	
 	it("should show message if study could not be loaded", async () => {

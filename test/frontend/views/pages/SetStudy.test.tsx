@@ -6,7 +6,7 @@ import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
 import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
 import SetStudy from "../../../../src/frontend/views/pages/SetStudy.tsx";
-import listData from "../../../../src/frontend/actions/listData.ts";
+import listEntries from "../../../../src/frontend/actions/listEntries.ts";
 
 describe("SetStudy.tsx", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
@@ -15,17 +15,18 @@ describe("SetStudy.tsx", async () => {
 		}))
 	}));
 	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
-		default: vi.fn((endpoint) => {
-			if(endpoint == "/getStudy") {
-				return {
-					apiPassword: "pass",
-					studyName: "Name",
-					blockchainAccountId: 34
-				}
-			}
-		})
+		default: vi.fn(() => ({
+			generatedString: "qwe"
+		}))
 	}));
-	vi.mock("../../../../src/frontend/actions/listData.ts", () => ({
+	vi.mock("../../../../src/frontend/actions/getEntry.ts", () => ({
+		default: vi.fn(() => ({
+			apiPassword: "pass",
+			studyName: "Name",
+			blockchainAccountId: 34
+		}))
+	}));
+	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
 		default: vi.fn(() => {
 			return [
 				{
@@ -51,7 +52,7 @@ describe("SetStudy.tsx", async () => {
 	});
 	
 	it("Should show error when no blockchain accounts exist", async () => {
-		vi.mocked(listData).mockResolvedValue([]);
+		vi.mocked(listEntries).mockResolvedValue([]);
 
 		const component = await renderPage(SetStudy);
 

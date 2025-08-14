@@ -3,10 +3,10 @@ import {renderComponent} from "../../testRender.ts";
 import ListEntries from "../../../../src/frontend/views/widgets/ListEntries.tsx";
 import {wait} from "../../../convenience.ts";
 import {ListDefinitions} from "../../../../src/shared/data/ListEntriesInterface.ts";
-import listData from "../../../../src/frontend/actions/listData.ts";
+import listEntries from "../../../../src/frontend/actions/listEntries.ts";
 
 describe("ListEntries", () => {
-	vi.mock("../../../../src/frontend/actions/listData.ts", () => ({
+	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
 		default: vi.fn(() => [
 			{
 				id: 1,
@@ -60,28 +60,28 @@ describe("ListEntries", () => {
 		await wait(1);
 		component.redraw();
 		
-		expect(listData).toHaveBeenCalled();
-		vi.mocked(listData).mockClear();
+		expect(listEntries).toHaveBeenCalled();
+		vi.mocked(listEntries).mockClear();
 		
 		//no change
 		component.redraw();
-		expect(listData).not.toHaveBeenCalled();
+		expect(listEntries).not.toHaveBeenCalled();
 		
 		//type changed
 		options.type = "studies";
 		component.redraw();
-		expect(listData).toHaveBeenCalled();
-		vi.mocked(listData).mockClear();
+		expect(listEntries).toHaveBeenCalled();
+		vi.mocked(listEntries).mockClear();
 		await wait(1);
 		component.redraw();
 		
 		//no change
 		component.redraw();
-		expect(listData).not.toHaveBeenCalled();
+		expect(listEntries).not.toHaveBeenCalled();
 		
 		//query changed
 		options.query = "?test2";
 		component.redraw();
-		expect(listData).toHaveBeenCalled();
+		expect(listEntries).toHaveBeenCalled();
 	});
 });

@@ -1,8 +1,5 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
-import getData from "../../actions/getData.ts";
-import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
-import GetBlockchainInterface from "../../../shared/data/GetBlockchainInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
 import FeedbackIcon, {FeedbackCallBack} from "../widgets/FeedbackIcon.tsx";
@@ -13,7 +10,8 @@ import postData from "../../actions/postData.ts";
 import {Change, diffChars} from "diff";
 import {GetQuestionnaireDataPostInterface} from "../../../shared/data/GetQuestionnaireDataInterface.ts";
 import floatingMenu, {tooltip} from "../../actions/FloatingMenu.ts";
-import listData from "../../actions/listData.ts";
+import listEntries from "../../actions/listEntries.ts";
+import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
@@ -95,12 +93,12 @@ export default PrivatePage(async () => {
 	
 	async function fillQuestionnaire(questionnaireId: number) {
 		fromListFeedback.setLoading(true);
-		const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${questionnaireId}`);
+		const questionnaire = await getEntry("questionnaire", questionnaireId);
 		if(!questionnaire) {
 			fromListFeedback.setSuccess(false);
 			return;
 		}
-		const blockchain = await getData<GetBlockchainInterface>("/getBlockchainAccount", `?accountId=${questionnaire.blockchainAccountId}`);
+		const blockchain = await getEntry("blockchainAccount", questionnaire.blockchainAccountId);
 		if(!blockchain) {
 			fromListFeedback.setSuccess(false);
 			return;
@@ -113,7 +111,7 @@ export default PrivatePage(async () => {
 		
 		fromListFeedback.setSuccess(true);
 	}
-	const questionnaires = await listData("questionnaires");
+	const questionnaires = await listEntries("questionnaires");
 	
 	return {
 		history: [

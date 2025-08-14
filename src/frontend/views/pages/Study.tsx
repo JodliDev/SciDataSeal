@@ -1,16 +1,15 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
-import getData from "../../actions/getData.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import A from "../widgets/A.tsx";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 import Icon from "../widgets/Icon.tsx";
-import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
+import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query) => {
 	const id = query.get("id");
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${id}`);
+	const study = await getEntry("study", parseInt(id ?? "0"));
 	
 	return {
 		history: [

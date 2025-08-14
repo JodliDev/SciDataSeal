@@ -13,7 +13,7 @@ describe("SetQuestionnaire", async () => {
 			questionnaireId: 123
 		}))
 	}));
-	vi.mock("../../../../src/frontend/actions/listData.ts", () => ({
+	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
 		default: vi.fn(() => [
 			{
 				id: 4,
@@ -25,23 +25,19 @@ describe("SetQuestionnaire", async () => {
 			}
 		])
 	}));
+	vi.mock("../../../../src/frontend/actions/getEntry.ts", () => ({
+		default: vi.fn(() => ({
+			questionnaireName:"questionnaire",
+			blockchainAccountId: 4,
+			blockchainDenotation: 4,
+			apiPassword: "pass",
+			dataKey: "key"
+		}))
+	}));
 	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
-		default: vi.fn((endpoint) => {
-			if(endpoint == "/getQuestionnaire") {
-				return {
-					questionnaireName:"questionnaire",
-					blockchainAccountId: 4,
-					blockchainDenotation: 4,
-					apiPassword: "pass",
-					dataKey: "key"
-				};
-			}
-			else if(endpoint == "/getNewDenotation") {
-				return {
-					denotation: 10
-				};
-			}
-		})
+		default: vi.fn(() => ({
+			denotation: 10
+		}))
 	}));
 	
 	beforeAll(() => {

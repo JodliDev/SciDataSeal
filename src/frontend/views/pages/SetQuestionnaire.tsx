@@ -1,7 +1,6 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import getData from "../../actions/getData.ts";
-import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import SetQuestionnaireInterface from "../../../shared/data/SetQuestionnaireInterface.ts";
 import {SiteTools} from "../../singleton/SiteTools.ts";
@@ -9,8 +8,9 @@ import Form from "../widgets/Form.tsx";
 import GetNewDenotation from "../../../shared/data/GetNewDenotation.ts";
 import {tooltip} from "../../actions/FloatingMenu.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
-import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
-import listData from "../../actions/listData.ts";
+import listEntries from "../../actions/listEntries.ts";
+import getEntry from "../../actions/getEntry.ts";
+import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -45,12 +45,12 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	}
 	
 	const id = parseInt(query.get("id") ?? "0");
-	const blockchainAccounts = await listData("blockchainAccounts");
-	const questionnaire: Partial<GetQuestionnaireInterface["Response"]> = id
-		? await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`) ?? {}
+	const blockchainAccounts = await listEntries("blockchainAccounts");
+	const questionnaire: Partial<GetEntryInterface<"questionnaire">["Response"]> = id
+		? await getEntry("questionnaire", id) ?? {}
 		: {};
 	const studyId = questionnaire.studyId ?? parseInt(query.get("studyId") ?? "0");
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${studyId}`);
+	const study = await getEntry("study", studyId);
 	
 	let disableAccountSwitch = false;
 	

@@ -2,14 +2,13 @@ import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import Form from "../widgets/Form.tsx";
 import {Lang} from "../../singleton/Lang.ts";
-import getData from "../../actions/getData.ts";
-import GetQuestionnaireInterface from "../../../shared/data/GetQuestionnaireInterface.ts";
 import {SaveDataInterface} from "../../../shared/data/SaveDataInterface.ts";
+import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	const id = query.get("id");
-	const questionnaire = await getData<GetQuestionnaireInterface>("/getQuestionnaire", `?questionnaireId=${id}`);
+	const questionnaire = await getEntry("questionnaire", parseInt(id ?? "0"));
 	const columns: string[] = JSON.parse(`[${questionnaire?.columns ?? ""}]`);
 	
 	return {

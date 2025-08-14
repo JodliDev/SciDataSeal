@@ -1,14 +1,13 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
-import getData from "../../actions/getData.ts";
 import {Lang} from "../../singleton/Lang.ts";
-import GetStudyInterface from "../../../shared/data/GetStudyInterface.ts";
 import ListEntries from "../widgets/ListEntries.tsx";
+import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query) => {
 	const studyId = query.get("studyId");
-	const study = await getData<GetStudyInterface>("/getStudy", `?studyId=${studyId}`);
+	const study = await getEntry("study", parseInt(studyId ?? "0"));
 	
 	return {
 		history: [
