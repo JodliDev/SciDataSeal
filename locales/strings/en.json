@@ -34,6 +34,7 @@
 	"errorCannotChangeOwnUser": "You cannot change your own account.",
 	"errorFaultyData": "Faulty data (%1$s)",
 	"errorFaultyResponse": "Faulty response",
+	"errorInsufficientFunds": "Insufficient funds in the wallt.",
 	"errorMessageIsTooLong": "Message is too long.",
 	"errorMustDeleteAllQuestionnaires": "There are still %1$d questionnaires connected to this blockchain account.",
 	"errorMissingData": "Missing data",

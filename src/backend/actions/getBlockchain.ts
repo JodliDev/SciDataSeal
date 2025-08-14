@@ -1,6 +1,7 @@
 import BlockchainInterface from "../blockchains/BlockchainInterface.ts";
 import SolanaTest from "../blockchains/SolanaTest.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
+import Solana from "../blockchains/Solana.ts";
 
 /**
  * Retrieves a blockchain instance based on the specified type string.
@@ -11,6 +12,8 @@ import TranslatedException from "../../shared/exceptions/TranslatedException.ts"
  */
 export default function getBlockchain(type: string): BlockchainInterface {
 	switch(type) {
+		case "solana":
+			return new Solana();
 		case "solanaTest":
 			return new SolanaTest();
 		default:
