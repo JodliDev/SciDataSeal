@@ -6,6 +6,7 @@ import {correctType, renderVNode} from "../../testRender.ts";
 import cssFeedbackIcon from "../../../../src/frontend/views/widgets/FeedbackIcon.module.css";
 import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
 import {wait} from "../../../convenience.ts";
+import CanceledByUserException from "../../../../src/shared/exceptions/CanceledByUserException.ts";
 
 
 describe("Form", () => {
@@ -134,6 +135,42 @@ describe("Form", () => {
 			component.redraw();
 			
 			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).not.toBeNull();
+		});
+		
+		
+		it("should not show error if submit was canceled", async  () => {
+			options.onBeforeSend = () => {
+				throw new CanceledByUserException();
+			}
+			
+			const component = createForm();
+			const element = component.dom.querySelector("form")!;
+			element.dispatchEvent(new Event("submit"));
+			
+			await wait(1); //onSubmit is asynchronous
+			component.redraw();
+			
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.failed}`)).toBeNull();
+			expect(component.dom.querySelector(`.${cssFeedbackIcon.success}`)).toBeNull();
+		});
+		it("should only empty form after submit when emptyFormWhenDone is set", async  () => {
+			async function runTest() {
+				const component = createForm();
+				const element = component.dom.querySelector("form")!;
+				element.dispatchEvent(new Event("submit"));
+				
+				await wait(1); //onSubmit is asynchronous
+				
+				return component.dom.querySelector("input[type=text][name=key]") as HTMLInputElement;
+			}
+			
+			
+			const input1 = await runTest();
+			expect(input1.value).toBe("value");
+			
+			options.clearFormWhenDone = true;
+			const input2 = await runTest();
+			expect(input2.value).toBe("");
 		});
 	});
 	

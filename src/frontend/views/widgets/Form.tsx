@@ -6,19 +6,36 @@ import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 import {Btn} from "./Btn.tsx";
 import DeleteInterface from "../../../shared/data/DeleteInterface.ts";
+import CanceledByUserException from "../../../shared/exceptions/CanceledByUserException.ts";
 
+/**
+ * Options for the Form component.
+ *
+ * @property endpoint - The endpoint to which data will be sent.
+ * @property query - Optional query string to be appended to the endpoint.
+ * @property headers - Optional headers to include when sending data to the backend..
+ * @property id - Optional id used for the delete button. The id will also be sent to the backend indicating that an existing entry should be changed rather than creating a new one.
+ * @property addDeleteBtnFor - Specifies if a delete button should be shown.
+ * @property onSent - Optional callback executed after the form is successfully submitted and backend responded with a successful response. The response is passed as a parameter
+ * @property onDeleted - Optional callback that is executed after the delete action is completed.
+ * @property onBeforeSend - Callback that is executed before the form submission. If modified data is returned, no data is sent to the backend.
+ * @property submitLabel - Optional label text for the form's submit button.
+ * @property filterData - Optional callback to filter or transform input data before it's sent.
+ * @property clearFormWhenDone - Indicates whether the form should be cleared after submission.
+ */
 export type FormOptions<T extends PostDataStructureInterface> = {
-	endpoint: T["Endpoint"],
-	id?: number,
-	addDeleteBtnFor?: DeleteInterface["Request"]["type"],
-	onSent?: (response: T["Response"]) => void,
-	onDeleted?: () => void,
-	onBeforeSend?: (data: Record<string, unknown>) => T["Response"] | void,
-	submitLabel?: string,
-	query?: `?${string}`
-	headers?: Record<string, string>,
-	filterData?: (data: Record<string, unknown>) => T["Request"],
-	class?: string
+	endpoint: T["Endpoint"];
+	query?: `?${string}`;
+	headers?: Record<string, string>;
+	id?: number;
+	addDeleteBtnFor?: DeleteInterface["Request"]["type"];
+	onSent?: (response: T["Response"]) => void;
+	onDeleted?: () => void;
+	onBeforeSend?: (data: Record<string, unknown>) => T["Response"] | void;
+	submitLabel?: string;
+	filterData?: (data: Record<string, unknown>) => T["Request"];
+	clearFormWhenDone?: boolean;
+	class?: string;
 };
 
 /**
@@ -54,7 +71,8 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 			feedback.setLoading(true);
 			
 			event.preventDefault();
-			const formData = new FormData(event.target as HTMLFormElement);
+			const formTarget = event.target as HTMLFormElement;
+			const formData = new FormData(formTarget);
 			
 			const data: Record<string, unknown> = {};
 			for(const entry of formData.entries()) {
@@ -77,10 +95,19 @@ function Form<T extends PostDataStructureInterface>(vNode: m.Vnode<FormOptions<T
 			const response = pre ? pre : await postData(vNode.attrs.endpoint, uploadData, {query: vNode.attrs.query, headers: vNode.attrs.headers});
 			vNode.attrs.onSent?.(response);
 			feedback.setSuccess(true);
+			
+			if(vNode.attrs.clearFormWhenDone) {
+				formTarget.reset();
+			}
 		}
 		catch(error) {
-			errorMessage = Lang.getError(error);
-			feedback.setSuccess(false);
+			if(error instanceof CanceledByUserException) {
+				feedback.setLoading(false);
+			}
+			else {
+				errorMessage = Lang.getError(error);
+				feedback.setSuccess(false);
+			}
 		}
 	}
 	

@@ -26,6 +26,7 @@
 	"initDescription": "Please provide the credentials of your admin user:",
 	"infoDataCacheTime": "Data was cached at %1$s",
 	"infoDataCharacterCount": "Dataset has %1$d characters",
+	"errorCanceledByUser": "Canceled by user",
 	"errorCannotDeleteYourself": "You cannot delete yourself.",
 	"errorDenotationIsTooLarge": "The Questionnaire denotation is too large. There are too many questionnaires saved to this wallet.",
 	"errorAlreadyExists": "Already exists (%1$s)",
