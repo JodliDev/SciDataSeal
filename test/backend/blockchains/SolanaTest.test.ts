@@ -3,7 +3,7 @@ import {Connection, Keypair, PublicKey, sendAndConfirmTransaction} from "@solana
 import SolanaTest from "../../../src/backend/blockchains/SolanaTest.ts";
 import {compressAndEncrypt} from "../../../src/backend/actions/compressAndEncrypt.ts";
 import {randomBytes} from "crypto";
-import generateStringDenotation from "../../../src/backend/actions/generateStringDenotation.ts";
+import generateStringDenotation from "../../../src/shared/actions/generateStringDenotation.ts";
 
 describe("SolanaTest", () => {
 	const privateKey = "a".repeat(64);

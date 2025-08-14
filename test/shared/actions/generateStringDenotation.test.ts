@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import generateStringDenotation from "../../../src/backend/actions/generateStringDenotation.ts";
+import generateStringDenotation from "../../../src/shared/actions/generateStringDenotation.ts";
 
 
 describe("generateStringDenotation", () => {

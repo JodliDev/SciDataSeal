@@ -11,6 +11,7 @@ import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 import listEntries from "../../actions/listEntries.ts";
 import getEntry from "../../actions/getEntry.ts";
 import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
+import generateStringDenotation, {MAX_DENOTATION_NUMBER} from "../../../shared/actions/generateStringDenotation.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -90,9 +91,12 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						)}
 					</select>
 				</label>
-				<label {...tooltip(Lang.get("tooltipDenotation"))}>
+				<label>
 					<small>{Lang.get("denotation")}</small>
-					<input type="number" min="1" name="blockchainDenotation" {...bindPropertyToInput(questionnaire, "blockchainDenotation")}/>
+					<div class="inputLike horizontal vAlignCenter">
+						<input class="fillSpace" type="number" min="1" max={MAX_DENOTATION_NUMBER} name="blockchainDenotation" {...bindPropertyToInput(questionnaire, "blockchainDenotation")} {...tooltip(Lang.get("tooltipDenotation"))}/>
+						<span {...tooltip(Lang.get("tooltipStringDenotation"))}>({generateStringDenotation(questionnaire.blockchainDenotation ?? 0)})</span>
+					</div>
 				</label>
 				<label {...tooltip(Lang.get("tooltipApiPassword"))}>
 					<small>{Lang.get("apiPassword")}</small>

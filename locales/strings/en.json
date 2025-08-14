@@ -83,6 +83,7 @@
 	"tooltipDataKey": "The data key is used to encrypt / decrypt data that are saved to the blockchain.",
 	"tooltipDeleteEntry": "Delete this entry.",
 	"tooltipDenotation": "All data from this questionnaire are tagged with this number. It is needed so XXX knows which transactions in the blockchain wallet belong to this questionnaire. Must be unique for the selected blockchain wallet.",
+	"tooltipStringDenotation": "The string representation of the denotation as it will be saved in the blockchain.",
 	"tooltipQuestionnaires": "Questionnaires are connected to a blockchain and provide the necessary endpoints to save your study data to the blockchain.",
 	"tooltipReload": "Reload data from the blockchain and replace the local cache.",
 	"tooltipSelectQuestionnaire": "Automatically fill out the form to load questionnaire data from this instance.",

@@ -1,7 +1,7 @@
 import BlockchainInterface, {LineData} from "./BlockchainInterface.ts";
 import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction, Transaction} from "@solana/web3.js";
 import {createMemoInstruction} from "@solana/spl-memo";
-import generateStringDenotation from "../actions/generateStringDenotation.ts";
+import generateStringDenotation from "../../shared/actions/generateStringDenotation.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 import {compressAndEncrypt, decompressAndDecrypt} from "../actions/compressAndEncrypt.ts";
 

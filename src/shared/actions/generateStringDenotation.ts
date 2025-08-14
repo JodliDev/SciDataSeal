@@ -1,5 +1,7 @@
-import {encodeBase62} from "../Base62.ts";
-import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
+import {encodeBase62} from "./Base62.ts";
+import TranslatedException from "../exceptions/TranslatedException.ts";
+
+export const MAX_DENOTATION_NUMBER = 3843;
 
 /**
  * Converts a numerical denotation into a base-62 encoded, fixed-length string.

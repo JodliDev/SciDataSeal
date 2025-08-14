@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {decodeBase62, encodeBase62} from "../../src/backend/Base62.ts";
+import {decodeBase62, encodeBase62} from "../../../src/shared/actions/Base62.ts";
 
 describe("encodeBase62", () => {
 	it("encodes 0 to '0'", () => {
