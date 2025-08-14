@@ -95,5 +95,7 @@
 	"url": "Url",
 	"username": "Username",
 	"userSettings": "User settings",
-	"viewData": "View data"
+	"viewData": "View data",
+	"warnChangingDenotation": "Changing the denotation will result in already existing data from the blockchain wallet not being accessible anymore. If there already is data saved in the wallet under this denotation, it will show up in the data for this questionnaire.",
+	"warnChangingBlockchainAccount": "Changing the blockchain account will result in already existing data from the former blockchain wallet not being accessible anymore (existing data will not be transferred to the new blockchain account)."
 }

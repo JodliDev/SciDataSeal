@@ -23,7 +23,7 @@ export interface KyselyTables {
  */
 export const SqlMorpheusConfig = {
 	dialect: "Sqlite",
-	version: 13,
+	version: 14,
 	configPath: `${process.cwd()}/config`,
 	tables: [
 		UserTable,
@@ -35,6 +35,6 @@ export const SqlMorpheusConfig = {
 	],
 	throwIfNotAllowed: true,
 	preMigration(_: PublicMigrations): SqlChanges | void {
-		
+	
 	},
 } satisfies DatabaseInstructions

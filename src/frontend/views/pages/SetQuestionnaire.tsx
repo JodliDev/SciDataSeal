@@ -12,6 +12,7 @@ import listEntries from "../../actions/listEntries.ts";
 import getEntry from "../../actions/getEntry.ts";
 import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
 import generateStringDenotation, {MAX_DENOTATION_NUMBER} from "../../../shared/actions/generateStringDenotation.ts";
+import WarnIcon from "../widgets/WarnIcon.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -52,6 +53,8 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		: {};
 	const studyId = questionnaire.studyId ?? parseInt(query.get("studyId") ?? "0");
 	const study = await getEntry("study", studyId);
+	const originalDenotation = questionnaire?.blockchainDenotation;
+	const originalBlockchainAccount = questionnaire?.blockchainAccountId;
 	
 	let disableAccountSwitch = false;
 	
@@ -85,16 +88,24 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				</label>
 				<label>
 					<small>{Lang.get("blockchainAccount")}</small>
-					<select name="blockchainAccountId" disabled={disableAccountSwitch} {...bindPropertyToInput(questionnaire, "blockchainAccountId", {change: changeAccount})}>
-						{blockchainAccounts?.map(entry =>
-							<option value={entry.id}>{entry.label}</option>
-						)}
-					</select>
+					<div class="inputLike horizontal vAlignCenter">
+						{originalBlockchainAccount != undefined && originalBlockchainAccount != questionnaire.blockchainAccountId &&
+							<WarnIcon tooltip={Lang.get("warnChangingBlockchainAccount")}/>
+						}
+						<select name="blockchainAccountId" disabled={disableAccountSwitch} {...bindPropertyToInput(questionnaire, "blockchainAccountId", {change: changeAccount})}>
+							{blockchainAccounts?.map(entry =>
+								<option value={entry.id}>{entry.label}</option>
+							)}
+						</select>
+					</div>
 				</label>
 				<label>
 					<small>{Lang.get("denotation")}</small>
 					<div class="inputLike horizontal vAlignCenter">
-						<input class="fillSpace" type="number" min="1" max={MAX_DENOTATION_NUMBER} name="blockchainDenotation" {...bindPropertyToInput(questionnaire, "blockchainDenotation")} {...tooltip(Lang.get("tooltipDenotation"))}/>
+						{originalDenotation != undefined && originalDenotation != questionnaire.blockchainDenotation &&
+							<WarnIcon tooltip={Lang.get("warnChangingDenotation")}/>
+						}
+						<input type="number" min="1" max={MAX_DENOTATION_NUMBER} name="blockchainDenotation" {...bindPropertyToInput(questionnaire, "blockchainDenotation")} {...tooltip(Lang.get("tooltipDenotation"))}/>
 						<span {...tooltip(Lang.get("tooltipStringDenotation"))}>({generateStringDenotation(questionnaire.blockchainDenotation ?? 0)})</span>
 					</div>
 				</label>
