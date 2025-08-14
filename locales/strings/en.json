@@ -12,6 +12,7 @@
 	"columnData": "Column data",
 	"columnName": "Column name",
 	"confirmDeleteEntry": "Are you sure you want to delete this entry?",
+	"confirmSavingData": "Do you want to send the data to the blockchain? They cannot be deleted afterwards.",
 	"compare": "Compare",
 	"createQuestionnaire": "Create questionnaire",
 	"createBlockchainAccount": "Create blockchain account",

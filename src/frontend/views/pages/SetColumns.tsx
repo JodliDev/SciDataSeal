@@ -6,9 +6,19 @@ import { Btn } from "../widgets/Btn.tsx";
 import bindValueToInput from "../../actions/bindValueToInput.ts";
 import {SetQuestionnaireColumnsInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import getEntry from "../../actions/getEntry.ts";
+import CanceledByUserException from "../../../shared/exceptions/CanceledByUserException.ts";
+import {SiteTools} from "../../singleton/SiteTools.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
+	function onSent() {
+		SiteTools.switchPage("Questionnaire", `?id=${id}`);
+	}
+	function confirmSend() {
+		if(!confirm(Lang.get("confirmSavingData"))) {
+			throw new CanceledByUserException();
+		}
+	}
 	const id = query.get("id");
 	function addColumn() {
 		columns.push("");
@@ -35,7 +45,13 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
 			{label: Lang.get("setColumns"), page: "SetColumns", query: `?id=${id}`},
 		],
-		view: () => <Form<SetQuestionnaireColumnsInterface> endpoint="/setQuestionnaireColumns" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
+		view: () => <Form<SetQuestionnaireColumnsInterface>
+			endpoint="/setQuestionnaireColumns"
+			query={`?id=${questionnaire?.questionnaireId}`}
+			headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}
+			onBeforeSend={confirmSend}
+			onSent={onSent}
+		>
 			{columns.length
 				? columns.map((column, index) =>
 					<label>

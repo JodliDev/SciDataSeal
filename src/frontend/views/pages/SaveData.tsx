@@ -4,9 +4,15 @@ import Form from "../widgets/Form.tsx";
 import {Lang} from "../../singleton/Lang.ts";
 import {SaveDataInterface} from "../../../shared/data/SaveDataInterface.ts";
 import getEntry from "../../actions/getEntry.ts";
+import CanceledByUserException from "../../../shared/exceptions/CanceledByUserException.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
+	function confirmSend() {
+		if(!confirm(Lang.get("confirmSavingData"))) {
+			throw new CanceledByUserException();
+		}
+	}
 	const id = query.get("id");
 	const questionnaire = await getEntry("questionnaire", parseInt(id ?? "0"));
 	const studyId = questionnaire?.studyId ?? parseInt(query.get("studyId") ?? "0");
@@ -23,7 +29,13 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			{label: Lang.get("saveData"), page: "SaveData", query: `?id=${id}`},
 		],
 		view: () => !!columns.length
-			? <Form<SaveDataInterface> endpoint="/saveData" query={`?id=${questionnaire?.questionnaireId}`} headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}>
+			? <Form<SaveDataInterface>
+				endpoint="/saveData"
+				query={`?id=${questionnaire?.questionnaireId}`}
+				headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}
+				onBeforeSend={confirmSend}
+				clearFormWhenDone={true}
+			>
 				<div class="horizontal hAlignCenter wrapContent">
 					{columns.map(column =>
 						<label>
