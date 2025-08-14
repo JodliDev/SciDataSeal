@@ -9,12 +9,16 @@ import getEntry from "../../actions/getEntry.ts";
 export default PrivatePage(async (query: URLSearchParams) => {
 	const id = query.get("id");
 	const questionnaire = await getEntry("questionnaire", parseInt(id ?? "0"));
+	const studyId = questionnaire?.studyId ?? parseInt(query.get("studyId") ?? "0");
+	const study = await getEntry("study", studyId);
 	const columns: string[] = JSON.parse(`[${questionnaire?.columns ?? ""}]`);
 	
 	return {
 		history: [
 			{label: Lang.get("home"), page: "Home"},
-			{label: Lang.get("questionnaires"), page: "ListQuestionnaires"},
+			{label: Lang.get("studies"), page: "ListStudies"},
+			{label: study?.studyName ?? "Not found", page: "Study", query: `?id=${studyId}`},
+			{label: Lang.get("questionnaires"), page: "ListQuestionnaires", query: `?studyId=${studyId}`},
 			{label: questionnaire?.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
 			{label: Lang.get("saveData"), page: "SaveData", query: `?id=${id}`},
 		],

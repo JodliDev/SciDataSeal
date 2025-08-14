@@ -40,11 +40,13 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			? [
 				{label: Lang.get("home"), page: "Home"},
 				{label: Lang.get("studies"), page: "ListStudies"},
-				{label: Lang.get("changeStudy"), page: "SetStudy", query: `?id=${id}`},
+				{label: study?.studyName ?? "Not found", page: "Study", query: `?id=${id}`},
+				{label: Lang.get("changeSettings"), page: "SetStudy", query: `?id=${id}`},
 			]
 			: [
 				{label: Lang.get("home"), page: "Home"},
-				{label: Lang.get("createStudy"), page: "SetStudy", query: `?id=${id}`},
+				{label: Lang.get("studies"), page: "ListStudies"},
+				{label: Lang.get("createStudy"), page: "SetStudy"},
 			],
 		view: () =>
 			!!blockchainAccounts?.length

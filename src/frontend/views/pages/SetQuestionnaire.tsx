@@ -72,12 +72,14 @@ export default PrivatePage(async (query: URLSearchParams) => {
 				{label: study?.studyName ?? "Not found", page: "Study", query: `?id=${studyId}`},
 				{label: Lang.get("questionnaires"), page: "ListQuestionnaires", query: `?studyId=${studyId}`},
 				{label: questionnaire.questionnaireName ?? "Not found", page: "Questionnaire", query: `?id=${id}`},
+				{label: Lang.get("changeSettings"), page: "SetQuestionnaire", query: `?id=${id}`},
 			]
 			: [
 				{label: Lang.get("home"), page: "Home"},
 				{label: Lang.get("studies"), page: "ListStudies"},
 				{label: study?.studyName ?? "Not found", page: "Study", query: `?id=${studyId}`},
-				{label: Lang.get("createQuestionnaire"), page: "Questionnaire"},
+				{label: Lang.get("questionnaires"), page: "ListQuestionnaires", query: `?studyId=${studyId}`},
+				{label: Lang.get("createQuestionnaire"), page: "SetQuestionnaire", query: `?studyId=${studyId}`},
 			],
 		view: () =>
 			<Form<SetQuestionnaireInterface> id={id} endpoint="/setQuestionnaire" addDeleteBtnFor={id ? "questionnaire" : undefined} onSent={onSent} onDeleted={onDeleted}>

@@ -35,7 +35,8 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			]
 			: [
 				{label: Lang.get("home"), page: "Home"},
-				{label: Lang.get("createBlockchainAccount"), page: "BlockchainAccount", query: `?id=${id}`},
+				{label: Lang.get("blockchainAccounts"), page: "ListBlockchainAccounts"},
+				{label: Lang.get("createBlockchainAccount"), page: "BlockchainAccount"},
 			],
 		view: () => <Form<SetBlockchainInterface> id={id} endpoint="/setBlockchainAccount" addDeleteBtnFor={id ? "blockchainAccount" : undefined} onSent={onSent} onDeleted={onDeleted}>
 			<label>

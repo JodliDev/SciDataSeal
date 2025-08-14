@@ -14,7 +14,7 @@ export default PrivatePage(async (query) => {
 			{label: Lang.get("home"), page: "Home"},
 			{label: Lang.get("studies"), page: "ListStudies"},
 			{label: study?.studyName ?? "Not found", page: "Study", query: `?id=${studyId}`},
-			{label: Lang.get("questionnaires"), page: "ListQuestionnaires"},
+			{label: Lang.get("questionnaires"), page: "ListQuestionnaires", query: `?studyId=${studyId}`},
 		],
 		view: () => <ListEntries
 			type="questionnaires"
