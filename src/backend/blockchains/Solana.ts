@@ -104,6 +104,30 @@ export default class Solana implements BlockchainInterface {
 		return signatures;
     }
 	
+	private decipherLine(original: string, dataKey: string): Omit<LineData, "timestamp"> {
+		try {
+			const decompressed = decompressAndDecrypt(original, dataKey)
+			
+			if(decompressed.startsWith(HEADER_TAG)) {
+				return {
+					data: decompressed.substring(HEADER_TAG.length),
+					isHeader: true
+				};
+			} else {
+				return {
+					data: decompressed,
+					isHeader: false
+				};
+			}
+		}
+		catch {
+			return {
+				data: `Cannot decipher: ${original}`,
+				isHeader: false
+			};
+		}
+	}
+	
 	public async listData(publicKey: string, intDenotation: number, dataKey: string): Promise<LineData[]> {
 		const connection = new Connection(this.getUrl(), "confirmed");
 		const signatures = await connection.getSignaturesForAddress(new PublicKey(publicKey));
@@ -111,33 +135,6 @@ export default class Solana implements BlockchainInterface {
 		const denotationLength = denotation.length;
 		
 		const output: LineData[] = [];
-		
-		const addLine = (timestamp: number, line: string) => {
-			try {
-				const decompressed = decompressAndDecrypt(line, dataKey)
-				
-				if(decompressed.startsWith(HEADER_TAG)) {
-					output.push({
-						timestamp: timestamp,
-						data: decompressed.substring(HEADER_TAG.length),
-						isHeader: true
-					});
-				} else {
-					output.push({
-						timestamp: timestamp,
-						data: decompressed,
-						isHeader: false
-					});
-				}
-			}
-			catch {
-				output.push({
-					timestamp: timestamp,
-					data: `Cannot decipher: ${line}`,
-					isHeader: false
-				});
-			}
-		}
 		
 		let temp = "";
 		for(const sig of signatures.reverse()) {
@@ -152,13 +149,19 @@ export default class Solana implements BlockchainInterface {
 				temp += message.substring(0, message.length - CONTINUE_TAG.length);
 			}
 			else {
-				addLine(sig.blockTime ?? 0, temp + message);
+				output.push({
+					timestamp: sig.blockTime ?? 0,
+					...this.decipherLine(temp + message, dataKey)
+				});
 				temp = "";
 			}
 		}
 		
 		if(temp) { //this should never happen
-			addLine(signatures[0].blockTime ?? 0, temp);
+			output.push({
+				timestamp: signatures[0].blockTime ?? 0,
+				...this.decipherLine(temp, dataKey)
+			});
 		}
 		
 		return output;
