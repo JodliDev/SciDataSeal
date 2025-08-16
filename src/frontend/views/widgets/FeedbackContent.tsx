@@ -5,6 +5,7 @@ import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 
 interface Attributes {
 	callback: FeedbackCallBack
+	class?: string
 }
 
 /**
@@ -14,7 +15,7 @@ export default TsClosureComponent<Attributes>(() => {
 	return {
 		view: (vNode) => {
 			const feedback = vNode.attrs.callback;
-			return <div class="vertical hAlignCenter vAlignCenter">
+			return <div class={`${vNode.attrs.class ?? "vertical hAlignCenter vAlignCenter"}`}>
 				{feedback.isReady()
 					? vNode.children
 					: <FeedbackIcon callback={feedback}/>
