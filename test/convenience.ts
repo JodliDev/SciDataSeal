@@ -37,6 +37,7 @@ class MockKysely {
 	innerJoin = this.makeChainable();
 	where = this.makeChainable();
 	orderBy = this.makeChainable();
+	offset = this.makeChainable();
 	limit = this.makeChainable();
 	fn = {
 		countAll: vi.fn(() => this.fn),
