@@ -40,8 +40,9 @@ describe("listEntries", () => {
 				...query
 			});
 		
-		expect(response.ok).toBe(true);
-		expect(response.body.data).toEqual({list: mockList});
+		const message = `Testing type ${type} with query ${JSON.stringify(query)}\nRespond: ${JSON.stringify(response.body)}`;
+		expect(response.ok, message).toBe(true);
+		expect(response.body.data, message).toEqual({list: mockList, totalCount: 0});
 	}
 	
 	const mockDb = mockKysely();
@@ -53,9 +54,7 @@ describe("listEntries", () => {
 	it("should return error if type is missing", async() => {
 		const response = await request(app)
 			.get("/listEntries")
-			.query({
-			
-			});
+			.query({});
 		
 		expect(response.ok).toBe(false);
 		expect(response.body.error).toHaveProperty("message", "errorMissingData");
@@ -110,6 +109,16 @@ describe("listEntries", () => {
 		
 		it("should return a list of all studies", async() => {
 			await testResult("studies", "Study");
+		});
+	});
+	
+	describe("dataLogs", () => {
+		afterEach(() => {
+			mockDb.resetMocks();
+		});
+		
+		it("should return a list of all studies", async() => {
+			await testResult("dataLogs", "DataLog");
 		});
 	});
 	

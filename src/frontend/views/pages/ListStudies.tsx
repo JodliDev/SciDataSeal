@@ -1,7 +1,7 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
-import ListEntries from "../widgets/ListEntries.tsx";
+import ListEntries, {buttonEntry} from "../widgets/ListEntries.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
@@ -11,10 +11,11 @@ export default PrivatePage(async () => {
 			{label: Lang.get("studies"), page: "ListStudies"},
 		],
 		view: () => <ListEntries
-			type="studies"
+			query={{type: "studies"}}
+			drawEntry={buttonEntry("Study")}
+			direction="horizontal"
 			addLabel={Lang.get("createStudy")}
 			addTarget="SetStudy"
-			target="Study"
 		/>
 	};
 });

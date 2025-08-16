@@ -1,26 +1,29 @@
 import {describe, it, vi, expect, afterAll} from "vitest";
 import {renderComponent} from "../../testRender.ts";
-import ListEntries from "../../../../src/frontend/views/widgets/ListEntries.tsx";
+import ListEntries, {buttonEntry} from "../../../../src/frontend/views/widgets/ListEntries.tsx";
 import {wait} from "../../../convenience.ts";
 import {ListDefinitions} from "../../../../src/shared/data/ListEntriesInterface.ts";
-import listEntries from "../../../../src/frontend/actions/listEntries.ts";
+import {listEntriesWithPages} from "../../../../src/frontend/actions/listEntries.ts";
 
 describe("ListEntries", () => {
 	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
-		default: vi.fn(() => [
-			{
-				id: 1,
-				label: "test1",
-			},
-			{
-				id: 5,
-				label: "test2",
-			},
-			{
-				id: 6,
-				label: "test3",
-			}
-		])
+		listEntriesWithPages: vi.fn(() => ({
+			list: [
+				{
+					id: 1,
+					label: "test1",
+				},
+				{
+					id: 5,
+					label: "test2",
+				},
+				{
+					id: 6,
+					label: "test3",
+				}
+			],
+			totalCount: 55
+		}))
 	}));
 	
 	afterAll(() => {
@@ -28,7 +31,11 @@ describe("ListEntries", () => {
 	});
 	
 	const options = {
-		type: "users" as keyof ListDefinitions,
+		query: {
+			type: "users" as keyof ListDefinitions,
+		},
+		drawEntry: buttonEntry("Test"),
+		direction: "horizontal" as const,
 		addQuery: undefined,
 		addTarget: "test",
 		addLabel: "test",
@@ -50,8 +57,12 @@ describe("ListEntries", () => {
 	
 	it("should reload when list data changes", async () => {
 		const options = {
-			type: "users" as keyof ListDefinitions,
-			query: "?test" as `?${string}`,
+			query: {
+				type: "users" as keyof ListDefinitions,
+				test: "testData"
+			},
+			direction: "table" as const,
+			drawEntry: buttonEntry("Test"),
 			addTarget: "test",
 			addLabel: "test",
 			target: "test"
@@ -60,28 +71,26 @@ describe("ListEntries", () => {
 		await wait(1);
 		component.redraw();
 		
-		expect(listEntries).toHaveBeenCalled();
-		vi.mocked(listEntries).mockClear();
+		expect(listEntriesWithPages).toHaveBeenCalled();
+		vi.mocked(listEntriesWithPages).mockClear();
 		
 		//no change
 		component.redraw();
-		expect(listEntries).not.toHaveBeenCalled();
+		expect(listEntriesWithPages).not.toHaveBeenCalled();
 		
-		//type changed
-		options.type = "studies";
+		//query changed
+		options.query = {
+			type: "studies" as keyof ListDefinitions,
+			test: "testData"
+		};
 		component.redraw();
-		expect(listEntries).toHaveBeenCalled();
-		vi.mocked(listEntries).mockClear();
+		expect(listEntriesWithPages).toHaveBeenCalled();
+		vi.mocked(listEntriesWithPages).mockClear();
 		await wait(1);
 		component.redraw();
 		
 		//no change
 		component.redraw();
-		expect(listEntries).not.toHaveBeenCalled();
-		
-		//query changed
-		options.query = "?test2";
-		component.redraw();
-		expect(listEntries).toHaveBeenCalled();
+		expect(listEntriesWithPages).not.toHaveBeenCalled();
 	});
 });

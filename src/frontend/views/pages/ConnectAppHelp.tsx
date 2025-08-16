@@ -9,12 +9,12 @@ import {tooltip} from "../../actions/FloatingMenu.ts";
 import {SetQuestionnaireColumnsInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import {SaveDataInterface} from "../../../shared/data/SaveDataInterface.ts";
 import listEntries from "../../actions/listEntries.ts";
-import ListEntriesInterface from "../../../shared/data/ListEntriesInterface.ts";
+import {ListResponseType} from "../../../shared/data/ListEntriesInterface.ts";
 import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
-	function createQuestionnaireMenu(questionnaires: ListEntriesInterface<"questionnaires">["Response"]["list"]) {
+	function createQuestionnaireMenu(questionnaires: ListResponseType<"questionnaires">) {
 		async function onChange(event: Event) {
 			const target = event.target as HTMLSelectElement;
 			feedback.setLoading(true);

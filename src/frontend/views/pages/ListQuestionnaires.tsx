@@ -1,13 +1,13 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
-import ListEntries from "../widgets/ListEntries.tsx";
+import ListEntries, {buttonEntry} from "../widgets/ListEntries.tsx";
 import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query) => {
-	const studyId = query.get("studyId");
-	const study = await getEntry("study", parseInt(studyId ?? "0"));
+	const studyId = query.get("studyId") ?? "0";
+	const study = await getEntry("study", parseInt(studyId));
 	
 	return {
 		history: [
@@ -17,12 +17,12 @@ export default PrivatePage(async (query) => {
 			{label: Lang.get("questionnaires"), page: "ListQuestionnaires", query: `?studyId=${studyId}`},
 		],
 		view: () => <ListEntries
-			type="questionnaires"
-			query={`?studyId=${studyId}`}
+			query={{type: "questionnaires", studyId: studyId}}
+			drawEntry={buttonEntry("Questionnaire")}
+			direction="horizontal"
 			addLabel={Lang.get("createQuestionnaire")}
 			addTarget="SetQuestionnaire"
 			addQuery={`?studyId=${studyId}`}
-			target="Questionnaire"
 		/>
 	};
 });

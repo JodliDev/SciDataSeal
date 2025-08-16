@@ -19,19 +19,51 @@ export interface ListDefinitions {
 		Query: {}
 		Response: {}
 	}
+	dataLogs: {
+		Query: {
+			questionnaireId: string;
+		}
+		Response: {
+			blockchainAccountId: number;
+			blockchainType: string;
+			signature: string;
+		}
+	}
+}
+
+interface DefaultResponse {
+	id: number;
+	label: string | number;
+}
+
+interface DefaultQueryValues<T extends keyof ListDefinitions> {
+	type: T
+	page?: string
+}
+
+/**
+ * Just some trickery to make TypeScript happy.
+ * Using `DefaultQueryValues<T> & ListDefinitions[T]["Query"]` would lead to
+ * `Interface ListEntriesInterface<T> incorrectly extends interface GetDataStructureInterface`
+ */
+type DefaultObject<T extends keyof ListDefinitions> = {
+	[K in keyof DefaultQueryValues<T>]: DefaultQueryValues<T>[K]
+}
+type ListDefinitionsObject<T extends keyof ListDefinitions> = {
+	[K in keyof ListDefinitions[T]["Query"]]: ListDefinitions[T]["Query"][K]
 }
 
 export default interface ListEntriesInterface<T extends keyof ListDefinitions> extends GetDataStructureInterface {
 	Endpoint: "/listEntries";
-	Query: {
-		type: T;
-	} & ListDefinitions[T]["Query"];
+	Query: DefaultObject<T> & ListDefinitionsObject<T>;
 	Response: {
+		totalCount: number;
 		list: (
-			{
-				id: number;
-				label: string;
-			} & ListDefinitions[T]["Response"]
+			DefaultResponse & ListDefinitions[T]["Response"]
 		)[];
 	}
 }
+
+//For easy access:
+export type ListResponseType<T extends keyof ListDefinitions = keyof ListDefinitions> = ListEntriesInterface<T>["Response"]["list"];
+export type ListResponseEntryType<T extends keyof ListDefinitions = keyof ListDefinitions> = ListResponseType<T>[number];
