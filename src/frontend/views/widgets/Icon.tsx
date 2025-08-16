@@ -4,9 +4,13 @@ import columnsSvg from "../../assets/icons/columns.svg?raw";
 import connectAppSvg from "../../assets/icons/connectApp.svg?raw";
 import deleteSvg from "../../assets/icons/delete.svg?raw";
 import listSvg from "../../assets/icons/list.svg?raw";
+import nextSvg from "../../assets/icons/next.svg?raw";
+import prevSvg from "../../assets/icons/prev.svg?raw";
 import removeSvg from "../../assets/icons/remove.svg?raw";
 import saveSvg from "../../assets/icons/save.svg?raw";
 import settingsSvg from "../../assets/icons/settings.svg?raw";
+import toEndSvg from "../../assets/icons/toEnd.svg?raw";
+import toStartSvg from "../../assets/icons/toStart.svg?raw";
 import userListSvg from "../../assets/icons/userList.svg?raw";
 import userSettingsSvg from "../../assets/icons/userSettings.svg?raw";
 import viewSvg from "../../assets/icons/view.svg?raw";
@@ -21,9 +25,13 @@ const IconType = {
 	connectApp: connectAppSvg,
 	delete: deleteSvg,
 	list: listSvg,
+	next: nextSvg,
+	prev: prevSvg,
 	remove: removeSvg,
 	save: saveSvg,
 	settings: settingsSvg,
+	toEnd: toEndSvg,
+	toStart: toStartSvg,
 	userList: userListSvg,
 	userSettings: userSettingsSvg,
 	view: viewSvg,
