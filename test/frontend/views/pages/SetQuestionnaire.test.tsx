@@ -174,5 +174,58 @@ describe("SetQuestionnaire", async () => {
 			denotationInput = component.dom.querySelector("input[name=blockchainDenotation]")! as HTMLInputElement;
 			expect(denotationInput.value).toBe("4");
 		});
+		
+		it("should show warning if blockchainAccountId was changed and questionnaire id was provided", async () => {
+			const component = await renderPage(SetQuestionnaire, "id=66");
+			let select = component.dom.querySelector("select[name=blockchainAccountId]") as HTMLElement;
+			let warnSymbol = select.parentNode?.querySelector(".warn");
+			expect(warnSymbol).toBeNull();
+			
+			await changeAccountSelection(component, 5);
+			
+			select = component.dom.querySelector("select[name=blockchainAccountId]") as HTMLElement;
+			warnSymbol = select.parentNode?.querySelector(".warn");
+			expect(warnSymbol).not.toBeNull();
+		});
+		
+		it("should show no warning if blockchainAccountId was changed and no questionnaire id was provided", async () => {
+			const component = await renderPage(SetQuestionnaire);
+			
+			await changeAccountSelection(component, 5);
+			
+			const select = component.dom.querySelector("select[name=blockchainAccountId]") as HTMLElement;
+			const warnSymbol = select.parentNode?.querySelector(".warn");
+			expect(warnSymbol).toBeNull();
+		});
+	});
+	
+	it("should show warning if denotation was changed and questionnaire id was provided", async () => {
+		const component = await renderPage(SetQuestionnaire, "id=66");
+		let input = component.dom.querySelector("input[name=blockchainDenotation]") as HTMLInputElement;
+		let warnSymbol = input.parentNode?.querySelector(".warn");
+		expect(warnSymbol).toBeNull();
+		
+		input.value = "99";
+		input.dispatchEvent(new Event("change"))
+		await wait(1);
+		component.redraw();
+		
+		input = component.dom.querySelector("input[name=blockchainDenotation]") as HTMLInputElement;
+		warnSymbol = input.parentNode?.querySelector(".warn");
+		expect(warnSymbol).not.toBeNull();
+	});
+	
+	it("should show no warning if denotation was changed and no questionnaire id was provided", async () => {
+		const component = await renderPage(SetQuestionnaire);
+		let input = component.dom.querySelector("input[name=blockchainDenotation]") as HTMLInputElement;
+		
+		input.value = "99";
+		input.dispatchEvent(new Event("change"))
+		await wait(1);
+		component.redraw();
+		
+		input = component.dom.querySelector("input[name=blockchainDenotation]") as HTMLInputElement;
+		const warnSymbol = input.parentNode?.querySelector(".warn");
+		expect(warnSymbol).toBeNull();
 	});
 });

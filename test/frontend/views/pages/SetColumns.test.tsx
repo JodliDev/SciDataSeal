@@ -2,6 +2,8 @@ import {describe, it, vi, expect, afterAll, afterEach} from "vitest";
 import {renderPage} from "../../testRender.ts";
 import SetColumns from "../../../../src/frontend/views/pages/SetColumns.tsx";
 import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
+import {wait} from "../../../convenience.ts";
+import postData from "../../../../src/frontend/actions/postData.ts";
 
 describe("SetColumns", async () => {
 	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
@@ -67,5 +69,31 @@ describe("SetColumns", async () => {
 		component.redraw();
 		forms = component.dom.querySelectorAll("form input[name='columns[]']");
 		expect(forms.length).toBe(0);
+	});
+	
+	it("should cancel sending when confirm was aborted", async () => {
+		const confirmMock = vi.spyOn(window, "confirm").mockReturnValue(false);
+		vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
+			default: vi.fn()
+		}));
+		const component = await renderPage(SetColumns);
+		const form = component.dom.querySelector("form")! as HTMLFormElement;
+		
+		//cancel sending
+		form.dispatchEvent(new Event("submit"));
+		await wait(1);
+		component.redraw();
+		expect(postData).not.toHaveBeenCalled();
+		
+		//confirm sending
+		confirmMock.mockReturnValue(true);
+		form.dispatchEvent(new Event("submit"));
+		await wait(1);
+		component.redraw();
+		expect(postData).toHaveBeenCalled();
+		
+		//cleanup:
+		vi.mocked(postData).mockRestore();
+		confirmMock.mockRestore();
 	});
 });
