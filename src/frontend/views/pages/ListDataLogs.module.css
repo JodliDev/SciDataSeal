@@ -1,0 +1,9 @@
+.line {
+	display: table-row;
+	
+	.cell {
+		padding: 5px;
+		display: table-cell;
+		vertical-align: middle;
+	}
+}

@@ -86,6 +86,10 @@ describe("setQuestionnaireColumns", () => {
 	
 	
 	it("should save the correct values", async() => {
+		const mockDate = new Date("03.04.2024 02:38 UTC")
+		vi.useFakeTimers();
+		vi.setSystemTime(mockDate);
+		
 		const userId = 123;
 		const questionnaireId = 1;
 		const pass = "qwe";
@@ -99,7 +103,8 @@ describe("setQuestionnaireColumns", () => {
 			.values.chain({
 				questionnaireId: questionnaireId,
 				userId: userId,
-				signature: JSON.stringify(["someSignature"])
+				signature: JSON.stringify(["someSignature"]),
+				timestamp: 1709519880000
 			})
 			.execute;
 		
@@ -113,5 +118,7 @@ describe("setQuestionnaireColumns", () => {
 		expect(res.body).toHaveProperty("ok", true);
 		expect(insertMock).toHaveBeenCalled();
 		expect(updateMock).toHaveBeenCalled();
+		
+		vi.useRealTimers();
 	});
 });

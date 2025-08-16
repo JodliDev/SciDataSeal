@@ -14,3 +14,7 @@
 	overflow: auto;
 	transform: translateX(-50%);
 }
+
+.openedMenu {
+	/*Used so it can be found by Unit Test*/
+}

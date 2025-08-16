@@ -4,7 +4,9 @@ import columnsSvg from "../../assets/icons/columns.svg?raw";
 import connectAppSvg from "../../assets/icons/connectApp.svg?raw";
 import deleteSvg from "../../assets/icons/delete.svg?raw";
 import listSvg from "../../assets/icons/list.svg?raw";
+import logsSvg from "../../assets/icons/logs.svg?raw";
 import nextSvg from "../../assets/icons/next.svg?raw";
+import openInNewSvg from "../../assets/icons/openInNew.svg?raw";
 import prevSvg from "../../assets/icons/prev.svg?raw";
 import removeSvg from "../../assets/icons/remove.svg?raw";
 import saveSvg from "../../assets/icons/save.svg?raw";
@@ -25,7 +27,9 @@ const IconType = {
 	connectApp: connectAppSvg,
 	delete: deleteSvg,
 	list: listSvg,
+	logs: logsSvg,
 	next: nextSvg,
+	openInNew: openInNewSvg,
 	prev: prevSvg,
 	remove: removeSvg,
 	save: saveSvg,

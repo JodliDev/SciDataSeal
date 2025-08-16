@@ -36,8 +36,9 @@ class FloatingMenu {
 	 * the visible boundaries of the viewport, including adding spacing when necessary.
 	 */
 	private validatePosition(): void {
-		if(!this.view)
+		if(!this.view) {
 			return;
+		}
 		const rect = this.view.getBoundingClientRect();
 		if(rect.left < 5) {
 			this.view.style.left = "5px";
@@ -93,6 +94,7 @@ class FloatingMenu {
 			this.closeMenu();
 		}
 		this.view = document.createElement("div");
+		this.view.classList.add(css.openedMenu);
 		
 		const target = event.target as HTMLElement;
 		
