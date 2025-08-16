@@ -20,7 +20,7 @@ describe("Login", async () => {
 		SiteTools.init({}, () => {});
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	async function createAndSubmitForm() {

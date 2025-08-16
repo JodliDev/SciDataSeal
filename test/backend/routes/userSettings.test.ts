@@ -20,7 +20,7 @@ describe("userSettings", () => {
 		mockDb.resetMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	const mockDb = mockKysely();

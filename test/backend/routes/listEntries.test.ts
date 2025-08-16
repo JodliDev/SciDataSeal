@@ -14,7 +14,7 @@ describe("listEntries", () => {
 	}));
 	
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	async function testResult(

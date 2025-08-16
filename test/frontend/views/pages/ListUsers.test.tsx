@@ -9,7 +9,7 @@ describe("ListUsers", async () => {
 	}));
 	
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	it("should load correct list", async () => {

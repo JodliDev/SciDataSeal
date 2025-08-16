@@ -18,10 +18,10 @@ describe("Form", () => {
 		options = {endpoint: "/test"};
 	});
 	afterEach(() => {
-		vi.restoreAllMocks();
+		vi.resetAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	

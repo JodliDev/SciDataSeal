@@ -20,7 +20,7 @@ describe("isAdmin", () => {
 		}));
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	const mockDb = mockKysely();
 	

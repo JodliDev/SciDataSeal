@@ -24,7 +24,7 @@ describe("ListEntries", () => {
 	}));
 	
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	const options = {

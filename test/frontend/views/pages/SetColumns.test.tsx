@@ -17,7 +17,7 @@ describe("SetColumns", async () => {
 		vi.clearAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	it("should create one input per column", async () => {

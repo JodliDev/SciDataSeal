@@ -14,7 +14,7 @@ describe("Init", async () => {
 		vi.clearAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	async function createAndSubmitForm(password: string, passwordRepeat: string) {

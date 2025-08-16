@@ -1,4 +1,4 @@
-import {afterEach, describe, expect, it, vi} from "vitest";
+import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import unpackResponse from "../../../src/frontend/actions/unpackResponse.ts";
 import {ResponseFormat} from "../../../src/shared/ResponseFormat.ts";
 import {Lang} from "../../../src/frontend/singleton/Lang.ts";
@@ -6,6 +6,9 @@ import {Lang} from "../../../src/frontend/singleton/Lang.ts";
 describe("unpackResponse", () => {
 	afterEach(() => {
 		vi.resetAllMocks();
+	});
+	afterAll(() => {
+		vi.restoreAllMocks();
 	});
 	const mockJson = vi.fn();
 	const mockResponse = (ok: boolean, data: any) => ({

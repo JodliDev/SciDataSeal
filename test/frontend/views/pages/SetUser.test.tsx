@@ -27,7 +27,7 @@ describe("SetUser.tsx", async () => {
 		vi.clearAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	describe("submit data", async () => {

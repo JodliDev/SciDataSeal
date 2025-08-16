@@ -13,7 +13,7 @@ describe("setUser", () => {
 		dbMock.resetMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	const dbMock = mockKysely();

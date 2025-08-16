@@ -10,7 +10,7 @@ describe("getNewDenotation", () => {
 	}));
 	
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	const mockDb = mockKysely();

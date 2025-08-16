@@ -41,7 +41,7 @@ describe("ViewQuestionnaireData", async () => {
 		vi.clearAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	async function createAndSubmitForm() {

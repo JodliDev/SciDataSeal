@@ -16,7 +16,7 @@ describe("SaveData", async () => {
 		vi.clearAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	it("should create one textarea per column", async () => {

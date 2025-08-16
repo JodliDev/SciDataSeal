@@ -45,10 +45,10 @@ describe("SetStudy.tsx", async () => {
 		SiteTools.init({}, () => {});
 	});
 	afterEach(() => {
-		vi.restoreAllMocks();
+		vi.resetAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	it("Should show error when no blockchain accounts exist", async () => {

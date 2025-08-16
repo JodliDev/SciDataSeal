@@ -12,10 +12,10 @@ describe("deleteEntry", () => {
 	
 	afterEach(() => {
 		mockDb.resetMocks();
-		vi.restoreAllMocks();
+		vi.resetAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	const mockDb = mockKysely();

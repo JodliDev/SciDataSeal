@@ -14,7 +14,7 @@ describe("encryptPassword", () => {
 		}));
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	it("should generate a hashed password using bcrypt", async() => {

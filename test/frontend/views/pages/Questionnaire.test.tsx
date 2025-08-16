@@ -12,7 +12,7 @@ describe("Questionnaire", async () => {
 	}));
 	
 	afterEach(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	it("should load the correct questionnaire", async () => {

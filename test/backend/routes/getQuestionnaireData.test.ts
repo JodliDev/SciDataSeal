@@ -12,7 +12,7 @@ describe("getQuestionnaireData", () => {
 	}));
 	
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	const app = express();

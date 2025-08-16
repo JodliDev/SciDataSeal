@@ -28,9 +28,9 @@ describe("Site", () => {
 	afterEach(() => {
 		vi.unstubAllGlobals();
 		vi.clearAllMocks();
-	})
+	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	it("should load Init page when isInit = false", async () => {

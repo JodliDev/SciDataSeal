@@ -13,7 +13,6 @@ describe("getUrlData", () => {
 	};
 	
 	afterEach(() => {
-		vi.resetAllMocks();
 		vi.restoreAllMocks();
 	});
 	

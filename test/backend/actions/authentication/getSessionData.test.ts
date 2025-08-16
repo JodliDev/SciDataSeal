@@ -50,7 +50,7 @@ describe("getSessionData", () => {
 			isAdmin: true,
 		});
 		
-		vi.resetAllMocks();
+		vi.mocked(authenticateRequest).mockRestore();
 	});
 });
 

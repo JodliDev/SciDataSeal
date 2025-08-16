@@ -21,7 +21,7 @@ describe("AuthenticateMiddleware", () => {
 		vi.clearAllMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	const mockDb = {} as DbType;
 	const mockRequest = {} as Request;

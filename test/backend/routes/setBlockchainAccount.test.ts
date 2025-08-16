@@ -18,7 +18,7 @@ describe("setBlockchainAccount", () => {
 		mockDb.resetMocks();
 	});
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	
 	const mockDb = mockKysely();

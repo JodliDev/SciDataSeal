@@ -24,7 +24,7 @@ describe("AdminMiddleware", () => {
 		vi.clearAllMocks();
 	})
 	afterAll(() => {
-		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	});
 	const mockDb = {} as Kysely<any>;
 	const mockRequest = {} as Request;
