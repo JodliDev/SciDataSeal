@@ -4,7 +4,7 @@ import getData from "../../actions/getData.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import Form from "../widgets/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
-import {tooltip} from "../../actions/FloatingMenu.ts";
+import {tooltip} from "../../actions/floatingMenu.ts";
 import SetStudyInterface from "../../../shared/data/SetStudyInterface.ts";
 import GenerateRandomString from "../../../shared/data/GenerateRandomString.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";

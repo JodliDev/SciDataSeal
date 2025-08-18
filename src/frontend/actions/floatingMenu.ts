@@ -1,5 +1,5 @@
 import m, {Child} from "mithril";
-import css from "./FloatingMenu.module.css"
+import css from "./floatingMenu.module.css"
 
 interface Options {
 	eventName?: "click" | "mouseenter" | "mousemove";
@@ -17,8 +17,8 @@ interface OutputEvents {
  * This class manages the opening, closing, and positioning of the menu element, as well as
  * responding to various user interactions.
  */
-class FloatingMenu {
-	public static readonly openedMenus: Record<string, FloatingMenu> = {};
+class FloatingMenuClass {
+	public static readonly openedMenus: Record<string, FloatingMenuClass> = {};
 	
 	private readonly id: string;
 	private readonly menu: (close: () => void) => Child;
@@ -72,7 +72,7 @@ class FloatingMenu {
 		}
 		if(this.options?.connectedMenus) {
 			for(const name of this.options.connectedMenus) {
-				if(FloatingMenu.openedMenus[name]?.contains(target)) {
+				if(FloatingMenuClass.openedMenus[name]?.contains(target)) {
 					return;
 				}
 			}
@@ -122,7 +122,7 @@ class FloatingMenu {
 		
 		this.view.classList.add(css.FloatingMenu);
 		
-		FloatingMenu.openedMenus[this.id] = this;
+		FloatingMenuClass.openedMenus[this.id] = this;
 		
 		document.body.appendChild(this.view);
 		
@@ -147,7 +147,7 @@ class FloatingMenu {
 	 * - Clears the reference to the menu's view.
 	 */
 	public closeMenu(): void {
-		delete FloatingMenu.openedMenus[this.id];
+		delete FloatingMenuClass.openedMenus[this.id];
 		document.removeEventListener("click", this.clickOutside);
 		
 		if(this.view?.parentElement != null) {
@@ -222,9 +222,9 @@ class FloatingMenu {
  * @param options - An optional configuration object for the floating menu.
  */
 export default function floatingMenu(id: string, menu: (close: () => void) => Child, options: Options = {}): OutputEvents {
-	const floatingMenu = FloatingMenu.openedMenus.hasOwnProperty(id)
-		? FloatingMenu.openedMenus[id]
-		: new FloatingMenu(id, menu, options);
+	const floatingMenu = FloatingMenuClass.openedMenus.hasOwnProperty(id)
+		? FloatingMenuClass.openedMenus[id]
+		: new FloatingMenuClass(id, menu, options);
 	
 	return floatingMenu.getAttributes();
 }
@@ -244,12 +244,12 @@ export function tooltip(description: string): OutputEvents {
  * Mostly useful for unit testing.
  */
 export function closeAllMenus() {
-	for(const key in FloatingMenuFotTesting.openedMenus) {
-		FloatingMenuFotTesting.openedMenus[key].closeMenu();
+	for(const key in FloatingMenuForTesting.openedMenus) {
+		FloatingMenuForTesting.openedMenus[key].closeMenu();
 	}
 }
 
 /**
  * Used for unit tests
  */
-export class FloatingMenuFotTesting extends FloatingMenu {} //used for unit testing
+export class FloatingMenuForTesting extends FloatingMenuClass {} //used for unit testing

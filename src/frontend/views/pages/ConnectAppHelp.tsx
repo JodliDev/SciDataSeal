@@ -5,7 +5,7 @@ import css from "./ConnectAppHelp.module.css";
 import TabBar from "../widgets/TabView.tsx";
 import {FeedbackCallBack} from "../widgets/FeedbackIcon.tsx";
 import SetQuestionnaireInterface from "../../../shared/data/SetQuestionnaireInterface.ts";
-import {tooltip} from "../../actions/FloatingMenu.ts";
+import {tooltip} from "../../actions/floatingMenu.ts";
 import {SetQuestionnaireColumnsInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import {SaveDataInterface} from "../../../shared/data/SaveDataInterface.ts";
 import listEntries from "../../actions/listEntries.ts";

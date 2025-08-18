@@ -6,7 +6,7 @@ import {wait} from "../../../convenience.ts";
 import postData from "../../../../src/frontend/actions/postData.ts";
 import css from "../../../../src/frontend/views/pages/ViewQuestionnaireData.module.css";
 import cssFeedbackIcon from "../../../../src/frontend/views/widgets/FeedbackIcon.module.css";
-import {closeAllMenus} from "../../../../src/frontend/actions/FloatingMenu.ts";
+import {closeAllMenus} from "../../../../src/frontend/actions/floatingMenu.ts";
 import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
 import getEntry from "../../../../src/frontend/actions/getEntry.ts";
 import {GetDefinitions} from "../../../../src/shared/data/GetEntryInterface.ts";

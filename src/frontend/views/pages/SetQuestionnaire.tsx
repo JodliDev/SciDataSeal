@@ -6,7 +6,7 @@ import SetQuestionnaireInterface from "../../../shared/data/SetQuestionnaireInte
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import Form from "../widgets/Form.tsx";
 import GetNewDenotation from "../../../shared/data/GetNewDenotation.ts";
-import {tooltip} from "../../actions/FloatingMenu.ts";
+import {tooltip} from "../../actions/floatingMenu.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 import listEntries from "../../actions/listEntries.ts";
 import getEntry from "../../actions/getEntry.ts";

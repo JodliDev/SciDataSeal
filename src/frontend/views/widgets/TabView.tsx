@@ -1,7 +1,7 @@
 import m from "mithril";
 import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import css from "./TabView.module.css";
-import {tooltip} from "../../actions/FloatingMenu.ts";
+import {tooltip} from "../../actions/floatingMenu.ts";
 
 interface TabContent {
 	label: string;

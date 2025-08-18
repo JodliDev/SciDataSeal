@@ -1,7 +1,7 @@
 import m from "mithril";
 import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import Icon from "./Icon.tsx";
-import {tooltip} from "../../actions/FloatingMenu.ts";
+import {tooltip} from "../../actions/floatingMenu.ts";
 
 interface Attributes {
 	tooltip: string,

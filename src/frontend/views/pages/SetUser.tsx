@@ -5,7 +5,7 @@ import {SiteTools} from "../../singleton/SiteTools.ts";
 import Form from "../widgets/Form.tsx";
 import SetUserInterface from "../../../shared/data/SetUserInterface.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
-import {tooltip} from "../../actions/FloatingMenu.ts";
+import {tooltip} from "../../actions/floatingMenu.ts";
 import getEntry from "../../actions/getEntry.ts";
 import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
 

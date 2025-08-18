@@ -9,9 +9,10 @@ import createDataBlob from "../../actions/createDataBlob.ts";
 import postData from "../../actions/postData.ts";
 import {Change, diffChars} from "diff";
 import {GetQuestionnaireDataPostInterface} from "../../../shared/data/GetQuestionnaireDataInterface.ts";
-import floatingMenu, {tooltip} from "../../actions/FloatingMenu.ts";
+import floatingMenu, {tooltip} from "../../actions/floatingMenu.ts";
 import listEntries from "../../actions/listEntries.ts";
 import getEntry from "../../actions/getEntry.ts";
+import bindValueToInput from "../../actions/bindValueToInput.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async query => {

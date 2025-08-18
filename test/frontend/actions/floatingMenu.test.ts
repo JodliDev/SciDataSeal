@@ -1,23 +1,23 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
-import floatingMenu, {closeAllMenus, FloatingMenuFotTesting} from "../../../src/frontend/actions/FloatingMenu.ts";
-import css from "../../../src/frontend/actions/FloatingMenu.module.css";
+import floatingMenu, {closeAllMenus, FloatingMenuForTesting} from "../../../src/frontend/actions/floatingMenu.ts";
+import css from "../../../src/frontend/actions/floatingMenu.module.css";
 import {wait} from "../../convenience.ts";
 
-describe("FloatingMenu class", () => {
+describe("floatingMenu", () => {
 	const menuId = "testMenu";
 	const menuCallback = vi.fn(() => "Menu Content");
-	let floatingMenuObj: FloatingMenuFotTesting;
+	let floatingMenuObj: FloatingMenuForTesting;
 	
 	beforeEach(() => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback);
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback);
 	});
 	
 	afterEach(async () => {
 		await wait(1); //in case asynchronous clickOutside still needs to be set
 		menuCallback.mockReset();
 		document.body.innerHTML = "";
-		for(const key in FloatingMenuFotTesting.openedMenus) {
-			FloatingMenuFotTesting.openedMenus[key].closeMenu();
+		for(const key in FloatingMenuForTesting.openedMenus) {
+			FloatingMenuForTesting.openedMenus[key].closeMenu();
 		}
 	});
 	
@@ -28,29 +28,29 @@ describe("FloatingMenu class", () => {
 		
 		//open:
 		floatingMenuObj.getAttributes().onclick!(mockEvent);
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBe(floatingMenuObj);
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBe(floatingMenuObj);
 		expect(document.body.querySelector(`.${css.FloatingMenu}`)).toBeTruthy();
 		
 		//close:
 		floatingMenuObj.getAttributes().onclick!(mockEvent);
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeUndefined();
 		expect(document.body.querySelector(`.${css.FloatingMenu}`)).toBeFalsy();
 	});
 	
 	it("should create a dropdown menu on mouseenter and close it on mouseleave", () => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback, {eventName: "mouseenter"});
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback, {eventName: "mouseenter"});
 		const mockEvent = {
 			target: document.createElement("div"),
 		} as unknown as MouseEvent;
 		
 		//open:
 		floatingMenuObj.getAttributes().onmouseenter!(mockEvent);
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBe(floatingMenuObj);
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBe(floatingMenuObj);
 		expect(document.body.querySelector(`.${css.FloatingMenu}`)).toBeTruthy();
 		
 		//close:
 		floatingMenuObj.getAttributes().onmouseleave!(mockEvent);
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeUndefined();
 		expect(document.body.querySelector(`.${css.FloatingMenu}`)).toBeFalsy();
 	});
 
@@ -62,7 +62,7 @@ describe("FloatingMenu class", () => {
 		floatingMenuObj.getAttributes().onclick!(mockEvent);
 
 		floatingMenuObj.closeMenu();
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeUndefined();
 		expect(document.body.querySelector(`.${css.FloatingMenu}`)).toBeFalsy();
 	});
 
@@ -80,12 +80,12 @@ describe("FloatingMenu class", () => {
 		await wait(1); //the click handler in document.body is added asynchronously
 		document.body.click();
 
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeUndefined();
 		expect(document.body.querySelector(`.${css.FloatingMenu}`)).toBeFalsy();
 	});
 
 	it("should correctly position view when using click", async() => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback, {eventName: "click"});
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback, {eventName: "click"});
 		const target = document.createElement("div");
 		const mockEvent = {
 			target: target,
@@ -108,7 +108,7 @@ describe("FloatingMenu class", () => {
 	});
 
 	it("should correctly position view when using mouseenter", async() => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback, {eventName: "mouseenter"});
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback, {eventName: "mouseenter"});
 		const target = document.createElement("div");
 		const mockEvent = {
 			target: target,
@@ -131,7 +131,7 @@ describe("FloatingMenu class", () => {
 	});
 
 	it("should correctly position view when using mousemove", async() => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback, {eventName: "mousemove"});
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback, {eventName: "mousemove"});
 		const target = document.createElement("div");
 		const mockEvent = {
 			target: target,
@@ -170,7 +170,7 @@ describe("FloatingMenu class", () => {
 	});
 	
 	it("should close old menu when mouseenter was called twice", async() => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback, {eventName: "mouseenter"});
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback, {eventName: "mouseenter"});
 		
 		const mockClose = vi.spyOn(floatingMenuObj, "closeMenu");
 		
@@ -231,14 +231,14 @@ describe("FloatingMenu class", () => {
 	});
 
 	it("should return correct attributes based on click option", () => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback, {eventName: "click"});
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback, {eventName: "click"});
 		const attributes = floatingMenuObj.getAttributes();
 
 		expect(attributes).toHaveProperty("onclick");
 	});
 
 	it("should return correct attributes based on mouseenter option", () => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback, {eventName: "mouseenter"});
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback, {eventName: "mouseenter"});
 		const attributes = floatingMenuObj.getAttributes();
 
 		expect(attributes).toHaveProperty("onmouseenter");
@@ -246,7 +246,7 @@ describe("FloatingMenu class", () => {
 	});
 
 	it("should return correct attributes based on mousemove option", () => {
-		floatingMenuObj = new FloatingMenuFotTesting(menuId, menuCallback, {eventName: "mousemove"});
+		floatingMenuObj = new FloatingMenuForTesting(menuId, menuCallback, {eventName: "mousemove"});
 		const attributes = floatingMenuObj.getAttributes();
 
 		expect(attributes).toHaveProperty("onmouseenter");
@@ -278,8 +278,8 @@ describe("FloatingMenu class", () => {
 		const connectedMenuId = "connectedMenu";
 		const notConnectedMenuId = "notConnectedMenu";
 		const anotherMenuCallback = vi.fn(() => "Another Menu Content");
-		const connectedMenu = new FloatingMenuFotTesting(connectedMenuId, anotherMenuCallback, {connectedMenus: [menuId]});
-		const notConnectedMenu = new FloatingMenuFotTesting(notConnectedMenuId, anotherMenuCallback);
+		const connectedMenu = new FloatingMenuForTesting(connectedMenuId, anotherMenuCallback, {connectedMenus: [menuId]});
+		const notConnectedMenu = new FloatingMenuForTesting(notConnectedMenuId, anotherMenuCallback);
 		
 		// Trigger the menus to open:
 		floatingMenuObj.getAttributes().onclick!(mockEvent);
@@ -287,9 +287,9 @@ describe("FloatingMenu class", () => {
 		notConnectedMenu.getAttributes().onclick!(mockEvent);
 		
 		//Make sure menus are open:
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBe(floatingMenuObj);
-		expect(FloatingMenuFotTesting.openedMenus[connectedMenuId]).toBe(connectedMenu);
-		expect(FloatingMenuFotTesting.openedMenus[notConnectedMenuId]).toBe(notConnectedMenu);
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBe(floatingMenuObj);
+		expect(FloatingMenuForTesting.openedMenus[connectedMenuId]).toBe(connectedMenu);
+		expect(FloatingMenuForTesting.openedMenus[notConnectedMenuId]).toBe(notConnectedMenu);
 		
 		await wait(1);  //the click handler in document.body is added asynchronously
 		
@@ -299,9 +299,9 @@ describe("FloatingMenu class", () => {
 		await wait(1);
 		
 		//expect floatingMenu and connectedMenu to stay open:
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBe(floatingMenuObj);
-		expect(FloatingMenuFotTesting.openedMenus[connectedMenuId]).toBe(connectedMenu);
-		expect(FloatingMenuFotTesting.openedMenus[notConnectedMenuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBe(floatingMenuObj);
+		expect(FloatingMenuForTesting.openedMenus[connectedMenuId]).toBe(connectedMenu);
+		expect(FloatingMenuForTesting.openedMenus[notConnectedMenuId]).toBeUndefined();
 	});
 });
 
@@ -330,12 +330,12 @@ describe("floatingMenu method", () => {const menuId = "testMenu";
 		const attributes = floatingMenu(menuId, menuCallback);
 		
 		attributes.onclick!(mockEvent);
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeDefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeDefined();
 	});
 	
 	it("should return attributes of an already created menu", () => {
 		const mockGetAttributes = vi.fn();
-		FloatingMenuFotTesting.openedMenus[menuId] = {
+		FloatingMenuForTesting.openedMenus[menuId] = {
 			getAttributes: mockGetAttributes,
 			closeMenu: vi.fn()
 		} as any;
@@ -344,7 +344,7 @@ describe("floatingMenu method", () => {const menuId = "testMenu";
 		expect(mockGetAttributes).toHaveBeenCalledOnce();
 		
 		//cleanup:
-		delete FloatingMenuFotTesting.openedMenus[menuId];
+		delete FloatingMenuForTesting.openedMenus[menuId];
 	});
 	
 	it("should properly handle menus and maintain their state", () => {
@@ -358,24 +358,24 @@ describe("floatingMenu method", () => {const menuId = "testMenu";
 		const attributes = floatingMenu(menuId, menuCallback);
 		const otherAttributes = floatingMenu(otherMenuId, otherMenuCallback);
 		
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeUndefined();
-		expect(FloatingMenuFotTesting.openedMenus[otherMenuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[otherMenuId]).toBeUndefined();
 		
 		attributes.onclick!(mockEvent);
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeDefined();
-		expect(FloatingMenuFotTesting.openedMenus[otherMenuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeDefined();
+		expect(FloatingMenuForTesting.openedMenus[otherMenuId]).toBeUndefined();
 		
 		otherAttributes.onclick!(mockEvent);
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeDefined();
-		expect(FloatingMenuFotTesting.openedMenus[otherMenuId]).toBeDefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeDefined();
+		expect(FloatingMenuForTesting.openedMenus[otherMenuId]).toBeDefined();
 		
-		FloatingMenuFotTesting.openedMenus[menuId].closeMenu();
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeUndefined();
-		expect(FloatingMenuFotTesting.openedMenus[otherMenuId]).toBeDefined();
+		FloatingMenuForTesting.openedMenus[menuId].closeMenu();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[otherMenuId]).toBeDefined();
 		
-		FloatingMenuFotTesting.openedMenus[otherMenuId].closeMenu();
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeUndefined();
-		expect(FloatingMenuFotTesting.openedMenus[otherMenuId]).toBeUndefined();
+		FloatingMenuForTesting.openedMenus[otherMenuId].closeMenu();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[otherMenuId]).toBeUndefined();
 	});
 	
 	it("should pass correct close callback to the menu function", () => {
@@ -389,8 +389,8 @@ describe("floatingMenu method", () => {const menuId = "testMenu";
 			return "";
 		});
 		attributes.onclick!(mockEvent);
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeDefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeDefined();
 		closeCallback!()
-		expect(FloatingMenuFotTesting.openedMenus[menuId]).toBeUndefined();
+		expect(FloatingMenuForTesting.openedMenus[menuId]).toBeUndefined();
 	});
 });

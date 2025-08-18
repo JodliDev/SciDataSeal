@@ -2,7 +2,7 @@ import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
 import A from "../widgets/A.tsx";
-import {tooltip} from "../../actions/FloatingMenu.ts";
+import {tooltip} from "../../actions/floatingMenu.ts";
 import Icon from "../widgets/Icon.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 

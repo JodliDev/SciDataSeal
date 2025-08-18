@@ -6,7 +6,7 @@ import css from "./ListDataLogs.module.css";
 import getEntry from "../../actions/getEntry.ts";
 import getBlockchainSignatureUrl from "../../../shared/actions/getBlockchainSignatureUrl.ts";
 import Icon from "../widgets/Icon.tsx";
-import floatingMenu from "../../actions/FloatingMenu.ts";
+import floatingMenu from "../../actions/floatingMenu.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async query => {

@@ -4,7 +4,7 @@ import {listEntriesWithPages} from "../../../../src/frontend/actions/listEntries
 import ListDataLogs from "../../../../src/frontend/views/pages/ListDataLogs.tsx";
 import {wait} from "../../../convenience.ts";
 import getBlockchainSignatureUrl from "../../../../src/shared/actions/getBlockchainSignatureUrl.ts";
-import css from "../../../../src/frontend/actions/FloatingMenu.module.css";
+import css from "../../../../src/frontend/actions/floatingMenu.module.css";
 
 describe("ListDataLogs.tsx", async () => {
 	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
