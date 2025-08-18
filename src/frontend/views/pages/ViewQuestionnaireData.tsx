@@ -14,22 +14,7 @@ import listEntries from "../../actions/listEntries.ts";
 import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols
-export default PrivatePage(async () => {
-	const fromListFeedback = new FeedbackCallBack();
-	const reloadingFeedback = new FeedbackCallBack();
-	
-	let blobUrl: string | undefined = undefined;
-	let dataCharacterCount = 0;
-	let publicKey = "";
-	let dataKey = "";
-	let blockchainType = "";
-	let denotation = 1;
-	let hash = "";
-	let hashTime = 0;
-	let dataForReload = {};
-	let diff: Change[] | undefined = undefined;
-	let isDifferent = false;
-	
+export default PrivatePage(async query => {
 	function onBeforeSend(data: Record<string, unknown>): GetQuestionnaireDataPostInterface["Response"] | void {
 		dataForReload = data;
 		hash = generateHash(JSON.stringify(data)).toString();
@@ -111,7 +96,28 @@ export default PrivatePage(async () => {
 		
 		fromListFeedback.setSuccess(true);
 	}
+	
+	const fromListFeedback = new FeedbackCallBack();
+	const reloadingFeedback = new FeedbackCallBack();
+	
+	let blobUrl: string | undefined = undefined;
+	let dataCharacterCount = 0;
+	let publicKey = "";
+	let dataKey = "";
+	let blockchainType = "";
+	let denotation = 1;
+	let hash = "";
+	let hashTime = 0;
+	let dataForReload = {};
+	let diff: Change[] | undefined = undefined;
+	let isDifferent = false;
+	
 	const questionnaires = await listEntries("questionnaires");
+	const questionnaireId = parseInt(query.get("qId") ?? "0");
+	
+	if(questionnaireId) {
+		await fillQuestionnaire(questionnaireId);
+	}
 	
 	return {
 		history: [

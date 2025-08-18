@@ -36,6 +36,10 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						<Icon iconKey="columns"/>
 						{Lang.get("setColumns")}
 					</A>
+					<A page="ViewQuestionnaireData" query={`?qId=${questionnaireId}`} class="bigButton" {...tooltip(Lang.get("tooltipViewQuestionnaireData"))}>
+						<Icon iconKey="view"/>
+						{Lang.get("viewData")}
+					</A>
 					<A page="SetQuestionnaire" query={`?id=${questionnaireId}`} class="bigButton">
 						<Icon iconKey="settings"/>
 						{Lang.get("changeSettings")}
