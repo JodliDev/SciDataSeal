@@ -12,6 +12,10 @@ interface OutputEvents {
 	onmousemove?: (e: MouseEvent) => void;
 }
 
+interface MithrilEvent {
+	redraw?: boolean;
+}
+
 /**
  * Represents a floating menu that can be dynamically displayed and interacted with on the page.
  * This class manages the opening, closing, and positioning of the menu element, as well as
@@ -168,6 +172,7 @@ class FloatingMenuClass {
 			case "click":
 				return {
 					onclick: (event: MouseEvent) => {
+						(event as MithrilEvent).redraw = false;
 						if(this.view) {
 							this.closeMenu();
 						}
@@ -178,14 +183,27 @@ class FloatingMenuClass {
 				};
 			case "mouseenter":
 				return {
-					onmouseenter: (event: MouseEvent) => this.createDropdown(event),
-					onmouseleave: () => this.closeMenu()
+					onmouseenter: (event: MouseEvent) => {
+						(event as MithrilEvent).redraw = false;
+						this.createDropdown(event)
+					},
+					onmouseleave: (event: MouseEvent) => {
+						(event as MithrilEvent).redraw = false;
+						this.closeMenu();
+					}
 				};
 			case "mousemove":
 				return {
-					onmouseenter: (event: MouseEvent) => this.createDropdown(event),
-					onmouseleave: () => this.closeMenu(),
+					onmouseenter: (event: MouseEvent) => {
+						(event as MithrilEvent).redraw = false;
+						this.createDropdown(event)
+					},
+					onmouseleave: (event: MouseEvent) => {
+						(event as MithrilEvent).redraw = false;
+						this.closeMenu();
+					},
 					onmousemove: (event: MouseEvent) => {
+						(event as MithrilEvent).redraw = false;
 						if(!this.view)
 							return;
 						this.view.style.right = "unset";
