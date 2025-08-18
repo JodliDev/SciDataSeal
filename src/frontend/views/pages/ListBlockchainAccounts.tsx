@@ -12,7 +12,7 @@ export default PrivatePage(async () => {
 		],
 		view: () => <ListEntries
 			query={{type: "blockchainAccounts"}}
-			drawEntry={buttonEntry("Questionnaire")}
+			drawEntry={buttonEntry("BlockchainAccount")}
 			direction="horizontal"
 			addLabel={Lang.get("createBlockchainAccount")}
 			addTarget="BlockchainAccount"
