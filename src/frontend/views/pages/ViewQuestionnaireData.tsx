@@ -184,19 +184,19 @@ export default PrivatePage(async query => {
 					<div class="horizontal hAlignCenter wrapContent">
 						<label {...tooltip(Lang.get("tooltipBlockchainPrivateKey"))}>
 							<small>{Lang.get("publicKey")}</small>
-							<textarea name="publicKey">{publicKey}</textarea>
+							<textarea name="publicKey" {...bindValueToInput(publicKey, newValue => publicKey = newValue)}></textarea>
 						</label>
 						
 						<label {...tooltip(Lang.get("tooltipDataKey"))}>
 							<small>{Lang.get("dataKey")}</small>
-							<textarea name="dataKey">{dataKey}</textarea>
+							<textarea name="dataKey" {...bindValueToInput(dataKey, newValue => dataKey = newValue)}></textarea>
 						</label>
 					</div>
 					
 					<div class="horizontal hAlignCenter wrapContent">
 						<label>
 							<small>{Lang.get("type")}</small>
-							<select name="blockchainType" value={blockchainType}>
+							<select name="blockchainType" {...bindValueToInput(blockchainType, newValue => blockchainType = newValue)}>
 								<option value="solana">{Lang.get("solana")}</option>
 								<option value="solanaTest" selected="selected">{Lang.get("solanaTest")}</option>
 							</select>
@@ -204,7 +204,7 @@ export default PrivatePage(async query => {
 						
 						<label {...tooltip(Lang.get("tooltipDenotation"))}>
 							<small>{Lang.get("denotation")}</small>
-							<input type="number" min="1" name="denotation" value={denotation}/>
+							<input type="number" min="1" name="denotation" {...bindValueToInput(denotation, newValue => denotation = newValue)}/>
 						</label>
 					</div>
 				</Form>
