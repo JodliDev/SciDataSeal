@@ -37,7 +37,7 @@ jobs:
       
       - name: Run Tests
         if: ${{steps.autotag.outputs.tagcreated == 'yes'}}
-        run: npm test
+        run: npm run prepare_dev & npm test
         
       - name: Build for production
         if: ${{steps.autotag.outputs.tagcreated == 'yes'}}
