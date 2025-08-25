@@ -1,4 +1,4 @@
-import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
+import {afterAll, afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {Connection, Keypair} from "@solana/web3.js";
 import SolanaTest from "../../../src/backend/blockchains/SolanaTest.ts";
 
@@ -38,7 +38,7 @@ describe("SolanaTest", () => {
 		
 		vi.mocked(Connection).mockReturnValue(mockConnection as unknown as Connection);
 	});
-	afterEach(() => {
+	afterAll(() => {
 		vi.restoreAllMocks();
 	});
 	

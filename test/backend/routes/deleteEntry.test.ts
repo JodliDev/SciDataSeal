@@ -42,7 +42,7 @@ describe("deleteEntry", () => {
 	describe("blockchainAccount", () => {
 		afterEach(() => {
 			mockDb.resetMocks();
-			vi.restoreAllMocks();
+			vi.resetAllMocks();
 		});
 		
 		test("should return error if user is not an admin", async() => {
@@ -85,7 +85,7 @@ describe("deleteEntry", () => {
 	describe("questionnaire", () => {
 		afterEach(() => {
 			mockDb.resetMocks();
-			vi.restoreAllMocks();
+			vi.resetAllMocks();
 		});
 		
 		it("should delete the questionnaire successfully", async() => {
@@ -102,7 +102,7 @@ describe("deleteEntry", () => {
 	describe("study", () => {
 		afterEach(() => {
 			mockDb.resetMocks();
-			vi.restoreAllMocks();
+			vi.resetAllMocks();
 		});
 		
 		it("should delete the study successfully", async() => {
@@ -120,7 +120,7 @@ describe("deleteEntry", () => {
 	describe("user", () => {
 		afterEach(() => {
 			mockDb.resetMocks();
-			vi.restoreAllMocks();
+			vi.resetAllMocks();
 		});
 		
 		test("should return error if user is not an admin", async() => {

@@ -1,4 +1,4 @@
-import {describe, it, vi, expect, afterEach} from "vitest";
+import {describe, it, vi, expect, afterEach, afterAll} from "vitest";
 import {renderPage} from "../../testRender.ts";
 import Questionnaire from "../../../../src/frontend/views/pages/Questionnaire.tsx";
 import getData from "../../../../src/frontend/actions/getData.ts";
@@ -12,6 +12,9 @@ describe("Questionnaire", async () => {
 	}));
 	
 	afterEach(() => {
+		vi.resetAllMocks();
+	});
+	afterAll(() => {
 		vi.restoreAllMocks();
 	});
 	

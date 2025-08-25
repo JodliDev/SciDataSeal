@@ -1,4 +1,4 @@
-import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
+import {afterAll, afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {Connection, Keypair, PublicKey, sendAndConfirmTransaction} from "@solana/web3.js";
 import {compressAndEncrypt} from "../../../src/backend/actions/compressAndEncrypt.ts";
 import {randomBytes} from "crypto";
@@ -43,7 +43,7 @@ describe("Solana", () => {
 		
 		vi.mocked(Connection).mockReturnValue(mockConnection as unknown as Connection);
 	});
-	afterEach(() => {
+	afterAll(() => {
 		vi.restoreAllMocks();
 	});
 	

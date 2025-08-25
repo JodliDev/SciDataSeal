@@ -61,7 +61,7 @@ describe("SetStudy.tsx", async () => {
 	
 	describe("submit data", async () => {
 		afterEach(() => {
-			vi.restoreAllMocks();
+			vi.resetAllMocks();
 			SiteTools.init({}, () => {});
 		});
 
@@ -108,10 +108,10 @@ describe("SetStudy.tsx", async () => {
 			
 		});
 		afterEach(() => {
-			vi.restoreAllMocks();
+			SiteTools.init({}, () => {});
 		});
 		afterAll(() => {
-			SiteTools.init({}, () => {});
+			vi.restoreAllMocks();
 		});
 		
 		

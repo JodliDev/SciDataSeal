@@ -56,7 +56,7 @@ describe("Form", () => {
 			options = {endpoint: "/test", onSent: onSent};
 		});
 		afterEach(() => {
-			vi.restoreAllMocks();
+			vi.resetAllMocks();
 		});
 		
 		const onSent = vi.fn();
@@ -180,7 +180,7 @@ describe("Form", () => {
 			vi.spyOn(window, "confirm").mockReturnValue(true);
 		});
 		afterEach(() => {
-			vi.restoreAllMocks();
+			vi.resetAllMocks();
 		});
 		
 		const onDeleted = vi.fn();
