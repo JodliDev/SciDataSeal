@@ -23,7 +23,7 @@ jobs:
           node-version: 20
       
       - name: Create tag
-        uses: butlerlogic/action-autotag@1.1.4
+        uses: butlerlogic/action-autotag@1.1.2
         id: autotag
         env:
             GITHUB_TOKEN: "${{secrets.GITHUB_TOKEN}}"
