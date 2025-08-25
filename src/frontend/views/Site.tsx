@@ -11,6 +11,7 @@ import About from "./pages/fallback/About.tsx";
 import Navigation from "./Navigation.tsx";
 import ErrorPage from "./pages/fallback/ErrorPage.tsx";
 import {getUrlData} from "../actions/getUrlData.ts";
+import {Lang} from "../singleton/Lang.ts";
 
 interface DocumentPageState {
 	page: string;
@@ -60,7 +61,6 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		}
 		catch(e) {
 			console.error(e);
-			console.log(currentPage)
 			currentPage = ErrorPage(currentPage.history, pageName, e);
 			pageName = "Error";
 		}
@@ -91,7 +91,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 	return {
 		view: () => <div class={`${css.Site} vertical hAlignCenter`}>
 			<div class={`${css.siteContent} vertical fullLine fillSpace hAlignCenter vAlignCenter`}>
-				<h1 class={`${css.header} textCentered`}>Project Name</h1>
+				<h1 class={`${css.header} textCentered`}>{Lang.get("_projectName")}</h1>
 				<Navigation entries={currentPage.history}/>
 				<div id={pageName} class={`${css.page} vertical selfAlignStretch`}>{m(currentPage)}</div>
 			</div>
