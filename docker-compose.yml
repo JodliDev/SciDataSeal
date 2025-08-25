@@ -1,0 +1,8 @@
+services:
+  scidataseal:
+        image: jodlidev/scidataseal:latest
+        restart: "unless-stopped"
+        volumes:
+            - ./config:/scidataseal/config:rw
+        ports:
+            - "1304:1304"
