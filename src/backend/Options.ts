@@ -6,7 +6,7 @@ import {FrontendOptions} from "../shared/FrontendOptions.ts";
  */
 class OptionsClass implements FrontendOptions {
 	public readonly mode: "production" | "development" = "development";
-	public readonly port: number = 80;
+	public readonly port: number = 19419;
 	public readonly root: string = process.cwd();
 	public readonly urlPath: string = "/";
 	public readonly schedulerHourOfDay: number = 3;
