@@ -1,5 +1,5 @@
 import m from "mithril"
-import css from "./btn.module.css"
+import css from "./Btn.module.css"
 import {TsClosureComponent} from "../../mithril-polyfill.ts";
 import {tooltip} from "../../actions/floatingMenu.ts";
 import Icon, {IconAttributes} from "./Icon.tsx";
