@@ -5,4 +5,4 @@ services:
         volumes:
             - ./config:/scidataseal/config:rw
         ports:
-            - "1304:1304"
+            - "19419:19419"
