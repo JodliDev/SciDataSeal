@@ -1,3 +1,5 @@
+import {SEPARATOR} from "../../shared/definitions/Constants.ts";
+
 /**
  * Constructs a CSV-formatted string from an array of strings.
  * Each string in the array is wrapped with double quotes, and
@@ -7,6 +9,11 @@
  * @return A single CSV-formatted string representing the input array.
  */
 export default function createCsvLine(dataArray: string[]): string {
-	const filteredArray = dataArray.map(line => line.replaceAll("\"", "'"));
-	return `"${filteredArray.join("\",\"")}"`
+	const filteredArray = dataArray.map(line =>
+		line
+			.replaceAll("\"", "'")
+			.replaceAll("\n", " ")
+			.replaceAll("\r", " ")
+	);
+	return `"${filteredArray.join(`"${SEPARATOR}"`)}"`
 }
