@@ -53,8 +53,10 @@ function ListEntries<T extends keyof ListDefinitions>(vNode: m.Vnode<Attributes<
 					</A>
 				}
 				
-				<FeedbackContent callback={feedback} class={vNode.attrs.direction == "table" ? css.table : `${vNode.attrs.direction} vAlignCenter hAlignCenter wrapContent fillSpace`}>
-					{list.map(entry => vNode.attrs.drawEntry(entry))}
+				<FeedbackContent callback={feedback} class="fillSpace">
+					<div class={vNode.attrs.direction == "table" ? css.table : `${vNode.attrs.direction} vAlignCenter hAlignCenter wrapContent`}>
+						{list.map(entry => vNode.attrs.drawEntry(entry))}
+					</div>
 				</FeedbackContent>
 				
 				<PageNumbers loadPage={load}/>
