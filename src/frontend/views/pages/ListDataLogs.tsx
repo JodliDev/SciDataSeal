@@ -37,13 +37,15 @@ export default PrivatePage(async query => {
 					<div class={css.cell}>{(new Date(entry.label)).toLocaleString()}</div>
 					<div class={css.cell}>
 						{signatures.length > 1
-							? <div {...floatingMenu("url", () => <div>
-								{signatures.map(signature =>
-									<a href={getBlockchainSignatureUrl(entry.blockchainType, signature)} target="_blank">
-										{getBlockchainSignatureUrl(entry.blockchainType, signature)}
-									</a>
-								)}
-							</div>)}><Icon iconKey="openInNew"/></div>
+							? <div class="clickable" {...floatingMenu("url", () =>
+								<div class="vertical">
+									{signatures.map(signature =>
+										<a href={getBlockchainSignatureUrl(entry.blockchainType, signature)} target="_blank">
+											{getBlockchainSignatureUrl(entry.blockchainType, signature)}
+										</a>
+									)}
+								</div>
+							)}><Icon iconKey="openInNew"/></div>
 							: <a href={getBlockchainSignatureUrl(entry.blockchainType, signatures[0])} target="_blank">
 								<Icon iconKey="openInNew"/>
 							</a>
