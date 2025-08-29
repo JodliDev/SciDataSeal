@@ -4,6 +4,7 @@ import express from "express";
 import getQuestionnaireData from "../../../src/backend/routes/getQuestionnaireData.ts";
 import getBlockchain from "../../../src/backend/actions/getBlockchain.ts";
 import BlockchainInterface from "../../../src/backend/blockchains/BlockchainInterface.ts";
+import {SEPARATOR} from "../../../src/shared/definitions/Constants.ts";
 
 
 describe("getQuestionnaireData", () => {
@@ -36,7 +37,7 @@ describe("getQuestionnaireData", () => {
 			});
 		
 		expect(response.ok).toBe(true);
-		expect(response.body.data.csv).toBe('"Time",Header\n"123456",Data1');
+		expect(response.body.data.csv).toBe(`"Time"${SEPARATOR}Header\n"123456"${SEPARATOR}Data1`);
 		expect(getBlockchain).toHaveBeenCalledWith("testChain");
 		expect(mockListData).toHaveBeenCalledWith("testKey", 1, "key");
 	});
@@ -72,7 +73,7 @@ describe("getQuestionnaireData", () => {
 			});
 		
 		expect(response.ok).toBe(true);
-		expect(response.body.data.csv).toBe('"Time",Header\n"123456",Data1');
+		expect(response.body.data.csv).toBe(`"Time"${SEPARATOR}Header\n"123456"${SEPARATOR}Data1`);
 		expect(getBlockchain).toHaveBeenCalledWith("testChain");
 		expect(mockListData).toHaveBeenCalledWith("testKey", 1, "key");
 	});
