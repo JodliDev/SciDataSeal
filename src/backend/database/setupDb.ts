@@ -16,6 +16,7 @@ import {Options} from "../Options.ts";
 import {CONFIG_FOLDER, SQLITE_FILE_NAME} from "../../shared/definitions/Constants.ts";
 import {DatabaseAccess, prepareAndRunMigration, runMigrationWithoutHistory} from "sqlmorpheus";
 import {KyselyTables, SqlMorpheusConfig} from "./DatabaseConfigs.ts";
+import {Logger} from "../Logger.ts";
 
 /**
  * Sets up the database connection, performs migrations, and returns a database instance.
@@ -26,7 +27,7 @@ import {KyselyTables, SqlMorpheusConfig} from "./DatabaseConfigs.ts";
  * @return A promise that resolves with the configured database instance.
  */
 export default async function setupDb(path: string = `${Options.root}/${CONFIG_FOLDER}/${SQLITE_FILE_NAME}`, silentMigration?: boolean): Promise<DbType> {
-	console.log(`Using database at ${path}`);
+	Logger.log(`Using database at ${path}`);
 	const db = new SQLite(path);
 	
 	const dbAccess: DatabaseAccess = {

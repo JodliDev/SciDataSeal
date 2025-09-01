@@ -82,9 +82,10 @@ async function init() {
 			}
 		}
 	});
-	ViteExpress.listen(webServer, Options.port, async () => {
+	ViteExpress.listen(webServer, Options.port, async () =>
+		{
 			const { base } = await ViteExpress.getViteConfig();
-			console.log(`WebServer is listening on http://localhost:${Options.port}${base}`);
+			Logger.log(`WebServer is listening on http://localhost:${Options.port}${base}`);
 		}
 	);
 }
