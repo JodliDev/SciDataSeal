@@ -67,6 +67,27 @@ describe("setQuestionnaire", () => {
 		expect(response.body.error).toHaveProperty("values", ["blockchainAccountId"]);
 	});
 	
+	it("should return an error if study does not exist", async() => {
+		const sendData = {
+			questionnaireName: "test",
+			studyId: 1,
+			blockchainAccountId: 1,
+			blockchainDenotation: 2,
+			dataKey: "dataKey",
+			apiPassword: "password",
+		};
+		mockDb.selectFrom.chain("Study")
+			.executeTakeFirst.mockResolvedValue(null);
+		
+		const response = await request(app)
+			.post("/setQuestionnaire")
+			.send(sendData);
+		
+		expect(response.ok).toBe(false);
+		expect(response.body.error).toHaveProperty("message", "errorFaultyData");
+		expect(response.body.error).toHaveProperty("values", ["studyId"]);
+	});
+	
 	it("should update an existing questionnaire when being logged in", async() => {
 		const sendData = {
 			id: 111,

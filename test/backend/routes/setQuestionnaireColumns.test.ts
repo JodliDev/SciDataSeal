@@ -84,6 +84,21 @@ describe("setQuestionnaireColumns", () => {
 		expect(response.ok).toBe(true);
 	});
 	
+	it("should return an error if questionnaire apiPassword is not valid", async() => {
+		const questionnaireMock = mockDb.selectFrom.chain("Questionnaire")
+			.where.chain("questionnaireId", "=", 1)
+			.where.chain("apiPassword", "=", "wrongPassword")
+			.executeTakeFirst;
+		
+		questionnaireMock.mockResolvedValue(null);
+		
+		const response = await request(app).post("/setQuestionnaireColumns?id=1&pass=wrongPassword").send({columns: ["asd", "qwe"]});
+		
+		expect(questionnaireMock).toHaveBeenCalled();
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
+		expect(response.body.error).toHaveProperty("message", "errorUnauthorized");
+	});
+	
 	
 	it("should save the correct values", async() => {
 		const mockDate = new Date("03.04.2024 02:38 UTC")
