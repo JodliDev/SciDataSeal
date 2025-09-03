@@ -12,8 +12,9 @@ export default function getNewDenotation(db: DbType): express.Router {
 	
 	addGetRoute<GetNewDenotation>("/getNewDenotation", router, async (data) => {
 		const blockChainId = parseInt(data.blockchainAccountId ?? "0");
-		if(!blockChainId)
+		if(!blockChainId) {
 			throw new TranslatedException("errorMissingData");
+		}
 		
 		const response = await db.selectFrom("BlockchainAccount")
 			.select(["highestDenotation"])
@@ -21,8 +22,9 @@ export default function getNewDenotation(db: DbType): express.Router {
 			.limit(1)
 			.executeTakeFirst();
 		
-		if(!response)
+		if(!response) {
 			throw new TranslatedException("errorNotFound");
+		}
 		
 		return {
 			denotation: response.highestDenotation + 1
