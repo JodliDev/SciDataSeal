@@ -23,9 +23,37 @@ export async function wait(ms: number = 100) {
 type Procedure = (...args: any[]) => any;
 interface ExtendedMock<T extends Procedure = Procedure> extends Mock<T> {
 	chain: (...args: any[]) => MockKysely;
-	___lastChain: (...args: any[]) => MockKysely
+	___lastChain?: (...args: any[]) => MockKysely;
+	___mockedArgs: Record<string, MockKysely>;
 }
 
+type MockKyselyFn = Omit<ExtendedMock, "___lastChain" | "___mockedArgs">;
+
+
+/**
+ * Mock class for Kysely that can mock chain method calls.
+ *
+ * Usage examples:
+ * ```
+ * const mockDb = mockKysely();
+ *
+ * // Mock return value:
+ * mockDb
+ *  .selectFrom.chain("table")
+ * 	.where.chain("column1", "=", "data1")
+ * 	.executeTakeFirst
+ * 	.mockReturnValue("returnData");
+ *
+ *
+ * // Assert call signature:
+ * const updateTableMock = mockDb
+ *  .updateTable.chain("table")
+ * 	.where.chain("column1", "=", "data1")
+ *  .set;
+ *
+ * expect(updateTableMock).toHaveBeenCalledWith({"column2": "data2"});
+ * ```
+ */
 class MockKysely {
 	selectFrom = this.makeChainable();
 	select = this.makeChainable();
@@ -49,23 +77,33 @@ class MockKysely {
 	
 	public resetMocks() {
 		for(const key in this) {
-			const prop = this[key as keyof MockKysely] as Mock;
-			if(!prop.hasOwnProperty("mockReset"))
+			const prop = this[key as keyof MockKysely] as ExtendedMock;
+			if(!prop.hasOwnProperty("mockReset")) {
 				continue;
+			}
 			prop.mockReset();
+			prop.___lastChain = undefined;
+			prop.___mockedArgs = {};
 		}
 	}
 	
-	private makeChainable() {
+	private makeChainable(): MockKyselyFn {
 		const fn = vi.fn(() => this) as ExtendedMock;
+		fn.___mockedArgs = {};
 		fn.chain = (...compareArgs: unknown[]) => this.chainMethod(fn, ...compareArgs);
 		return fn;
 	}
-	private chainMethod(fn: ExtendedMock, ...compareArgs: unknown[]) {
+	private chainMethod(fn: ExtendedMock, ...compareArgs: unknown[]): MockKysely {
+		const argsString = JSON.stringify(compareArgs);
+		if(fn.___mockedArgs.hasOwnProperty(argsString)) {
+			return fn.___mockedArgs[argsString];
+		}
+		
 		const instance = new MockKysely();
+		fn.___mockedArgs[argsString] = instance;
 		const oldImplementation = fn.___lastChain;
 		const newImplementation = (...args: any[]) => {
-			if(!compareArgs.length || JSON.stringify(args) == JSON.stringify(compareArgs)) {
+			if(!compareArgs.length || JSON.stringify(args) == argsString) {
 				return instance;
 			}
 			else if(oldImplementation) {
@@ -78,12 +116,6 @@ class MockKysely {
 		};
 		fn.___lastChain = newImplementation;
 		fn.mockImplementation(newImplementation);
-		return instance;
-	}
-	public mockResolvedChainValue(method: "executeTakeFirst" | "execute", value: unknown) {
-		const instance = new MockKysely();
-		// this[method].mockResolvedValue(instance);
-		instance[method] = vi.fn().mockResolvedValue(value);
 		return instance;
 	}
 }
