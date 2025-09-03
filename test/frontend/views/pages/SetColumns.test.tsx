@@ -11,7 +11,7 @@ describe("SetColumns", async () => {
 			questionnaireId: 8,
 			questionnaireName: "testQuestionnaire",
 			apiPassword: "testApiPassword",
-			columns: '"column1","column2","column3"'
+			columns: '["column1","column2","column3"]'
 		}))
 	}));
 	

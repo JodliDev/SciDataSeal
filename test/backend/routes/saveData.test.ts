@@ -104,14 +104,14 @@ describe("saveData", () => {
 		const mockQuestionnaire = {
 			blockchainType: "test-chain",
 			privateKey: "test-key",
-			columns: "\"key1\",\"key2\"",
+			columns: "[\"key1\",\"key2\"]",
 			questionnaireId: 1,
 			userId: 100,
 		};
 		
 		mockDb.selectFrom.chain()
-			.where("questionnaireId", "=", questionnaireId)
-			.where("apiPassword", "=", pass)
+			.where.chain("questionnaireId", "=", questionnaireId)
+			.where.chain("apiPassword", "=", pass)
 			.executeTakeFirst.mockResolvedValue(mockQuestionnaire);
 		const insertMock = mockDb.insertInto.chain("DataLog").execute;
 		
@@ -120,7 +120,7 @@ describe("saveData", () => {
 			.set("Authorization", `Bearer ${pass}`)
 			.send({key1: "value1", key2: "value2"});
 		
-		expect(response.ok).toBe(true);
+		expect(response.ok, JSON.stringify(response.body)).toBe(true);
 		expect(response.body.data).toStrictEqual({});
 		expect(insertMock).toHaveBeenCalledTimes(1);
 	});

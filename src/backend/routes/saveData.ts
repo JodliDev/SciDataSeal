@@ -52,7 +52,7 @@ export default function saveData(db: DbType): express.Router {
 		}
 		
 		const dataArray: string[] = [];
-		const columnObj = JSON.parse(`[${questionnaire.columns}]`);
+		const columnObj = JSON.parse(questionnaire.columns || "[]");
 		for(const column of columnObj) {
 			dataArray.push(data.hasOwnProperty(column) ? data[column] as string : "");
 		}

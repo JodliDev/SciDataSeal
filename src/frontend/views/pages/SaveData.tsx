@@ -17,7 +17,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	const questionnaire = await getEntry("questionnaire", parseInt(id ?? "0"));
 	const studyId = questionnaire?.studyId ?? parseInt(query.get("studyId") ?? "0");
 	const study = await getEntry("study", studyId);
-	const columns: string[] = JSON.parse(`[${questionnaire?.columns ?? ""}]`);
+	const columns: string[] = JSON.parse(questionnaire?.columns || "[]");
 	
 	return {
 		history: [

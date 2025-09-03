@@ -22,21 +22,26 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 		const questionnaireId = parseInt(query.id as string);
 		const columns = data.columns;
 		
-		if(!pass || !questionnaireId || !columns)
+		if(!pass || !questionnaireId || !columns) {
 			throw new TranslatedException("errorMissingData");
-		
-		if(!isValidBackendString(pass))
-			throw new TranslatedException("errorFaultyData", "apiPassword");
-		
-		if(!Array.isArray(columns))
-			throw new TranslatedException("errorFaultyData", "columns");
-		
-		for(const column of columns) {
-			if(!isValidBackendString(column))
-				throw new TranslatedException("errorFaultyData", "columns");
 		}
 		
-		const columnsString = createCsvLine(columns);
+		if(!isValidBackendString(pass)) {
+			throw new TranslatedException("errorFaultyData", "apiPassword");
+		}
+		
+		if(!Array.isArray(columns)) {
+			throw new TranslatedException("errorFaultyData", "columns");
+		}
+		
+		for(const column of columns) {
+			if(!isValidBackendString(column)) {
+				throw new TranslatedException("errorFaultyData", "columns");
+			}
+		}
+		
+		const columnsCsv = createCsvLine(columns);
+		const columnsJson = JSON.stringify(columns);
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
 			.innerJoin("BlockchainAccount", "Questionnaire.blockchainAccountId", "BlockchainAccount.blockchainAccountId")
@@ -46,14 +51,16 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 			.limit(1)
 			.executeTakeFirst();
 		
-		if(!questionnaire)
+		if(!questionnaire) {
 			throw new UnauthorizedException();
+		}
 		
-		if(questionnaire.columns == columnsString)
+		if(questionnaire.columns == columnsJson) {
 			return; //Already the same. We don't need to do anything.
+		}
 		
 		const blockChain = getBlockchain(questionnaire.blockchainType);
-		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.blockchainDenotation, columnsString, true, pass);
+		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.blockchainDenotation, columnsJson, true, pass);
 		
 		await db.insertInto("DataLog")
 			.values({
@@ -66,7 +73,7 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 			.execute();
 		
 		await db.updateTable("Questionnaire")
-			.set({"columns": columnsString})
+			.set({columns: columnsJson})
 			.where("questionnaireId", "=", questionnaireId)
 			.limit(1)
 			.execute();
