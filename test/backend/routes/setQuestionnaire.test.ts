@@ -191,6 +191,11 @@ describe("setQuestionnaire", () => {
 			apiPassword: "password",
 		};
 		
+		mockDb.selectFrom.chain("Study")
+			.where.chain("studyId", "=", 1)
+			.where.chain("userId", "=", 123)
+			.executeTakeFirst.mockResolvedValue({userId: 123});
+		
 		mockDb.selectFrom.chain("BlockchainAccount")
 			.executeTakeFirst.mockResolvedValue({highestDenotation: sendData.blockchainDenotation + 1});
 		

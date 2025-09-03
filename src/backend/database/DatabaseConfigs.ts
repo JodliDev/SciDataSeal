@@ -23,7 +23,7 @@ export interface KyselyTables {
  */
 export const SqlMorpheusConfig = {
 	dialect: "Sqlite",
-	version: 18,
+	version: 19,
 	configPath: `${process.cwd()}/config`,
 	tables: [
 		UserTable,
@@ -34,7 +34,7 @@ export const SqlMorpheusConfig = {
 		QuestionnaireTable,
 	],
 	throwIfNotAllowed: true,
-	preMigration(_: PublicMigrations): SqlChanges | void {
-	
+	preMigration(migrations: PublicMigrations): SqlChanges | void {
+		migrations.renameColumn(19, DataLogTable, "signature", "signatures")
 	},
 } satisfies DatabaseInstructions

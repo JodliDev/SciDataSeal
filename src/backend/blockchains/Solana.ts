@@ -3,7 +3,7 @@ import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAnd
 import {createMemoInstruction} from "@solana/spl-memo";
 import generateStringDenotation from "../../shared/actions/generateStringDenotation.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
-import {compressAndEncrypt, decompressAndDecrypt} from "../actions/compressAndEncrypt.ts";
+import {decompressAndDecrypt} from "../actions/compressAndEncrypt.ts";
 
 const DATA_MAX_BYTE_LENGTH = 560;
 const CONTINUE_TAG = "~";
@@ -76,19 +76,21 @@ export default class Solana implements BlockchainInterface {
 		);
 	}
 	
-	public async saveMessage(privateKey: string, intDenotation: number, data: string, isHeader: boolean, dataKey: string): Promise<string[]> {
+	public async saveMessage(privateKey: string, intDenotation: number, data: string, isHeader: boolean): Promise<string[]> {
 		if(!data) {
 			throw new TranslatedException("errorMissingData");
 		}
+		if(isHeader) {
+			data = `${HEADER_TAG}${data}`;
+		}
 		
 		const denotation = generateStringDenotation(intDenotation);
-		const result = compressAndEncrypt(`${isHeader ? HEADER_TAG : ""}${data}`, dataKey);
 		
 		//figure out the necessary length:
 		const textEncoder = new TextEncoder();
-		const neededBytes = textEncoder.encode(result).length;
+		const neededBytes = textEncoder.encode(data).length;
 		const neededMessages = Math.ceil(neededBytes / DATA_MAX_BYTE_LENGTH);
-		const partLength = result.length / neededMessages;
+		const partLength = data.length / neededMessages;
 		
 		if(neededMessages > this.maxTransactionsPerMessage) {
 			throw new TranslatedException("errorMessageIsTooLong");
@@ -96,7 +98,7 @@ export default class Solana implements BlockchainInterface {
 		//upload (and split, if needed) message:
 		const signatures: string[] = [];
 		for(let i = 0; i < neededMessages; ++i) {
-			const part = result.substring(i * partLength, (i + 1) * partLength);
+			const part = data.substring(i * partLength, (i + 1) * partLength);
 			const endTag = i < neededMessages - 1 ? CONTINUE_TAG : "";
 			signatures.push(await this.uploadMessage(privateKey, denotation + part + endTag));
 		}
@@ -104,18 +106,21 @@ export default class Solana implements BlockchainInterface {
 		return signatures;
     }
 	
+	public isConfirmed(): Promise<Awaited<boolean>> {
+		return Promise.resolve(true); //Solana is always confirmed
+	}
+	
 	private decipherLine(original: string, dataKey: string): Omit<LineData, "timestamp"> {
 		try {
-			const decompressed = decompressAndDecrypt(original, dataKey)
-			
-			if(decompressed.startsWith(HEADER_TAG)) {
+			if(original.startsWith(HEADER_TAG)) {
 				return {
-					data: decompressed.substring(HEADER_TAG.length),
+					data: decompressAndDecrypt(original.substring(HEADER_TAG.length), dataKey),
 					isHeader: true
 				};
-			} else {
+			}
+			else {
 				return {
-					data: decompressed,
+					data: decompressAndDecrypt(original, dataKey),
 					isHeader: false
 				};
 			}

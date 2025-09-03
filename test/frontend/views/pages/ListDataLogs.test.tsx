@@ -4,7 +4,8 @@ import {listEntriesWithPages} from "../../../../src/frontend/actions/listEntries
 import ListDataLogs from "../../../../src/frontend/views/pages/ListDataLogs.tsx";
 import {wait} from "../../../convenience.ts";
 import getBlockchainSignatureUrl from "../../../../src/shared/actions/getBlockchainSignatureUrl.ts";
-import css from "../../../../src/frontend/actions/floatingMenu.module.css";
+import floatingMenuCss from "../../../../src/frontend/actions/floatingMenu.module.css";
+import css from "../../../../src/frontend/views/pages/ListDataLogs.module.css";
 
 describe("ListDataLogs.tsx", async () => {
 	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
@@ -13,13 +14,13 @@ describe("ListDataLogs.tsx", async () => {
 				{
 					id: 2,
 					label: 1780704000000,
-					signature: JSON.stringify(["sig1", "sig2", "sig3"]),
+					signatures: JSON.stringify(["sig1", "sig2", "sig3"]),
 					blockchainType: "solana"
 				},
 				{
 					id: 4,
 					label: 1709519880000,
-					signature: JSON.stringify(["signature1"]),
+					signatures: JSON.stringify(["signature1"]),
 					blockchainType: "solanaTest"
 				}
 			]
@@ -48,18 +49,18 @@ describe("ListDataLogs.tsx", async () => {
 		expect(lines.length).toBe(2);
 		
 		//dates:
-		expect((lines[0].firstChild as HTMLElement).innerText).toBe((new Date(1780704000000)).toLocaleString());
-		expect((lines[1].firstChild as HTMLElement).innerText).toBe((new Date(1709519880000)).toLocaleString());
+		expect((lines[0].querySelector(`.${css.date}`) as HTMLElement).innerText).toBe((new Date(1780704000000)).toLocaleString());
+		expect((lines[1].querySelector(`.${css.date}`) as HTMLElement).innerText).toBe((new Date(1709519880000)).toLocaleString());
 		
 		//single signature menu:
-		const a = lines[1].firstChild!.nextSibling!.firstChild as HTMLLinkElement;
+		const a = lines[1].querySelector(`.${css.url}`)!.firstChild as HTMLLinkElement;
 		expect(a.href).toBe((getBlockchainSignatureUrl("solanaTest", "signature1")));
 		
 		//single multi signature menu:
-		const div = lines[0].firstChild!.nextSibling!.firstChild as HTMLDivElement;
+		const div = lines[0].querySelector(`.${css.url}`)!.firstChild as HTMLDivElement;
 		div.dispatchEvent(new Event("click"));
 		
-		const menuLinks = component.dom.querySelectorAll(`.${css.openedMenu} a`);
+		const menuLinks = component.dom.querySelectorAll(`.${floatingMenuCss.openedMenu} a`);
 		expect(menuLinks.length).toBe(3);
 		expect((menuLinks[0] as HTMLLinkElement).href).toBe((getBlockchainSignatureUrl("solana", "sig1")));
 		expect((menuLinks[1] as HTMLLinkElement).href).toBe((getBlockchainSignatureUrl("solana", "sig2")));

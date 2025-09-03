@@ -6,7 +6,10 @@ import saveData from "../../../src/backend/routes/saveData.ts";
 
 describe("saveData", () => {
 	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
-		default: vi.fn().mockReturnValue({saveMessage: () => ["signature"]}),
+		default: vi.fn(() => ({saveMessage: () => ["signature"]}))
+	}));
+	vi.mock("../../../src/backend/actions/compressAndEncrypt.ts", () => ({
+		compressAndEncrypt: vi.fn(() => "encrypted"),
 	}));
 	
 	afterEach(() => {
@@ -103,6 +106,7 @@ describe("saveData", () => {
 		const pass = "test-pass";
 		const mockQuestionnaire = {
 			blockchainType: "test-chain",
+			dataKey: "test-data-key",
 			privateKey: "test-key",
 			columns: "[\"key1\",\"key2\"]",
 			questionnaireId: 1,

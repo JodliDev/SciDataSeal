@@ -12,9 +12,10 @@
 	"colon": "%1$s: ",
 	"columnData": "Column data",
 	"columnName": "Column name",
+	"columns": "Columns",
+	"compare": "Compare",
 	"confirmDeleteEntry": "Are you sure you want to delete this entry?",
 	"confirmSavingData": "Do you want to send the data to the blockchain? They cannot be deleted afterwards.",
-	"compare": "Compare",
 	"createQuestionnaire": "Create questionnaire",
 	"createBlockchainAccount": "Create blockchain account",
 	"createStudy": "Create study",
@@ -101,5 +102,7 @@
 	"viewData": "View data",
 	"warnChangingDenotation": "Changing the denotation will result in already existing data from the blockchain wallet not being accessible anymore. If there already is data saved in the wallet under this denotation, it will show up in the data for this questionnaire.",
 	"warnChangingBlockchainAccount": "Changing the blockchain account will result in already existing data from the former blockchain wallet not being accessible anymore (existing data will not be transferred to the new blockchain account).",
-	"warnNoColumns": "You need to set columns or no data will be saved."
+	"warnNoColumns": "You need to set columns or no data will be saved.",
+	"wasNotSent": "Was not sent to the blockchain yet.",
+	"wasNotConfirmed": "Was not confirmed by the blockchain yet."
 }

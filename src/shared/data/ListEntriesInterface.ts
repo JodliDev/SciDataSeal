@@ -26,7 +26,10 @@ export interface ListDefinitions {
 		Response: {
 			blockchainAccountId: number;
 			blockchainType: string;
-			signature: string;
+			signatures: string;
+			isHeader: boolean;
+			wasSent: boolean;
+			wasConfirmed: boolean;
 		}
 	}
 }

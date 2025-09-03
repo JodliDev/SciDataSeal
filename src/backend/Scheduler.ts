@@ -1,59 +1,74 @@
+interface SchedulerEntry {
+	action: () => void;
+	nextRun: number;
+	repeatEveryMinutes: number;
+}
+
 /**
  * Represents a Scheduler that triggers actions at a specified hour of the day.
  */
 export default class Scheduler {
-	/**
-	 * Represents the hour of the day ranging from 0 to 23.
-	 */
-	private readonly hourOfDay: number;
+	private timeoutId?: NodeJS.Timeout;
+	private nextRun: number = 0;
 	
 	/**
 	 * Represents a queue that stores an array of functions intended to be executed sequentially.
 	 */
-	private readonly queue: (() => void)[] = [];
+	private readonly queue: SchedulerEntry[] = [];
 	
-	constructor(hourOfDay: number) {
-		this.hourOfDay = hourOfDay;
+	/**
+	 * Adds a function to the queue that should be repeated at the specified interval.
+	 * Also schedules / corrects the next Scheduler execution.
+	 *
+	 * @param repeatEveryMinutes - The interval in minutes at which the function should be executed.
+	 * @param action - The function to be added to the queue.
+	 */
+	public add(repeatEveryMinutes: number, action: () => void) {
+		const entry = {
+			action: action,
+			repeatEveryMinutes: repeatEveryMinutes,
+			nextRun: Date.now() + repeatEveryMinutes * 60 * 1000
+		} satisfies SchedulerEntry
+		this.queue.push(entry);
+		
 		this.queueNextRun();
 	}
 	
 	/**
-	 * Adds a function to the queue.
-	 *
-	 * @param action - The function to be added to the queue.
-	 */
-	public add(action: () => void) {
-		this.queue.push(action);
-	}
-	
-	/**
-	 * Schedules the next execution of the `run` method at a specified hour of the day.
-	 * Calculates the time remaining until the next occurrence of the specified hour. If the current time has already passed
-	 * the specified hour for today, it schedules the execution for the next day at that hour.
+	 * Figures out and schedules (if needed) the next execution.
 	 */
 	private queueNextRun(): void {
-		const now = Date.now();
-		const date = new Date();
-		date.setHours(this.hourOfDay);
-		date.setMinutes(0);
-		date.setSeconds(0);
-		date.setMilliseconds(0);
+		let nextRun = this.queue[0]?.nextRun ?? 0;
 		
-		if(date.getTime() < now)
-			date.setDate(date.getDate() + 1);
+		for(const entry of this.queue) {
+			if(entry.nextRun < nextRun) {
+				nextRun = entry.nextRun;
+			}
+		}
+		if(nextRun == this.nextRun) {
+			return;
+		}
 		
-		const nextRunTime = date.getTime() - now;
-		
-		setTimeout(this.run.bind(this), nextRunTime);
+		if(this.timeoutId) {
+			clearTimeout(this.timeoutId);
+		}
+		if(nextRun) {
+			this.nextRun = nextRun;
+			this.timeoutId = setTimeout(this.run.bind(this), nextRun - Date.now());
+		}
 	}
 	
 	/**
-	 * Executes all actions currently in the queue sequentially.
+	 * Executes actions in the queue that are due to be executed.
 	 * After processing the queue, schedules the next execution.
 	 */
 	private run(): void {
-		for(const action of this.queue) {
-			action();
+		const now = Date.now();
+		for(const entry of this.queue) {
+			if(entry.nextRun <= now) {
+				entry.action();
+				entry.nextRun = now + entry.repeatEveryMinutes * 60 * 1000;
+			}
 		}
 		this.queueNextRun();
 	}

@@ -10,7 +10,11 @@ export default interface DataLog {
 	questionnaireId: number;
 	blockchainAccountId: number;
 	timestamp: number;
-	signature: string;
+	signatures: string;
+	data: string;
+	isHeader: boolean;
+	wasSent: boolean;
+	wasConfirmed: boolean;
 }
 
 @TableClass("DataLog", "logId")
@@ -23,5 +27,9 @@ export class DataLogTable implements Insertable<DataLog> {
 	@ForeignKey(BlockchainAccountTable, "blockchainAccountId", {onDelete: "CASCADE"})
 	blockchainAccountId = 0;
 	timestamp = 0;
-	signature = "";
+	signatures = "";
+	data = "";
+	isHeader = false;
+	wasSent = false;
+	wasConfirmed = false;
 }

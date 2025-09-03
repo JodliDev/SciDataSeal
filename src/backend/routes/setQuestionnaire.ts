@@ -15,11 +15,13 @@ export default function setQuestionnaire(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addPostRoute<SetQuestionnaireInterface>("/setQuestionnaire", router, async (data, request) => {
-		if(!data.questionnaireName || !data.apiPassword || !data.studyId)
+		if(!data.questionnaireName || !data.apiPassword || !data.studyId) {
 			throw new TranslatedException("errorMissingData");
+		}
 		
-		if(!isValidBackendString(data.questionnaireName))
+		if(!isValidBackendString(data.questionnaireName)) {
 			throw new TranslatedException("errorFaultyData", "questionnaireName");
+		}
 		
 		const session = await getSessionData(db, request);
 		
@@ -38,8 +40,9 @@ export default function setQuestionnaire(db: DbType): express.Router {
 				.executeTakeFirst()
 		
 		
-		if(!study)
+		if(!study) {
 			throw new TranslatedException("errorFaultyData", "studyId");
+		}
 		
 		const blockchainAccountId = data.blockchainAccountId || study.blockchainAccountId;
 		const dataKey = data.dataKey || data.apiPassword;
@@ -52,8 +55,9 @@ export default function setQuestionnaire(db: DbType): express.Router {
 			.executeTakeFirst();
 		
 		
-		if(!account)
+		if(!account) {
 			throw new TranslatedException("errorFaultyData", "blockchainAccountId");
+		}
 		
 		if(data.id) {
 			const values: Record<string, unknown> = {
@@ -79,8 +83,9 @@ export default function setQuestionnaire(db: DbType): express.Router {
 		else {
 			const blockchainDenotation = data.blockchainDenotation || account.highestDenotation + 1;
 			
-			if(blockchainDenotation <= account.highestDenotation)
-				throw new TranslatedException("errorAlreadyExists","blockchainDenotation");
+			if(blockchainDenotation <= account.highestDenotation) {
+				throw new TranslatedException("errorAlreadyExists", "blockchainDenotation");
+			}
 			
 			await db.updateTable("BlockchainAccount")
 				.set({highestDenotation: blockchainDenotation})

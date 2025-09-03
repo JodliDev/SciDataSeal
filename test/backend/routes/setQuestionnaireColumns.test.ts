@@ -11,6 +11,9 @@ describe("setQuestionnaireColumns", () => {
 			saveMessage: vi.fn(() => Promise.resolve(["someSignature"]))
 		})),
 	}));
+	vi.mock("../../../src/backend/actions/compressAndEncrypt.ts", () => ({
+		compressAndEncrypt: vi.fn(() => "encrypted"),
+	}));
 	
 	beforeEach(() => {
 		mockDb.resetMocks();
@@ -27,7 +30,7 @@ describe("setQuestionnaireColumns", () => {
 	it("should return errorMissingData if data is missing in POST route", async() => {
 		const response = await request(app).post("/setQuestionnaireColumns").send({});
 		
-		expect(response.ok).toBe(false);
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
 		expect(response.body).toHaveProperty("error");
 		expect(response.body.error).toHaveProperty("message", "errorMissingData");
 	});
@@ -45,13 +48,13 @@ describe("setQuestionnaireColumns", () => {
 			.set("Authorization", `Bearer ${pass}`)
 			.send({columns: ["asd", "qwe"]});
 		
-		expect(response.ok).toBe(true);
+		expect(response.ok, JSON.stringify(response.body)).toBe(true);
 	});
 	
 	it("should return errorFaultyData if pass has invalid characters", async() => {
 		const response = await request(app).post("/setQuestionnaireColumns?id=1&pass=q$we").send({columns: []});
 		
-		expect(response.ok).toBe(false);
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
 		expect(response.body).toHaveProperty("error");
 		expect(response.body.error).toHaveProperty("message", "errorFaultyData");
 		expect(response.body.error).toHaveProperty("values", ["apiPassword"]);
@@ -60,7 +63,7 @@ describe("setQuestionnaireColumns", () => {
 	it("should return errorFaultyData if column is not an array", async() => {
 		const response = await request(app).post("/setQuestionnaireColumns?id=1&pass=qwe").send({columns: "qwe"});
 		
-		expect(response.ok).toBe(false);
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
 		expect(response.body).toHaveProperty("error");
 		expect(response.body.error).toHaveProperty("message", "errorFaultyData");
 		expect(response.body.error).toHaveProperty("values", ["columns"]);
@@ -69,7 +72,7 @@ describe("setQuestionnaireColumns", () => {
 	it("should return errorFaultyData if a column entry has invalid characters", async() => {
 		const response = await request(app).post("/setQuestionnaireColumns?id=1&pass=qwe").send({columns: ["asd", "qw$e"]});
 		
-		expect(response.ok).toBe(false);
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
 		expect(response.body).toHaveProperty("error");
 		expect(response.body.error).toHaveProperty("message", "errorFaultyData");
 		expect(response.body.error).toHaveProperty("values", ["columns"]);
@@ -81,7 +84,7 @@ describe("setQuestionnaireColumns", () => {
 		
 		const response = await request(app).post("/setQuestionnaireColumns?id=1&pass=qwe").send({columns: ["asd", "qwe"]});
 		
-		expect(response.ok).toBe(true);
+		expect(response.ok, JSON.stringify(response.body)).toBe(true);
 	});
 	
 	it("should return an error if questionnaire apiPassword is not valid", async() => {
@@ -115,17 +118,11 @@ describe("setQuestionnaireColumns", () => {
 			.executeTakeFirst.mockResolvedValue({columns: "\"asd\"", userId: userId});
 		
 		const insertMock = mockDb.insertInto.chain("DataLog")
-			.values.chain({
-				questionnaireId: questionnaireId,
-				userId: userId,
-				signature: JSON.stringify(["someSignature"]),
-				timestamp: 1709519880000
-			})
 			.execute;
 		
 		const updateMock = mockDb.updateTable.chain("Questionnaire")
-			.set({"columns": "[\"asd\",\"qwe\"]"})
-			.where("questionnaireId", "=", questionnaireId)
+			.set.chain({"columns": "[\"asd\",\"qwe\"]"})
+			.where.chain("questionnaireId", "=", questionnaireId)
 			.execute;
 		
 		const res = await request(app).post(`/setQuestionnaireColumns?id=${questionnaireId}&pass=${pass}`).send({columns: ["asd", "qwe"]});

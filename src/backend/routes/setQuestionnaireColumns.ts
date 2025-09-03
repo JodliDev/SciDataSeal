@@ -2,12 +2,12 @@ import express from "express";
 import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
-import getBlockchain from "../actions/getBlockchain.ts";
 import getAuthHeader from "../actions/authentication/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import {SetQuestionnaireColumnsInterface} from "../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import createCsvLine from "../actions/createCsvLine.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
+import {compressAndEncrypt} from "../actions/compressAndEncrypt.ts";
 
 
 /**
@@ -44,8 +44,7 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 		const columnsJson = JSON.stringify(columns);
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
-			.innerJoin("BlockchainAccount", "Questionnaire.blockchainAccountId", "BlockchainAccount.blockchainAccountId")
-			.select(["privateKey", "columns", "Questionnaire.blockchainAccountId as blockchainAccountId", "blockchainType", "blockchainDenotation", "Questionnaire.userId as userId"])
+			.select(["columns", "blockchainAccountId", "userId", "dataKey"])
 			.where("questionnaireId", "=", questionnaireId)
 			.where("apiPassword", "=", pass)
 			.limit(1)
@@ -59,16 +58,19 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 			return; //Already the same. We don't need to do anything.
 		}
 		
-		const blockChain = getBlockchain(questionnaire.blockchainType);
-		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.blockchainDenotation, columnsJson, true, pass);
+		const message = compressAndEncrypt(columnsCsv, questionnaire.dataKey);
 		
 		await db.insertInto("DataLog")
 			.values({
 				questionnaireId: questionnaireId,
 				userId: questionnaire.userId,
-				signature: JSON.stringify(signature),
+				signatures: "",
 				timestamp: Date.now(),
 				blockchainAccountId: questionnaire.blockchainAccountId,
+				data: message,
+				isHeader: true,
+				wasSent: false,
+				wasConfirmed: false
 			})
 			.execute();
 		

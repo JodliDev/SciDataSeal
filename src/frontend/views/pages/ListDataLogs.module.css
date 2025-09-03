@@ -1,9 +1,20 @@
 .line {
 	display: table-row;
 	
+	&.isHeader {
+		background-color: lightgray;
+	}
+	
 	.cell {
 		padding: 5px;
 		display: table-cell;
 		vertical-align: middle;
+		
+		&.date {
+			/* exists for testing */
+		}
+		&.url {
+			/* exists for testing */
+		}
 	}
 }

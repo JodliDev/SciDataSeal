@@ -7,6 +7,7 @@ import listSvg from "../../assets/icons/list.svg?raw";
 import logsSvg from "../../assets/icons/logs.svg?raw";
 import nextSvg from "../../assets/icons/next.svg?raw";
 import openInNewSvg from "../../assets/icons/openInNew.svg?raw";
+import pendingSvg from "../../assets/icons/pending.svg?raw";
 import prevSvg from "../../assets/icons/prev.svg?raw";
 import removeSvg from "../../assets/icons/remove.svg?raw";
 import saveSvg from "../../assets/icons/save.svg?raw";
@@ -17,6 +18,7 @@ import userListSvg from "../../assets/icons/userList.svg?raw";
 import userSettingsSvg from "../../assets/icons/userSettings.svg?raw";
 import viewSvg from "../../assets/icons/view.svg?raw";
 import warnSvg from "../../assets/icons/warn.svg?raw";
+import wasNotConfirmedSvg from "../../assets/icons/wasNotConfirmed.svg?raw";
 import m from "mithril";
 import {TsClosureComponent} from "../../mithril-polyfill.ts";
 
@@ -30,6 +32,7 @@ const IconType = {
 	logs: logsSvg,
 	next: nextSvg,
 	openInNew: openInNewSvg,
+	pending: pendingSvg,
 	prev: prevSvg,
 	remove: removeSvg,
 	save: saveSvg,
@@ -40,6 +43,7 @@ const IconType = {
 	userSettings: userSettingsSvg,
 	view: viewSvg,
 	warn: warnSvg,
+	wasNotConfirmed: wasNotConfirmedSvg,
 }
 
 export interface IconAttributes {

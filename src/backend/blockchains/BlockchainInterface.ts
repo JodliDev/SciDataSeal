@@ -17,10 +17,14 @@ export default interface BlockchainInterface {
 	 * @param denotation - A numerical representation of the questionnaire denotation.
 	 * @param data - The content of the message to be saved.
 	 * @param isHeader - Indicates if the data represents a header line.
-	 * @param dataKey - A key for encryption.
 	 * @return A promise that resolves to an array of signature ids.
 	 */
-	saveMessage(privateKey: string, denotation: number, data: string, isHeader: boolean, dataKey: string): Promise<string[]>;
+	saveMessage(privateKey: string, denotation: number, data: string, isHeader: boolean): Promise<string[]>;
+	
+	/**
+	 * Checks if the blockchain transaction has been confirmed.
+	 */
+	isConfirmed(): Promise<boolean>;
 	
 	/**
 	 * Retrieves all data for a given questionnaire.

@@ -6,7 +6,8 @@ import css from "./ListDataLogs.module.css";
 import getEntry from "../../actions/getEntry.ts";
 import getBlockchainSignatureUrl from "../../../shared/actions/getBlockchainSignatureUrl.ts";
 import Icon from "../widgets/Icon.tsx";
-import floatingMenu from "../../actions/floatingMenu.ts";
+import floatingMenu, {tooltip} from "../../actions/floatingMenu.ts";
+import {Btn} from "../widgets/Btn.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async query => {
@@ -32,10 +33,21 @@ export default PrivatePage(async query => {
 			target="SetUser"
 			direction="table"
 			drawEntry={(entry) => {
-				const signatures: string[] = JSON.parse(entry.signature ?? "[]") ?? [];
-				return <div class={css.line}>
-					<div class={css.cell}>{(new Date(entry.label)).toLocaleString()}</div>
+				const signatures: string[] = JSON.parse(entry.signatures || "[]") ?? [];
+				
+				return <div class={`${css.line} ${entry.isHeader ? css.isHeader : ""}`} {...entry.isHeader ? tooltip(Lang.get("columns")) : {}}>
 					<div class={css.cell}>
+						{!entry.wasSent
+							? <div {...tooltip(Lang.get("wasNotSent"))}><Icon iconKey="pending"/></div>
+							: (
+								!entry.wasConfirmed
+									? <div {...tooltip(Lang.get("wasNotConfirmed"))}><Icon iconKey="wasNotConfirmed"/></div>
+									: <Btn.Empty/>
+							)
+						}
+					</div>
+					<div class={`${css.cell} ${css.date}`}>{(new Date(entry.label)).toLocaleString()}</div>
+					<div class={`${css.cell} ${css.url}`}>
 						{signatures.length > 1
 							? <div class="clickable" {...floatingMenu("url", () =>
 								<div class="vertical">
@@ -46,9 +58,13 @@ export default PrivatePage(async query => {
 									)}
 								</div>
 							)}><Icon iconKey="openInNew"/></div>
-							: <a href={getBlockchainSignatureUrl(entry.blockchainType, signatures[0])} target="_blank">
-								<Icon iconKey="openInNew"/>
-							</a>
+							: (
+								signatures.length == 1
+									? <a href={getBlockchainSignatureUrl(entry.blockchainType, signatures[0])} target="_blank">
+										<Icon iconKey="openInNew"/>
+									</a>
+									: ""
+							)
 						}
 					</div>
 				</div>

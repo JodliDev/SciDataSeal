@@ -2,12 +2,12 @@ import express from "express";
 import {DbType} from "../database/setupDb.ts";
 import UnauthorizedException from "../../shared/exceptions/UnauthorizedException.ts";
 import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
-import getBlockchain from "../actions/getBlockchain.ts";
 import {SaveDataInterface} from "../../shared/data/SaveDataInterface.ts";
 import getAuthHeader from "../actions/authentication/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import createCsvLine from "../actions/createCsvLine.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
+import {compressAndEncrypt} from "../actions/compressAndEncrypt.ts";
 
 /**
  * Creates a POST and a GET route for saving data to the blockchain
@@ -25,8 +25,6 @@ export default function saveData(db: DbType): express.Router {
 		}
 		
 
-		// await saveData(questionnaireId, pass, data as Record<string, string>);
-		
 		if(!isValidBackendString(pass)) {
 			throw new TranslatedException("errorFaultyData", "apiPassword");
 		}
@@ -36,8 +34,7 @@ export default function saveData(db: DbType): express.Router {
 		}
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
-			.innerJoin("BlockchainAccount", "Questionnaire.blockchainAccountId", "BlockchainAccount.blockchainAccountId")
-			.select(["privateKey", "columns", "Questionnaire.blockchainAccountId as blockchainAccountId", "blockchainType", "blockchainDenotation", "Questionnaire.userId as userId"])
+			.select(["columns", "blockchainAccountId", "userId", "dataKey"])
 			.where("questionnaireId", "=", questionnaireId)
 			.where("apiPassword", "=", pass)
 			.limit(1)
@@ -57,16 +54,19 @@ export default function saveData(db: DbType): express.Router {
 			dataArray.push(data.hasOwnProperty(column) ? data[column] as string : "");
 		}
 		
-		const blockChain = getBlockchain(questionnaire.blockchainType);
-		const signature = await blockChain.saveMessage(questionnaire.privateKey, questionnaire.blockchainDenotation, createCsvLine(dataArray), false, pass);
+		const message = compressAndEncrypt(createCsvLine(dataArray), questionnaire.dataKey);
 		
 		await db.insertInto("DataLog")
 			.values({
 				questionnaireId: questionnaireId,
 				userId: questionnaire.userId,
-				signature: JSON.stringify(signature),
+				signatures: "",
 				timestamp: Date.now(),
 				blockchainAccountId: questionnaire.blockchainAccountId,
+				data: message,
+				isHeader: false,
+				wasSent: false,
+				wasConfirmed: false
 			})
 			.execute();
 		

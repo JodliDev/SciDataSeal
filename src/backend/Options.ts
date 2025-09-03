@@ -9,7 +9,7 @@ class OptionsClass implements FrontendOptions {
 	public readonly port: number = 19419;
 	public readonly root: string = process.cwd();
 	public readonly urlPath: string = "/";
-	public readonly schedulerHourOfDay: number = 3;
+	public readonly blockchainSyncIntervalMinutes: number = 10;
 	public isInit: boolean = false;
 	
 	constructor() {

@@ -27,18 +27,36 @@ import deleteEntry from "./routes/deleteEntry.ts";
 import setStudy from "./routes/setStudy.ts";
 import listEntries from "./routes/listEntries.ts";
 import getEntry from "./routes/getEntry.ts";
+import {Logger} from "./Logger.ts";
+import syncBlockchain from "./actions/syncBlockchain.ts";
 
 async function init() {
 	const db = await setupDb()
 	const authenticateMiddleware = AuthenticateMiddleware(db);
 	const adminMiddleware = AdminMiddleware(db);
 	const webServer = express();
-	const scheduler = new Scheduler(Options.schedulerHourOfDay);
+	const scheduler = new Scheduler();
 	await recreateOptionsString(db);
 	
-	scheduler.add(() => {
-		deleteOutdatedSessions(db);
-	})
+	scheduler.add(Options.blockchainSyncIntervalMinutes, () => {
+		try {
+			Logger.log("Syncing blockchain...");
+			syncBlockchain(db);
+		}
+		catch(e) {
+			Logger.error(`Could not sync blockchain: ${e}`);
+		}
+	});
+	
+	scheduler.add(24 * 60, () => {
+		try {
+			Logger.log("Deleting outdated sessions...");
+			deleteOutdatedSessions(db);
+		}
+		catch(e) {
+			Logger.error(`Error while deleting outdated sessions: ${e}`);
+		}
+	});
 	
 	webServer.use(express.json());
 	webServer.use(express.urlencoded({ extended: false }));

@@ -70,7 +70,7 @@ describe("Solana", () => {
 		it("should throw an error when required data is missing", async () => {
 			const instance = new Solana();
 			await expect(async () => {
-				await instance.saveMessage(privateKey, 1, "", false, dataKey);
+				await instance.saveMessage(privateKey, 1, "", false);
 			}).rejects.toThrow("errorMissingData");
 		});
 		
@@ -84,7 +84,7 @@ describe("Solana", () => {
 			vi.mocked(sendAndConfirmTransaction).mockResolvedValue("signature");
 			
 			const instance = new Solana();
-			const result = await instance.saveMessage(privateKey, 1, "testData", false, dataKey);
+			const result = await instance.saveMessage(privateKey, 1, "testData", false);
 			
 			expect(result).toEqual(["signature"]);
 		});
@@ -99,7 +99,7 @@ describe("Solana", () => {
 			vi.mocked(sendAndConfirmTransaction).mockResolvedValue("signature");
 			const data = randomBytes(561).toString("base64");
 			const instance = new Solana();
-			const result = await instance.saveMessage(privateKey, 1, data, false, dataKey);
+			const result = await instance.saveMessage(privateKey, 1, data, false);
 
 			expect(result).toEqual(["signature", "signature"]);
 		});
@@ -116,8 +116,28 @@ describe("Solana", () => {
 			const instance = new Solana();
 			
 			await expect(async () => {
-				await instance.saveMessage(privateKey, 1, data, false, dataKey);
+				await instance.saveMessage(privateKey, 1, data, false);
 			}).rejects.toThrow("errorMessageIsTooLong");
+		});
+		
+		it("should add HEADER_TAG when needed", async() => {
+			vi.mocked(Keypair.fromSecretKey).mockReturnValue({publicKey: {toString: () => publicKey}} as Keypair);
+			mockConnection.getLatestBlockhash.mockResolvedValueOnce({
+				blockhash: "blockhash",
+				lastValidBlockHeight: 1234567890,
+			});
+			mockConnection.getBalance.mockResolvedValueOnce(2 * 1_000_000_000);
+			vi.mocked(sendAndConfirmTransaction).mockResolvedValue("signature");
+			
+			const generatedDenotation = generateStringDenotation(1);
+			const instance = new Solana();
+			const uploadMessageSpy = vi.spyOn(instance as any, "uploadMessage");
+			
+			await instance.saveMessage(privateKey, 1, "testData", false);
+			expect(uploadMessageSpy).toHaveBeenCalledWith(privateKey, generatedDenotation + "testData");
+			
+			await instance.saveMessage(privateKey, 1, "testData", true);
+			expect(uploadMessageSpy).toHaveBeenCalledWith(privateKey, generatedDenotation + "~~testData");
 		});
 	});
 	
@@ -209,7 +229,7 @@ describe("Solana", () => {
 			const testData = "testData";
 			mockConnection.getSignaturesForAddress.mockResolvedValue([ //Solana returns data reversed
 				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}${compressAndEncrypt(testData, dataKey)}`},
-				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}${compressAndEncrypt(`~~${headerData}`, dataKey)}`},
+				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}~~${compressAndEncrypt(headerData, dataKey)}`},
 			]);
 			
 			const instance = new Solana();

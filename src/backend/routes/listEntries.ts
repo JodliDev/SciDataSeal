@@ -45,7 +45,7 @@ export default function listEntries(db: DbType): express.Router {
 					
 					const select = query
 						.innerJoin("BlockchainAccount", "BlockchainAccount.blockchainAccountId", "DataLog.blockchainAccountId")
-						.select(["logId as id", "timestamp as label", "signature", "BlockchainAccount.blockchainAccountId as blockchainAccountId", "blockchainType"])
+						.select(["logId as id", "timestamp as label", "signatures", "isHeader", "wasSent", "wasConfirmed", "BlockchainAccount.blockchainAccountId as blockchainAccountId", "blockchainType"])
 						.orderBy("timestamp");
 					
 					return {query: query, select: select};
