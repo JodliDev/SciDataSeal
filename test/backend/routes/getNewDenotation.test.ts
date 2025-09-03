@@ -1,4 +1,4 @@
-import {afterAll, describe, expect, it, vi} from "vitest";
+import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import request from "supertest";
 import express from "express";
 import getNewDenotation from "../../../src/backend/routes/getNewDenotation.ts";
@@ -9,6 +9,9 @@ describe("getNewDenotation", () => {
 		getLoggedInSessionData: vi.fn().mockResolvedValue({userId: 123})
 	}));
 	
+	afterEach(() => {
+		mockDb.resetMocks();
+	});
 	afterAll(() => {
 		vi.restoreAllMocks();
 	});
@@ -34,7 +37,7 @@ describe("getNewDenotation", () => {
 	it("should throw error when blockchainAccountId is missing", async() => {
 		const response = await request(app).get("/api/getNewDenotation");
 		
-		expect(response.ok).toBe(false);
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
 		expect(response.body.error).toHaveProperty("message", "errorMissingData");
 	});
 	
@@ -43,7 +46,7 @@ describe("getNewDenotation", () => {
 			.get("/api/getNewDenotation")
 			.query({blockchainAccountId: "invalid"});
 		
-		expect(response.ok).toBe(false);
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
 		expect(response.body.error).toHaveProperty("message", "errorMissingData");
 	});
 	
@@ -55,7 +58,7 @@ describe("getNewDenotation", () => {
 			.get("/api/getNewDenotation")
 			.query({blockchainAccountId: "2"});
 		
-		expect(response.ok).toBe(false);
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
 		expect(response.body.error).toHaveProperty("message", "errorNotFound");
 	});
 });
