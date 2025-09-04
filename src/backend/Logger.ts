@@ -4,16 +4,16 @@
  */
 class LoggerClass {
 	debug(text: string) {
-		console.debug(text);
+		console.debug(`\x1b[90m${(new Date()).toLocaleTimeString()}\x1b[0m ${text}`);
 	}
 	log(text: string) {
-		console.log(text);
+		console.log(`\x1b[90m${(new Date()).toLocaleTimeString()}\x1b[0m ${text}`);
 	}
 	warn(text: string) {
-		console.warn(text);
+		console.warn(`\x1b[90m${(new Date()).toLocaleTimeString()}\x1b[0m ${text}`);
 	}
 	error(text: string) {
-		console.error(text);
+		console.error(`\x1b[90m${(new Date()).toLocaleTimeString()}\x1b[0m ${text}`);
 	}
 }
 
