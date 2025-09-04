@@ -7,7 +7,6 @@ import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import {SetQuestionnaireColumnsInterface} from "../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import createCsvLine from "../actions/createCsvLine.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
-import {compressAndEncrypt} from "../actions/compressAndEncrypt.ts";
 
 
 /**
@@ -44,7 +43,7 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 		const columnsJson = JSON.stringify(columns);
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
-			.select(["columns", "blockchainAccountId", "userId", "dataKey"])
+			.select(["columns", "blockchainAccountId", "userId"])
 			.where("questionnaireId", "=", questionnaireId)
 			.where("apiPassword", "=", pass)
 			.limit(1)
@@ -58,8 +57,6 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 			return; //Already the same. We don't need to do anything.
 		}
 		
-		const message = compressAndEncrypt(columnsCsv, questionnaire.dataKey);
-		
 		await db.insertInto("DataLog")
 			.values({
 				questionnaireId: questionnaireId,
@@ -67,7 +64,7 @@ export default function setQuestionnaireColumns(db: DbType): express.Router {
 				signatures: "",
 				timestamp: Date.now(),
 				blockchainAccountId: questionnaire.blockchainAccountId,
-				data: message,
+				data: columnsCsv,
 				isHeader: true,
 				wasSent: false,
 				wasConfirmed: false

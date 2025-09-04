@@ -8,9 +8,6 @@ describe("saveData", () => {
 	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
 		default: vi.fn(() => ({saveMessage: () => ["signature"]}))
 	}));
-	vi.mock("../../../src/backend/actions/compressAndEncrypt.ts", () => ({
-		compressAndEncrypt: vi.fn(() => "encrypted"),
-	}));
 	
 	afterEach(() => {
 		mockDb.resetMocks();

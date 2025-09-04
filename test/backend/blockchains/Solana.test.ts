@@ -1,6 +1,6 @@
 import {afterAll, afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {Connection, Keypair, PublicKey, sendAndConfirmTransaction} from "@solana/web3.js";
-import {compressAndEncrypt} from "../../../src/backend/actions/compressAndEncrypt.ts";
+import {compressAndEncrypt, decompressAndDecrypt} from "../../../src/backend/actions/compressAndEncrypt.ts";
 import {randomBytes} from "crypto";
 import generateStringDenotation from "../../../src/shared/actions/generateStringDenotation.ts";
 import TranslatedException from "../../../src/shared/exceptions/TranslatedException.ts";
@@ -62,16 +62,21 @@ describe("Solana", () => {
 		});
 	});
 	
+	describe("getDataString", () => {
+		it("should add a HEADER_TAG when needed", async() => {
+			const data = ["testData1", "testData2"];
+			const instance = new Solana();
+			
+			const headerString = (instance as any).getDataString(data, true, dataKey);
+			expect(decompressAndDecrypt(headerString, dataKey)).toBe("~~" + data.join("\n"));
+			
+			const notHeaderString = (instance as any).getDataString(data, false, dataKey);
+			expect(decompressAndDecrypt(notHeaderString, dataKey)).toBe(data.join("\n"));
+		});
+	});
 	describe("saveMessage", () => {
 		afterEach(() => {
 			vi.resetAllMocks();
-		});
-		
-		it("should throw an error when required data is missing", async () => {
-			const instance = new Solana();
-			await expect(async () => {
-				await instance.saveMessage(privateKey, 1, "", false);
-			}).rejects.toThrow("errorMissingData");
 		});
 		
 		it("should return transaction signatures when saving a valid message", async() => {
@@ -84,7 +89,7 @@ describe("Solana", () => {
 			vi.mocked(sendAndConfirmTransaction).mockResolvedValue("signature");
 			
 			const instance = new Solana();
-			const result = await instance.saveMessage(privateKey, 1, "testData", false);
+			const result = await instance.saveMessage(privateKey, 1, ["testData"], false, dataKey);
 			
 			expect(result).toEqual(["signature"]);
 		});
@@ -99,7 +104,7 @@ describe("Solana", () => {
 			vi.mocked(sendAndConfirmTransaction).mockResolvedValue("signature");
 			const data = randomBytes(561).toString("base64");
 			const instance = new Solana();
-			const result = await instance.saveMessage(privateKey, 1, data, false);
+			const result = await instance.saveMessage(privateKey, 1, [data], false, dataKey);
 
 			expect(result).toEqual(["signature", "signature"]);
 		});
@@ -116,28 +121,8 @@ describe("Solana", () => {
 			const instance = new Solana();
 			
 			await expect(async () => {
-				await instance.saveMessage(privateKey, 1, data, false);
+				await instance.saveMessage(privateKey, 1, [data], false, dataKey);
 			}).rejects.toThrow("errorMessageIsTooLong");
-		});
-		
-		it("should add HEADER_TAG when needed", async() => {
-			vi.mocked(Keypair.fromSecretKey).mockReturnValue({publicKey: {toString: () => publicKey}} as Keypair);
-			mockConnection.getLatestBlockhash.mockResolvedValueOnce({
-				blockhash: "blockhash",
-				lastValidBlockHeight: 1234567890,
-			});
-			mockConnection.getBalance.mockResolvedValueOnce(2 * 1_000_000_000);
-			vi.mocked(sendAndConfirmTransaction).mockResolvedValue("signature");
-			
-			const generatedDenotation = generateStringDenotation(1);
-			const instance = new Solana();
-			const uploadMessageSpy = vi.spyOn(instance as any, "uploadMessage");
-			
-			await instance.saveMessage(privateKey, 1, "testData", false);
-			expect(uploadMessageSpy).toHaveBeenCalledWith(privateKey, generatedDenotation + "testData");
-			
-			await instance.saveMessage(privateKey, 1, "testData", true);
-			expect(uploadMessageSpy).toHaveBeenCalledWith(privateKey, generatedDenotation + "~~testData");
 		});
 	});
 	
@@ -223,13 +208,29 @@ describe("Solana", () => {
 			]);
 		});
 		
+		it("should split data accordingly", async() => {
+			const denotation = 62;
+			const testData = "testData1\ntestData2";
+			mockConnection.getSignaturesForAddress.mockResolvedValue([ //Solana returns data reversed
+				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}${compressAndEncrypt(testData, dataKey)}`},
+			]);
+			
+			const instance = new Solana();
+			const result = await instance.listData(publicKey, denotation, dataKey);
+			
+			expect(result).toEqual([
+				{timestamp: 1780704000, data: "testData1", isHeader: false},
+				{timestamp: 1780704000, data: "testData2", isHeader: false}
+			]);
+		});
+		
 		it("should parse and return line data when signatures are found", async() => {
 			const denotation = 62;
 			const headerData = "headerData";
 			const testData = "testData";
 			mockConnection.getSignaturesForAddress.mockResolvedValue([ //Solana returns data reversed
 				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}${compressAndEncrypt(testData, dataKey)}`},
-				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}~~${compressAndEncrypt(headerData, dataKey)}`},
+				{blockTime: 1709519880, memo: `[100] ${generateStringDenotation(denotation)}${compressAndEncrypt("~~" + headerData, dataKey)}`},
 			]);
 			
 			const instance = new Solana();

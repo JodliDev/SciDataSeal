@@ -7,7 +7,6 @@ import getAuthHeader from "../actions/authentication/getAuthHeader.ts";
 import {addPostRoute} from "../actions/routes/addPostRoute.ts";
 import createCsvLine from "../actions/createCsvLine.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
-import {compressAndEncrypt} from "../actions/compressAndEncrypt.ts";
 
 /**
  * Creates a POST and a GET route for saving data to the blockchain
@@ -34,7 +33,7 @@ export default function saveData(db: DbType): express.Router {
 		}
 		
 		const questionnaire = await db.selectFrom("Questionnaire")
-			.select(["columns", "blockchainAccountId", "userId", "dataKey"])
+			.select(["columns", "blockchainAccountId", "userId"])
 			.where("questionnaireId", "=", questionnaireId)
 			.where("apiPassword", "=", pass)
 			.limit(1)
@@ -54,7 +53,7 @@ export default function saveData(db: DbType): express.Router {
 			dataArray.push(data.hasOwnProperty(column) ? data[column] as string : "");
 		}
 		
-		const message = compressAndEncrypt(createCsvLine(dataArray), questionnaire.dataKey);
+		const message = createCsvLine(dataArray);
 		
 		await db.insertInto("DataLog")
 			.values({

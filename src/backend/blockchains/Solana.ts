@@ -3,11 +3,12 @@ import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAnd
 import {createMemoInstruction} from "@solana/spl-memo";
 import generateStringDenotation from "../../shared/actions/generateStringDenotation.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
-import {decompressAndDecrypt} from "../actions/compressAndEncrypt.ts";
+import {compressAndEncrypt, decompressAndDecrypt} from "../actions/compressAndEncrypt.ts";
 
 const DATA_MAX_BYTE_LENGTH = 560;
 const CONTINUE_TAG = "~";
 const HEADER_TAG = "~~";
+const DATA_SEPARATOR = "\n";
 
 /**
  * This class provides functionality for interacting with the Solana blockchain.
@@ -75,22 +76,24 @@ export default class Solana implements BlockchainInterface {
 			[keyPair]
 		);
 	}
+	private getDataString(data: string[], isHeader: boolean, dataKey: string) {
+		return compressAndEncrypt(isHeader ? `${HEADER_TAG}${data.join(DATA_SEPARATOR)}` : data.join(DATA_SEPARATOR), dataKey);
+	}
 	
-	public async saveMessage(privateKey: string, intDenotation: number, data: string, isHeader: boolean): Promise<string[]> {
+	public async saveMessage(privateKey: string, intDenotation: number, data: string[], isHeader: boolean, dataKey: string): Promise<string[]> {
 		if(!data) {
 			throw new TranslatedException("errorMissingData");
 		}
-		if(isHeader) {
-			data = `${HEADER_TAG}${data}`;
-		}
+		
+		const dataString = this.getDataString(data, isHeader, dataKey);
 		
 		const denotation = generateStringDenotation(intDenotation);
 		
 		//figure out the necessary length:
 		const textEncoder = new TextEncoder();
-		const neededBytes = textEncoder.encode(data).length;
+		const neededBytes = textEncoder.encode(dataString).length;
 		const neededMessages = Math.ceil(neededBytes / DATA_MAX_BYTE_LENGTH);
-		const partLength = data.length / neededMessages;
+		const partLength = dataString.length / neededMessages;
 		
 		if(neededMessages > this.maxTransactionsPerMessage) {
 			throw new TranslatedException("errorMessageIsTooLong");
@@ -98,7 +101,7 @@ export default class Solana implements BlockchainInterface {
 		//upload (and split, if needed) message:
 		const signatures: string[] = [];
 		for(let i = 0; i < neededMessages; ++i) {
-			const part = data.substring(i * partLength, (i + 1) * partLength);
+			const part = dataString.substring(i * partLength, (i + 1) * partLength);
 			const endTag = i < neededMessages - 1 ? CONTINUE_TAG : "";
 			signatures.push(await this.uploadMessage(privateKey, denotation + part + endTag));
 		}
@@ -106,30 +109,28 @@ export default class Solana implements BlockchainInterface {
 		return signatures;
     }
 	
-	public isConfirmed(): Promise<Awaited<boolean>> {
+	public isConfirmed(_: string[]): Promise<boolean> {
 		return Promise.resolve(true); //Solana is always confirmed
 	}
 	
-	private decipherLine(original: string, dataKey: string): Omit<LineData, "timestamp"> {
+	private decipherMessage(original: string, dataKey: string, timestamp: number): LineData[] {
 		try {
-			if(original.startsWith(HEADER_TAG)) {
-				return {
-					data: decompressAndDecrypt(original.substring(HEADER_TAG.length), dataKey),
-					isHeader: true
-				};
-			}
-			else {
-				return {
-					data: decompressAndDecrypt(original, dataKey),
-					isHeader: false
-				};
-			}
+			const decrypted = decompressAndDecrypt(original, dataKey);
+			const isHeader = decrypted.startsWith(HEADER_TAG);
+			const dataArray = isHeader ? decrypted.substring(HEADER_TAG.length).split(DATA_SEPARATOR) : decrypted.split(DATA_SEPARATOR);
+			
+			return dataArray.map(entry => ({
+				timestamp: timestamp,
+				data: entry,
+				isHeader: isHeader
+			}));
 		}
 		catch {
-			return {
+			return [{
+				timestamp: timestamp,
 				data: `Cannot decipher: ${original}`,
 				isHeader: false
-			};
+			}];
 		}
 	}
 	
@@ -154,19 +155,13 @@ export default class Solana implements BlockchainInterface {
 				temp += message.substring(0, message.length - CONTINUE_TAG.length);
 			}
 			else {
-				output.push({
-					timestamp: sig.blockTime ?? 0,
-					...this.decipherLine(temp + message, dataKey)
-				});
+				output.push(...this.decipherMessage(temp + message, dataKey, sig.blockTime ?? 0));
 				temp = "";
 			}
 		}
 		
 		if(temp) { //this should never happen
-			output.push({
-				timestamp: signatures[0].blockTime ?? 0,
-				...this.decipherLine(temp, dataKey)
-			});
+			output.push(...this.decipherMessage(temp, dataKey, signatures[0].blockTime ?? 0));
 		}
 		
 		return output;

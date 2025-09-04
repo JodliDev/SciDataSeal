@@ -2,6 +2,7 @@ import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import {mockKysely} from "../../convenience.ts";
 import syncBlockchain from "../../../src/backend/actions/syncBlockchain.ts";
 import getBlockchain from "../../../src/backend/actions/getBlockchain.ts";
+import {Logger} from "../../../src/backend/Logger.ts";
 
 
 describe("syncBlockchain", () => {
@@ -19,134 +20,223 @@ describe("syncBlockchain", () => {
 	});
 	afterAll(() => {
 		vi.mocked(getBlockchain).mockRestore();
-	})
+	});
 	
-	it("should process logs to send and update wasSent and wasConfirmed fields", async () => {
-		const dataLogsToSend = [
-			{
+	function mockSelectDataLogs(needsSending: any[], needsConfirmation: any[]) {
+		mockDb.selectFrom.chain("DataLog")
+			.where.chain("wasSent", "=", false)
+			.execute
+			.mockReturnValueOnce(needsSending);
+		
+		mockDb.selectFrom.chain("DataLog")
+			.where.chain("wasSent", "=", true)
+			.where.chain("wasConfirmed", "=", false)
+			.execute
+			.mockReturnValueOnce(needsConfirmation);
+	}
+	
+	describe("send", () => {
+		afterEach(() => {
+			mockDb.resetMocks();
+		});
+		
+		it("should process logs to send and update wasSent and wasConfirmed fields", async () => {
+			mockSelectDataLogs([{
 				logId: 1,
 				privateKey: "privateKey1",
 				blockchainDenotation: "89",
 				data: "data1",
 				isHeader: true,
 				blockchainType: "type1",
-			}
-		];
-		mockDb.selectFrom.chain("DataLog")
-			.where.chain("wasSent", "=", false)
-			.execute
-			.mockReturnValueOnce(dataLogsToSend);
-		
-		mockDb.selectFrom.chain("DataLog")
-			.where.chain("wasSent", "=", true)
-			.where.chain("wasConfirmed", "=", false)
-			.execute
-			.mockReturnValueOnce([]);
-		
-		const updateTableMock = mockDb.updateTable.chain("DataLog").set;
-		
-		await syncBlockchain(mockDb);
-		
-		expect(updateTableMock).toHaveBeenCalledWith({
-			data: "",
-			wasSent: true,
-			wasConfirmed: true,
-			signatures: JSON.stringify(["signature1"]),
+			}], []);
+			
+			const updateTableMock = mockDb.updateTable.chain("DataLog").set;
+			
+			await syncBlockchain(mockDb);
+			
+			expect(updateTableMock).toHaveBeenCalledWith({
+				data: "",
+				wasSent: true,
+				wasConfirmed: true,
+				signatures: JSON.stringify(["signature1"]),
+			});
 		});
 		
-		// cleanup:
-		vi.mocked(getBlockchain).mockRestore();
+		it("should process header and data logs separately and split via questionnaireId", async () => {
+			const saveMessageMock = vi.fn();
+			const mock = vi.mocked(getBlockchain).mockReturnValue({
+				saveMessage: saveMessageMock,
+				isConfirmed: vi.fn(() => true),
+			} as any);
+			
+			const defaultLog = {
+				privateKey: "privateKey1",
+				blockchainDenotation: 89,
+				blockchainType: "type1",
+				dataKey: "dataKey1"
+			}
+			
+			mockSelectDataLogs([
+				{
+					logId: 1,
+					questionnaireId: 1,
+					data: "data1",
+					isHeader: true,
+					...defaultLog
+				},
+				{
+					logId: 2,
+					questionnaireId: 1,
+					data: "data2",
+					isHeader: true,
+					...defaultLog
+				},
+				{
+					logId: 3,
+					questionnaireId: 1,
+					data: "data3",
+					isHeader: false,
+					...defaultLog
+				},
+				{
+					logId: 4,
+					questionnaireId: 1,
+					data: "data4",
+					isHeader: false,
+					...defaultLog
+				},
+				{
+					logId: 5,
+					questionnaireId: 1,
+					data: "data5",
+					isHeader: false,
+					...defaultLog
+				},
+				{
+					logId: 6,
+					questionnaireId: 2,
+					data: "data6",
+					isHeader: false,
+					...defaultLog
+				},
+			], []);
+			
+			await syncBlockchain(mockDb);
+			
+			expect(saveMessageMock).toHaveBeenCalledWith("privateKey1", 89, ["data1", "data2"], true, "dataKey1");
+			expect(saveMessageMock).toHaveBeenCalledWith("privateKey1", 89, ["data3", "data4", "data5"], false, "dataKey1");
+			expect(saveMessageMock).toHaveBeenCalledWith("privateKey1", 89, ["data6"], false, "dataKey1");
+			
+			// cleanup:
+			mock.mockRestore();
+		});
+		
+		it("should handle errors while sending logs", async() => {
+			const loggerSpy = vi.spyOn(Logger, "error");
+			
+			mockSelectDataLogs([{
+				logId: 1,
+				privateKey: "privateKey1",
+				blockchainDenotation: "89",
+				data: "data1",
+				isHeader: false,
+				blockchainType: "type1",
+			}], []);
+			
+			mockDb
+				.updateTable.chain("DataLog")
+				.execute.mockRejectedValueOnce(new Error("mock error"));
+			
+			await syncBlockchain(mockDb);
+			
+			expect(loggerSpy).toHaveBeenCalled();
+			
+			// cleanup:
+			loggerSpy.mockRestore();
+		});
 	});
 	
-	it("should handle errors while sending logs", async() => {
-		const dataLogsToSend = {
-			privateKey: "privateKey1",
-			blockchainDenotation: "89",
-			data: "data1",
-			isHeader: true,
-			blockchainType: "type1",
-		};
-		mockDb.selectFrom.chain("DataLog")
-			.where.chain("wasSent", "=", false)
-			.execute
-			.mockReturnValueOnce([{...dataLogsToSend, logId: 1}, {...dataLogsToSend, logId: 2}]);
+	describe("confirm", () => {
+		afterEach(() => {
+			mockDb.resetMocks();
+		});
 		
-		mockDb.selectFrom.chain("DataLog")
-			.where.chain("wasSent", "=", true)
-			.where.chain("wasConfirmed", "=", false)
-			.execute
-			.mockReturnValueOnce([]);
+		it("should confirm logs", async() => {
+			mockSelectDataLogs([], [{
+				logId: 1,
+				blockchainType: "type1",
+				signatures: JSON.stringify(["signature1", "signature2"]),
+			}]);
+			
+			const updateTableMock = mockDb
+				.updateTable.chain("DataLog")
+				.set.chain({
+					wasConfirmed: true
+				})
+				.execute;
+			
+			await syncBlockchain(mockDb);
+			
+			expect(updateTableMock).toHaveBeenCalled();
+		});
 		
-		const updateTableMock1 = mockDb
-			.updateTable.chain("DataLog")
-			.where.chain("logId", "=", 1)
-			.execute.mockRejectedValueOnce(new Error("mock error"));
+		it("should confirm signatures only once", async() => {
+			mockSelectDataLogs([], [
+				{
+					logId: 1,
+					blockchainType: "type1",
+					signatures: JSON.stringify(["signature1", "signature2"]),
+				},
+				{
+					logId: 2,
+					blockchainType: "type1",
+					signatures: JSON.stringify(["signature1", "signature2"]),
+				}
+			]);
+			
+			const updateTableMock1 = mockDb
+				.updateTable.chain("DataLog")
+				.set.chain({
+					wasConfirmed: true
+				})
+				.where.chain("logId", "=", 1)
+				.execute;
+			
+			const updateTableMock2 = mockDb
+				.updateTable.chain("DataLog")
+				.set.chain({
+					wasConfirmed: true
+				})
+				.where.chain("logId", "=", 2)
+				.execute;
+			
+			await syncBlockchain(mockDb);
+			
+			expect(updateTableMock1).toHaveBeenCalled();
+			expect(updateTableMock2).not.toHaveBeenCalled();
+		});
 		
-		const updateTableMock2 = mockDb
-			.updateTable.chain("DataLog")
-			.where.chain("logId", "=", 2)
-			.execute;
-		
-		await syncBlockchain(mockDb);
-		
-		expect(updateTableMock1).toHaveBeenCalled();
-		expect(updateTableMock2).toHaveBeenCalled();
-	});
-
-	it("should confirm logs that were sent but not confirmed", async() => {
-		const dataLogsForConfirmation = [
-			{logId: 2, blockchainType: "type1"},
-		];
-		mockDb.selectFrom.chain("DataLog")
-			.where.chain("wasSent", "=", false)
-			.execute
-			.mockReturnValueOnce([]);
-		
-		mockDb.selectFrom.chain("DataLog")
-			.where.chain("wasSent", "=", true)
-			.where.chain("wasConfirmed", "=", false)
-			.execute
-			.mockReturnValueOnce(dataLogsForConfirmation);
-		
-		const updateTableMock = mockDb
-			.updateTable.chain("DataLog")
-			.set.chain({
-				wasConfirmed: true
-			})
-			.execute;
-		
-		await syncBlockchain(mockDb);
-
-		expect(updateTableMock).toHaveBeenCalled();
-	});
-
-	it("should handle errors while confirming logs", async() => {
-		const dataLogsForConfirmation = {logId: 2, blockchainType: "type1"};
-		
-		mockDb.selectFrom.chain("DataLog")
-			.where.chain("wasSent", "=", false)
-			.execute
-			.mockReturnValueOnce([]);
-		
-		mockDb.selectFrom.chain("DataLog")
-			.where.chain("wasSent", "=", true)
-			.where.chain("wasConfirmed", "=", false)
-			.execute
-			.mockReturnValueOnce([{...dataLogsForConfirmation, logId: 1}, {...dataLogsForConfirmation, logId: 2}]);
-		
-		const updateTableMock1 = mockDb
-			.updateTable.chain("DataLog")
-			.where.chain("logId", "=", 1)
-			.execute.mockRejectedValueOnce(new Error("mock error"));
-		
-		const updateTableMock2 = mockDb
-			.updateTable.chain("DataLog")
-			.where.chain("logId", "=", 2)
-			.execute;
-		
-		await syncBlockchain(mockDb);
-		
-		expect(updateTableMock1).toHaveBeenCalled();
-		expect(updateTableMock2).toHaveBeenCalled();
+		it("should handle errors while confirming logs", async() => {
+			const dataLogsForConfirmation = {
+				blockchainType: "type1",
+				signatures: JSON.stringify(["signature1"]),
+			};
+			mockSelectDataLogs([], [{...dataLogsForConfirmation, logId: 1}, {...dataLogsForConfirmation, logId: 2}]);
+			
+			const updateTableMock1 = mockDb
+				.updateTable.chain("DataLog")
+				.where.chain("logId", "=", 1)
+				.execute.mockRejectedValueOnce(new Error("mock error"));
+			
+			const updateTableMock2 = mockDb
+				.updateTable.chain("DataLog")
+				.where.chain("logId", "=", 2)
+				.execute;
+			
+			await syncBlockchain(mockDb);
+			
+			expect(updateTableMock1).toHaveBeenCalled();
+			expect(updateTableMock2).toHaveBeenCalled();
+		});
 	});
 });

@@ -11,9 +11,6 @@ describe("setQuestionnaireColumns", () => {
 			saveMessage: vi.fn(() => Promise.resolve(["someSignature"]))
 		})),
 	}));
-	vi.mock("../../../src/backend/actions/compressAndEncrypt.ts", () => ({
-		compressAndEncrypt: vi.fn(() => "encrypted"),
-	}));
 	
 	beforeEach(() => {
 		mockDb.resetMocks();
