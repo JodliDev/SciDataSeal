@@ -1,1 +1,2 @@
-Initial version
+- Save and confirm via Scheduler and speedup endpoints
+- Bundle data in blockchain that were received between blockchain syncs (the intervall can be changed via [blockchainSyncIntervalMinutes])
