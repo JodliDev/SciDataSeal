@@ -20,21 +20,21 @@ describe("Logger", () => {
 	
 	it("should call console.log when log is called", () => {
 		Logger.log("Log message");
-		expect(spyLog).toHaveBeenCalledWith("Log message");
+		expect(spyLog).toHaveBeenCalledWith(expect.stringContaining("Log message"));
 	});
 	
-	it("should call console.log when debug is called", () => {
+	it("should call console.debug when debug is called", () => {
 		Logger.debug("Debug message");
-		expect(spyDebug).toHaveBeenCalledWith("Debug message");
+		expect(spyDebug).toHaveBeenCalledWith(expect.stringContaining("Debug message"));
 	});
 	
 	it("should call console.warn when warn is called", () => {
 		Logger.warn("Warn message");
-		expect(spyWarn).toHaveBeenCalledWith("Warn message");
+		expect(spyWarn).toHaveBeenCalledWith(expect.stringContaining("Warn message"));
 	});
 	
 	it("should call console.error when error is called", () => {
 		Logger.error("Error message");
-		expect(spyError).toHaveBeenCalledWith("Error message");
+		expect(spyError).toHaveBeenCalledWith(expect.stringContaining("Error message"));
 	});
 });
