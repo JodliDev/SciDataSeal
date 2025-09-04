@@ -27,6 +27,7 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@v1.3.1
       
       - name: Check if release exists
+        id: check-release-exists
         uses: f2calv/gha-check-release-exists@v2
         with:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
