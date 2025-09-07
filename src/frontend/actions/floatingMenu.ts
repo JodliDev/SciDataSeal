@@ -185,7 +185,7 @@ class FloatingMenuClass {
 				return {
 					onmouseenter: (event: MouseEvent) => {
 						(event as MithrilEvent).redraw = false;
-						this.createDropdown(event)
+						this.createDropdown(event);
 					},
 					onmouseleave: (event: MouseEvent) => {
 						(event as MithrilEvent).redraw = false;
@@ -196,7 +196,12 @@ class FloatingMenuClass {
 				return {
 					onmouseenter: (event: MouseEvent) => {
 						(event as MithrilEvent).redraw = false;
-						this.createDropdown(event)
+						this.createDropdown(event);
+						if(!this.view) {
+							return;
+						}
+						this.view.style.left = `${event.clientX + 10}px`;
+						this.view.style.top = `${event.clientY + 10}px`;
 					},
 					onmouseleave: (event: MouseEvent) => {
 						(event as MithrilEvent).redraw = false;
@@ -204,8 +209,9 @@ class FloatingMenuClass {
 					},
 					onmousemove: (event: MouseEvent) => {
 						(event as MithrilEvent).redraw = false;
-						if(!this.view)
+						if(!this.view) {
 							return;
+						}
 						this.view.style.right = "unset";
 						this.view.style.bottom = "unset";
 						this.view.style.left = `${event.clientX + 10}px`;
