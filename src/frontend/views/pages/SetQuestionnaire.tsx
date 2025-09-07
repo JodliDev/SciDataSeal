@@ -4,7 +4,7 @@ import getData from "../../actions/getData.ts";
 import {Lang} from "../../singleton/Lang.ts";
 import SetQuestionnaireInterface from "../../../shared/data/SetQuestionnaireInterface.ts";
 import {SiteTools} from "../../singleton/SiteTools.ts";
-import Form from "../widgets/Form.tsx";
+import Form from "../structures/Form.tsx";
 import GetNewDenotation from "../../../shared/data/GetNewDenotation.ts";
 import {tooltip} from "../../actions/floatingMenu.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
@@ -12,7 +12,7 @@ import listEntries from "../../actions/listEntries.ts";
 import getEntry from "../../actions/getEntry.ts";
 import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
 import generateStringDenotation, {MAX_DENOTATION_NUMBER} from "../../../shared/actions/generateStringDenotation.ts";
-import WarnIcon from "../widgets/WarnIcon.tsx";
+import WarnIcon from "../structures/WarnIcon.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {

@@ -1,8 +1,8 @@
 import {describe, it, expect} from "vitest";
 import {correctType, renderVNode} from "../../testRender.ts";
-import FeedbackContent from "../../../../src/frontend/views/widgets/FeedbackContent.tsx";
-import {FeedbackCallBack} from "../../../../src/frontend/views/widgets/FeedbackIcon.tsx";
-import cssLoadingSpinner from "../../../../src/frontend/views/widgets/LoadingSpinner.module.css";
+import FeedbackContent from "../../../../src/frontend/views/structures/FeedbackContent.tsx";
+import {FeedbackCallBack} from "../../../../src/frontend/views/structures/FeedbackIcon.tsx";
+import cssLoadingSpinner from "../../../../src/frontend/views/structures/LoadingSpinner.module.css";
 import m from "mithril";
 
 describe("FeedbackContent", () => {

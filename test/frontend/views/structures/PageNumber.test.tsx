@@ -1,6 +1,6 @@
 import {describe, it, vi, expect} from "vitest";
 import {renderComponent} from "../../testRender.ts";
-import PageNumbers from "../../../../src/frontend/views/widgets/PageNumbers.tsx";
+import PageNumbers from "../../../../src/frontend/views/structures/PageNumbers.tsx";
 import {PAGE_SIZE} from "../../../../src/shared/definitions/Constants.ts";
 import {wait} from "../../../convenience.ts";
 

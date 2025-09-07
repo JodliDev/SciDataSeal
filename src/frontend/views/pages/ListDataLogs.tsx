@@ -1,13 +1,13 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
-import ListEntries from "../widgets/ListEntries.tsx";
+import ListEntries from "../structures/ListEntries.tsx";
 import css from "./ListDataLogs.module.css";
 import getEntry from "../../actions/getEntry.ts";
 import getBlockchainSignatureUrl from "../../../shared/actions/getBlockchainSignatureUrl.ts";
-import Icon from "../widgets/Icon.tsx";
+import Icon from "../structures/Icon.tsx";
 import floatingMenu, {tooltip} from "../../actions/floatingMenu.ts";
-import {Btn} from "../widgets/Btn.tsx";
+import {Btn} from "../structures/Btn.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async query => {

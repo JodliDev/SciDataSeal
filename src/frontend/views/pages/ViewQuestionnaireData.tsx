@@ -1,8 +1,8 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
-import Form from "../widgets/Form.tsx";
-import FeedbackIcon, {FeedbackCallBack} from "../widgets/FeedbackIcon.tsx";
+import Form from "../structures/Form.tsx";
+import FeedbackIcon, {FeedbackCallBack} from "../structures/FeedbackIcon.tsx";
 import css from "./ViewQuestionnaireData.module.css";
 import generateHash from "../../actions/generateHash.ts";
 import createDataBlob from "../../actions/createDataBlob.ts";

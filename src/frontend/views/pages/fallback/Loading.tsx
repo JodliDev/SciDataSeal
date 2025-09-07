@@ -1,5 +1,5 @@
 import m from "mithril";
-import LoadingSpinner from "../../widgets/LoadingSpinner.tsx";
+import LoadingSpinner from "../../structures/LoadingSpinner.tsx";
 import {PageContent} from "../../../PageComponent.ts";
 
 export default function Loading(): PageContent {

@@ -1,8 +1,8 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
-import Form from "../widgets/Form.tsx";
+import Form from "../structures/Form.tsx";
 import {Lang} from "../../singleton/Lang.ts";
-import { Btn } from "../widgets/Btn.tsx";
+import { Btn } from "../structures/Btn.tsx";
 import bindValueToInput from "../../actions/bindValueToInput.ts";
 import {SetQuestionnaireColumnsInterface} from "../../../shared/data/SetQuestionnaireColumnsInterface.ts";
 import getEntry from "../../actions/getEntry.ts";

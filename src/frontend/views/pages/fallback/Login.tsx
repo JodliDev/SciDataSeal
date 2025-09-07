@@ -1,6 +1,6 @@
 import m from "mithril";
 import LoginInterface from "../../../../shared/data/LoginInterface.ts";
-import Form from "../../widgets/Form.tsx";
+import Form from "../../structures/Form.tsx";
 import {SiteTools} from "../../../singleton/SiteTools.ts";
 import {Lang} from "../../../singleton/Lang.ts";
 import {PageContent} from "../../../PageComponent.ts";

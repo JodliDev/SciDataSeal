@@ -4,7 +4,7 @@ import {wait} from "../../../convenience.ts";
 import postData from "../../../../src/frontend/actions/postData.ts";
 import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
-import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
+import cssButton from "../../../../src/frontend/views/structures/Btn.module.css";
 import SetStudy from "../../../../src/frontend/views/pages/SetStudy.tsx";
 import listEntries from "../../../../src/frontend/actions/listEntries.ts";
 

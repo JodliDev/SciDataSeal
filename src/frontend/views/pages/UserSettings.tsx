@@ -1,7 +1,7 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
-import Form from "../widgets/Form.tsx";
+import Form from "../structures/Form.tsx";
 import UserSettingsInterface from "../../../shared/data/UserSettingsInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols

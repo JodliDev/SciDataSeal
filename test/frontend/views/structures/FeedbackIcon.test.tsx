@@ -1,7 +1,7 @@
 import {describe, it, vi, expect} from "vitest";
-import FeedbackIcon, {FeedbackCallBack} from "../../../../src/frontend/views/widgets/FeedbackIcon.tsx";
-import cssFeedbackIcon from "../../../../src/frontend/views/widgets/FeedbackIcon.module.css";
-import cssLoadingSpinner from "../../../../src/frontend/views/widgets/LoadingSpinner.module.css";
+import FeedbackIcon, {FeedbackCallBack} from "../../../../src/frontend/views/structures/FeedbackIcon.tsx";
+import cssFeedbackIcon from "../../../../src/frontend/views/structures/FeedbackIcon.module.css";
+import cssLoadingSpinner from "../../../../src/frontend/views/structures/LoadingSpinner.module.css";
 import {renderComponent} from "../../testRender.ts";
 
 describe("FeedbackIcon", () => {

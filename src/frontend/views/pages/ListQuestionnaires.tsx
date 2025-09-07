@@ -1,7 +1,7 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
-import ListEntries, {buttonEntry} from "../widgets/ListEntries.tsx";
+import ListEntries, {buttonEntry} from "../structures/ListEntries.tsx";
 import getEntry from "../../actions/getEntry.ts";
 
 // noinspection JSUnusedGlobalSymbols

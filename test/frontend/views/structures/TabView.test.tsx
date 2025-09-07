@@ -1,7 +1,7 @@
 import {describe, it, vi, expect} from "vitest";
 import {renderComponent} from "../../testRender.ts";
-import TabView from "../../../../src/frontend/views/widgets/TabView.tsx";
-import css from "../../../../src/frontend/views/widgets/TabView.module.css";
+import TabView from "../../../../src/frontend/views/structures/TabView.tsx";
+import css from "../../../../src/frontend/views/structures/TabView.module.css";
 
 describe("TabView", () => {
 	

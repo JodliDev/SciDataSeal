@@ -1,5 +1,5 @@
 import {describe, it, vi, expect, afterEach, beforeAll} from "vitest";
-import A from "../../../../src/frontend/views/widgets/A.tsx";
+import A from "../../../../src/frontend/views/structures/A.tsx";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
 import {renderComponent} from "../../testRender.ts";
 

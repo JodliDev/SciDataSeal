@@ -2,7 +2,7 @@ import {describe, it, vi, expect, afterEach, afterAll} from "vitest";
 import {renderPage} from "../../testRender.ts";
 import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
 import ConnectAppHelp from "../../../../src/frontend/views/pages/ConnectAppHelp.tsx";
-import cssTabBar from "../../../../src/frontend/views/widgets/TabView.module.css";
+import cssTabBar from "../../../../src/frontend/views/structures/TabView.module.css";
 import getEntry from "../../../../src/frontend/actions/getEntry.ts";
 import {wait} from "../../../convenience.ts";
 import css from "../../../../src/frontend/views/pages/ConnectAppHelp.module.css";

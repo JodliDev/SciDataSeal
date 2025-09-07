@@ -2,7 +2,7 @@ import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import SetBlockchainInterface from "../../../shared/data/SetBlockchainInterface.ts";
 import {Lang} from "../../singleton/Lang.ts";
-import Form from "../widgets/Form.tsx";
+import Form from "../structures/Form.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import {tooltip} from "../../actions/floatingMenu.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";

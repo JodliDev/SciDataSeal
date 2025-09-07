@@ -1,6 +1,6 @@
 import {describe, it, vi, expect, afterAll} from "vitest";
 import {renderComponent} from "../../testRender.ts";
-import ListEntries, {buttonEntry} from "../../../../src/frontend/views/widgets/ListEntries.tsx";
+import ListEntries, {buttonEntry} from "../../../../src/frontend/views/structures/ListEntries.tsx";
 import {wait} from "../../../convenience.ts";
 import {ListDefinitions} from "../../../../src/shared/data/ListEntriesInterface.ts";
 import {listEntriesWithPages} from "../../../../src/frontend/actions/listEntries.ts";

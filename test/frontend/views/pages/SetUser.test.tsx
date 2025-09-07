@@ -5,7 +5,7 @@ import postData from "../../../../src/frontend/actions/postData.ts";
 import {Lang} from "../../../../src/frontend/singleton/Lang.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
 import SetUser from "../../../../src/frontend/views/pages/SetUser.tsx";
-import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
+import cssButton from "../../../../src/frontend/views/structures/Btn.module.css";
 
 describe("SetUser.tsx", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({

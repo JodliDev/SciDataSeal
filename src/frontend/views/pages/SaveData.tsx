@@ -1,6 +1,6 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
-import Form from "../widgets/Form.tsx";
+import Form from "../structures/Form.tsx";
 import {Lang} from "../../singleton/Lang.ts";
 import {SaveDataInterface} from "../../../shared/data/SaveDataInterface.ts";
 import getEntry from "../../actions/getEntry.ts";

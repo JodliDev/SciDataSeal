@@ -1,9 +1,9 @@
 import {PrivatePage} from "../../PageComponent.ts";
 import m from "mithril";
 import {Lang} from "../../singleton/Lang.ts";
-import A from "../widgets/A.tsx";
+import A from "../structures/A.tsx";
 import {tooltip} from "../../actions/floatingMenu.ts";
-import Icon from "../widgets/Icon.tsx";
+import Icon from "../structures/Icon.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 
 // noinspection JSUnusedGlobalSymbols

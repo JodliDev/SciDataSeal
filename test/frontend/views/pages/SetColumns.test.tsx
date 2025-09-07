@@ -1,7 +1,7 @@
 import {describe, it, vi, expect, afterAll, afterEach} from "vitest";
 import {renderPage} from "../../testRender.ts";
 import SetColumns from "../../../../src/frontend/views/pages/SetColumns.tsx";
-import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
+import cssButton from "../../../../src/frontend/views/structures/Btn.module.css";
 import {wait} from "../../../convenience.ts";
 import postData from "../../../../src/frontend/actions/postData.ts";
 

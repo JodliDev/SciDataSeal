@@ -1,5 +1,5 @@
 import m from "mithril";
-import Form from "../../widgets/Form.tsx";
+import Form from "../../structures/Form.tsx";
 import InitializeInterface from "../../../../shared/data/InitializeInterface.ts";
 import {Lang} from "../../../singleton/Lang.ts";
 import {PageContent} from "../../../PageComponent.ts";

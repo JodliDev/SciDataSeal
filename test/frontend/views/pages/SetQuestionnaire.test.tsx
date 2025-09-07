@@ -3,7 +3,7 @@ import {RenderModel, renderPage} from "../../testRender.ts";
 import {wait} from "../../../convenience.ts";
 import postData from "../../../../src/frontend/actions/postData.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
-import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
+import cssButton from "../../../../src/frontend/views/structures/Btn.module.css";
 import SetQuestionnaire from "../../../../src/frontend/views/pages/SetQuestionnaire.tsx";
 import getData from "../../../../src/frontend/actions/getData.ts";
 

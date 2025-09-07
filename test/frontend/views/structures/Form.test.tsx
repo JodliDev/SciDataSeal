@@ -1,10 +1,10 @@
 import {describe, it, vi, expect, afterAll, afterEach, beforeEach} from "vitest";
 import m from "mithril";
-import Form, {FormOptions} from "../../../../src/frontend/views/widgets/Form.tsx";
+import Form, {FormOptions} from "../../../../src/frontend/views/structures/Form.tsx";
 import postData from "../../../../src/frontend/actions/postData.ts";
 import {correctType, renderVNode} from "../../testRender.ts";
-import cssFeedbackIcon from "../../../../src/frontend/views/widgets/FeedbackIcon.module.css";
-import cssButton from "../../../../src/frontend/views/widgets/Btn.module.css";
+import cssFeedbackIcon from "../../../../src/frontend/views/structures/FeedbackIcon.module.css";
+import cssButton from "../../../../src/frontend/views/structures/Btn.module.css";
 import {wait} from "../../../convenience.ts";
 import CanceledByUserException from "../../../../src/shared/exceptions/CanceledByUserException.ts";
 
