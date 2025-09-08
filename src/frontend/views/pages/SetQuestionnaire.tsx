@@ -59,6 +59,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	let disableAccountSwitch = false;
 	
 	if(!id) {
+		questionnaire.blockchainAccountId = study?.blockchainAccountId;
 		questionnaire.blockchainDenotation = await getDenotation(0);
 		questionnaire.apiPassword = study?.apiPassword;
 		questionnaire.dataKey = questionnaire.apiPassword
