@@ -3,6 +3,8 @@ import request from "supertest";
 import express from "express";
 import {mockKysely} from "../../convenience.ts";
 import setBlockchainAccount from "../../../src/backend/routes/setBlockchainAccount.ts";
+import {WalletData} from "../../../src/backend/blockchains/BlockchainInterface.ts";
+import getBlockchain from "../../../src/backend/actions/getBlockchain.ts";
 
 
 describe("setBlockchainAccount", () => {
@@ -10,7 +12,13 @@ describe("setBlockchainAccount", () => {
 		getLoggedInSessionData: vi.fn().mockResolvedValue({userId: 123})
 	}));
 	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
-		default: vi.fn().mockReturnValue({getPublicKey: () => "test-public-key"}),
+		default: vi.fn().mockReturnValue({
+			createWallet: () => ({
+				mnemonic: "mnemonic",
+				publicKey: "publicKey",
+				privateKey: "privateKey"
+			} satisfies WalletData)
+		}),
 	}));
 	
 	afterEach(() => {
@@ -35,32 +43,111 @@ describe("setBlockchainAccount", () => {
 		expect(response.body.error).toHaveProperty("message", "errorMissingData");
 	});
 	
-	it("should return error for invalid blockchainName", async() => {
+	it("should return error when blockchainName is invalid", async() => {
 		const response = await request(app)
 			.post("/setBlockchainAccount")
 			.send({
 				blockchainName: "Block%chain",
 				blockchainType: "solana",
-				privateKey: "test-private-key",
+				mnemonic: "test",
 			});
 		
-		expect(response.ok).toBe(false);
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
 		expect(response.body.error).toHaveProperty("message", "errorFaultyData");
 		expect(response.body.error).toHaveProperty("values", ["blockchainName"]);
 	});
 	
-	it("should return error for invalid privateKey", async() => {
+	it("should return error when creating a new entry and blockchainType is missing", async() => {
+		const response = await request(app)
+			.post("/setBlockchainAccount")
+			.send({
+				blockchainName: "Blockchain",
+				mnemonic: "test",
+			});
+		
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
+		expect(response.body.error).toHaveProperty("message", "errorMissingData");
+	});
+	
+	it("should return error when creating a new entry and blockchainType is invalid", async() => {
+		const response = await request(app)
+			.post("/setBlockchainAccount")
+			.send({
+				blockchainName: "Blockchain",
+				blockchainType: "Faulty%",
+				mnemonic: "test",
+			});
+		
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
+		expect(response.body.error).toHaveProperty("message", "errorFaultyData");
+		expect(response.body.error).toHaveProperty("values", ["blockchainType"]);
+	});
+	
+	it("should throw an error when useExisting is true but no mnemonic was provided", async() => {
 		const response = await request(app)
 			.post("/setBlockchainAccount")
 			.send({
 				blockchainName: "Test Blockchain",
 				blockchainType: "solana",
-				privateKey: "Faulty%key",
+				useExisting: "1",
+			});
+		
+		expect(response.ok, JSON.stringify(response.body)).toBe(false);
+		expect(response.body.error).toHaveProperty("message", "errorMissingData");
+	});
+	
+	it("should use existing mnemonic when useExisting is true", async() => {
+		const createWalletMock = vi.fn();
+		vi.mocked(getBlockchain).mockReturnValueOnce({
+			createWallet: createWalletMock,
+			saveMessage: vi.fn(),
+			isConfirmed: vi.fn(),
+			listData: vi.fn()
+		});
+		await request(app)
+			.post("/setBlockchainAccount")
+			.send({
+				blockchainName: "Test Blockchain",
+				blockchainType: "solana",
+				useExisting: "1",
+				mnemonic: "mnemonic",
+			});
+		
+		expect(createWalletMock).toHaveBeenCalledWith("mnemonic");
+	});
+	
+	it("should create new wallet when useExisting is false", async() => {
+		const createWalletMock = vi.fn();
+		vi.mocked(getBlockchain).mockReturnValueOnce({
+			createWallet: createWalletMock,
+			saveMessage: vi.fn(),
+			isConfirmed: vi.fn(),
+			listData: vi.fn()
+		})
+		await request(app)
+			.post("/setBlockchainAccount")
+			.send({
+				blockchainName: "Test Blockchain",
+				blockchainType: "solana",
+				mnemonic: "shouldNotBeUsed",
+			});
+		
+		expect(createWalletMock).toHaveBeenCalledWith();
+	});
+	
+	it("should return error when mnemonic is invalid", async() => {
+		const response = await request(app)
+			.post("/setBlockchainAccount")
+			.send({
+				blockchainName: "Test Blockchain",
+				blockchainType: "solana",
+				useExisting: "1",
+				mnemonic: "Faulty%key",
 			});
 		
 		expect(response.ok).toBe(false);
 		expect(response.body.error).toHaveProperty("message", "errorFaultyData");
-		expect(response.body.error).toHaveProperty("values", ["privateKey"]);
+		expect(response.body.error).toHaveProperty("values", ["mnemonic"]);
 	});
 	
 	it("should update an existing blockchain account successfully", async() => {
@@ -68,8 +155,6 @@ describe("setBlockchainAccount", () => {
 		const sendData = {
 			id: 111,
 			blockchainName: "Updated Blockchain",
-			blockchainType: "solanaTest",
-			privateKey: "a".repeat(64),
 		}
 		
 		mockDb.selectFrom.chain("BlockchainAccount")
@@ -79,9 +164,6 @@ describe("setBlockchainAccount", () => {
 		const updateTableMock = mockDb.updateTable.chain("BlockchainAccount")
 			.set.chain({
 				blockchainName: sendData.blockchainName,
-				blockchainType: sendData.blockchainType,
-				privateKey: sendData.privateKey,
-				publicKey: "test-public-key",
 			})
 			.where.chain("blockchainAccountId", "=", 111)
 			.execute;
@@ -100,15 +182,15 @@ describe("setBlockchainAccount", () => {
 		const sendData = {
 			blockchainName: "New Blockchain",
 			blockchainType: "solana",
-			privateKey: "new-private-key",
+			mnemonic: "mnemonic",
 		}
 		
 		const insertIntoMock = mockDb.insertInto.chain("BlockchainAccount")
 			.values.chain({
 				blockchainName: sendData.blockchainName,
 				blockchainType: sendData.blockchainType,
-				privateKey: sendData.privateKey,
-				publicKey: "test-public-key",
+				privateKey: "privateKey",
+				publicKey: "publicKey",
 				highestDenotation: 0,
 			})
 			.executeTakeFirst.mockResolvedValue({insertId: newId});
@@ -117,7 +199,7 @@ describe("setBlockchainAccount", () => {
 			.post("/setBlockchainAccount")
 			.send(sendData);
 		
-		expect(response.ok).toBe(true);
+		expect(response.ok, JSON.stringify(response.body)).toBe(true);
 		expect(insertIntoMock).toHaveBeenCalled();
 		expect(response.body.data).toHaveProperty("blockchainAccountId", newId);
 	});

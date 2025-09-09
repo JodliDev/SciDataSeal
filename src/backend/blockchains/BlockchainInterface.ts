@@ -1,14 +1,20 @@
+export interface WalletData {
+	mnemonic: string;
+	privateKey: string;
+	publicKey: string;
+}
 /**
  * Interface representing a blockchain interaction layer.
  */
 export default interface BlockchainInterface {
+	
 	/**
-	 * Retrieves the public key associated with the provided private key.
+	 * Creates a new wallet or initializes a wallet from the given mnemonic.
 	 *
-	 * @param privateKey - The private key used to derive the public key.
-	 * @return A promise that resolves to the public key as a string.
+	 * @param mnemonic - Optional mnemonic phrase to restore an existing wallet. If not provided, a new wallet will be created.
+	 * @return A promise that resolves to the wallet data.
 	 */
-	getPublicKey(privateKey: string): Promise<string>;
+	createWallet(mnemonic?: string): Promise<WalletData>;
 	
 	/**
 	 * Saves a message based on the provided parameters and returns an array of signature ids.

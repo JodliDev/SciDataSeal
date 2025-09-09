@@ -6,9 +6,11 @@ export default interface SetBlockchainInterface extends PostDataStructureInterfa
 		id?: number;
 		blockchainName: string;
 		blockchainType: string;
-		privateKey: string;
+		useExisting?: boolean;
+		mnemonic?: string;
 	}
 	Response: {
+		mnemonic?: string;
 		blockchainAccountId: number;
 	}
 }

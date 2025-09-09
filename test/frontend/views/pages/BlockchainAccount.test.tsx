@@ -50,27 +50,24 @@ describe("BlockchainAccount", async () => {
 			return component;
 		}
 		
-		it("should switch page when data was sent successfully", async () => {
-			let calledSwitchPage = false;
-			SiteTools.init({}, (page) => {
-				expect(page).toBe("Home");
-				calledSwitchPage = true;
+		it("should show mnemonic when data was sent successfully", async () => {
+			vi.mocked(postData).mockResolvedValueOnce({
+				blockchainAccountId: 123,
+				mnemonic: "mnemonic",
 			});
-			await createAndSubmitForm();
-			
-			expect(postData).toHaveBeenCalled();
-			expect(calledSwitchPage).toBe(true);
+			const component = await createAndSubmitForm();
+			expect(component.dom.querySelector("form")).toBeNull();
+			expect(component.dom.querySelector(".inputLike")?.innerHTML).toBe("mnemonic");
 		});
 		
-		it("should not switch page when same account was changed", async () => {
-			let calledSwitchPage = false;
-			SiteTools.init({}, () => {
-				calledSwitchPage = true;
+		it("should not show mnemonic when same account was changed", async () => {
+			vi.mocked(postData).mockResolvedValueOnce({
+				blockchainAccountId: 123
 			});
-			await createAndSubmitForm(123);
 			
-			expect(postData).toHaveBeenCalled();
-			expect(calledSwitchPage).toBe(false);
+			const component = await createAndSubmitForm(123);
+			
+			expect(component.dom.querySelector("form")).not.toBeNull();
 		});
 	});
 	

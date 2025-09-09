@@ -5,6 +5,7 @@ import {randomBytes} from "crypto";
 import generateStringDenotation from "../../../src/shared/actions/generateStringDenotation.ts";
 import TranslatedException from "../../../src/shared/exceptions/TranslatedException.ts";
 import Solana from "../../../src/backend/blockchains/Solana.ts";
+import {generateMnemonic} from "bip39";
 
 describe("Solana", () => {
 	const privateKey = "a".repeat(64);
@@ -26,6 +27,7 @@ describe("Solana", () => {
 		vi.mock("@solana/web3.js", () => ({
 			Keypair: {
 				fromSecretKey: vi.fn(),
+				fromSeed: vi.fn()
 			},
 			PublicKey: vi.fn(),
 			Connection: vi.fn(),
@@ -43,22 +45,48 @@ describe("Solana", () => {
 		
 		vi.mocked(Connection).mockReturnValue(mockConnection as unknown as Connection);
 	});
+	vi.mock("bip39", () => ({
+		generateMnemonic: vi.fn(() => "mockedMnemonic"),
+		mnemonicToSeedSync: vi.fn(() => Buffer.from("privateKey"))
+	}))
 	afterAll(() => {
 		vi.restoreAllMocks();
 	});
 	
-	describe("getPublicKey", () => {
+	describe("createWallet", () => {
 		afterEach(() => {
 			vi.resetAllMocks();
 		});
 		
-		it("should return a valid public key string for a given private key", async() => {
-			vi.mocked(Keypair.fromSecretKey).mockReturnValue({publicKey: {toString: () => publicKey}} as Keypair);
+		it("should return a new mnemonic if none was provided", async() => {
+			vi.mocked(Keypair.fromSeed).mockReturnValue({
+				secretKey: Buffer.from(privateKey, "hex"),
+				publicKey: {toBase58: () => publicKey}
+			} as any);
 			const instance = new Solana();
-			const result = await instance.getPublicKey(privateKey);
+			const result = await instance.createWallet();
 			
-			expect(result).toBe(publicKey);
-			expect(Keypair.fromSecretKey).toBeCalledWith(Buffer.from(privateKey, "hex"));
+			expect(result).toEqual({
+				mnemonic: "mockedMnemonic",
+				privateKey: privateKey,
+				publicKey: publicKey,
+			});
+		});
+		
+		it("should reuse mnemonic if one was provided", async() => {
+			vi.mocked(Keypair.fromSeed).mockReturnValue({
+				secretKey: Buffer.from(privateKey, "hex"),
+				publicKey: {toBase58: () => publicKey}
+			} as any);
+			const instance = new Solana();
+			const result = await instance.createWallet("providedMnemonic");
+			
+			expect(result).toEqual({
+				mnemonic: "providedMnemonic",
+				privateKey: privateKey,
+				publicKey: publicKey,
+			});
+			expect(generateMnemonic).not.toHaveBeenCalled();
 		});
 	});
 	

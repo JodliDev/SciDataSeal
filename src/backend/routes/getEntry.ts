@@ -26,7 +26,7 @@ export default function getEntry(db: DbType): express.Router {
 						throw new UnauthorizedException();
 					}
 					return await db.selectFrom("BlockchainAccount")
-						.select(["blockchainAccountId", "blockchainName", "blockchainType", "privateKey", "publicKey", "highestDenotation"])
+						.select(["blockchainAccountId", "blockchainName", "blockchainType", "publicKey", "highestDenotation"])
 						.where("blockchainAccountId", "=", id)
 						.limit(1)
 						.executeTakeFirst();

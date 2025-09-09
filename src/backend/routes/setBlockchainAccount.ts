@@ -6,6 +6,7 @@ import isValidBackendString from "../../shared/actions/isValidBackendString.ts";
 import getBlockchain from "../actions/getBlockchain.ts";
 import SetBlockchainInterface from "../../shared/data/SetBlockchainInterface.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
+import {WalletData} from "../blockchains/BlockchainInterface.ts";
 
 /**
  * Creates a POST route for creating a blockchain account or changing an existing one (if an id was provided)
@@ -16,17 +17,13 @@ export default function setBlockchainAccount(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addPostRoute<SetBlockchainInterface>("/setBlockchainAccount", router, async (data) => {
-		if(!data.blockchainName || !data.blockchainType || !data.privateKey)
+		if(!data.blockchainName) {
 			throw new TranslatedException("errorMissingData");
+		}
 		
-		if(!isValidBackendString(data.blockchainName))
+		if(!isValidBackendString(data.blockchainName)) {
 			throw new TranslatedException("errorFaultyData", "blockchainName");
-		if(!isValidBackendString(data.blockchainType))
-			throw new TranslatedException("errorFaultyData", "blockchainType");
-		if(!isValidBackendString(data.privateKey))
-			throw new TranslatedException("errorFaultyData", "privateKey");
-		
-		const blockChain = getBlockchain(data.blockchainType);
+		}
 		
 		if(data.id) {
 			const account = await db.selectFrom("BlockchainAccount")
@@ -34,16 +31,14 @@ export default function setBlockchainAccount(db: DbType): express.Router {
 				.where("blockchainAccountId", "=", data.id)
 				.executeTakeFirst();
 			
-			if(!account)
+			if(!account) {
 				throw new UnauthorizedException();
+			}
 			
 			await db
 				.updateTable("BlockchainAccount")
 				.set({
 					blockchainName: data.blockchainName,
-					blockchainType: data.blockchainType,
-					privateKey: data.privateKey,
-					publicKey: await blockChain.getPublicKey(data.privateKey),
 				})
 				.where("blockchainAccountId", "=", data.id)
 				.execute();
@@ -53,19 +48,43 @@ export default function setBlockchainAccount(db: DbType): express.Router {
 			};
 		}
 		else {
+			if(!data.blockchainType) {
+				throw new TranslatedException("errorMissingData");
+			}
+			if(!isValidBackendString(data.blockchainType)) {
+				throw new TranslatedException("errorFaultyData", "blockchainType");
+			}
+			
+			const blockChain = getBlockchain(data.blockchainType);
+			
+			let wallet: WalletData;
+			if(data.useExisting) {
+				if(!data.mnemonic) {
+					throw new TranslatedException("errorMissingData");
+				}
+				if(!isValidBackendString(data.mnemonic)) {
+					throw new TranslatedException("errorFaultyData", "mnemonic");
+				}
+				wallet = await blockChain.createWallet(data.mnemonic);
+			}
+			else {
+				wallet = await blockChain.createWallet();
+			}
+			
 			const insert = await db
 				.insertInto("BlockchainAccount")
 				.values({
 					blockchainName: data.blockchainName,
 					blockchainType: data.blockchainType,
-					privateKey: data.privateKey,
-					publicKey: await blockChain.getPublicKey(data.privateKey),
+					privateKey: wallet.privateKey,
+					publicKey: wallet.publicKey,
 					highestDenotation: 0,
 				})
 				.executeTakeFirst();
 			
 			return {
-				blockchainAccountId: Number(insert.insertId)
+				blockchainAccountId: Number(insert.insertId),
+				mnemonic: wallet.mnemonic,
 			};
 		}
 	});

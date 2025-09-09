@@ -1,9 +1,10 @@
-import BlockchainInterface, {LineData} from "./BlockchainInterface.ts";
+import BlockchainInterface, {LineData, WalletData} from "./BlockchainInterface.ts";
 import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction, Transaction} from "@solana/web3.js";
 import {createMemoInstruction} from "@solana/spl-memo";
 import generateStringDenotation from "../../shared/actions/generateStringDenotation.ts";
 import TranslatedException from "../../shared/exceptions/TranslatedException.ts";
 import {compressAndEncrypt, decompressAndDecrypt} from "../actions/compressAndEncrypt.ts";
+import {generateMnemonic, mnemonicToSeedSync} from "bip39";
 
 const DATA_MAX_BYTE_LENGTH = 560;
 const CONTINUE_TAG = "~";
@@ -23,6 +24,22 @@ export default class Solana implements BlockchainInterface {
 	 */
 	protected getUrl(): string {
 		return clusterApiUrl();
+	}
+	
+	public async createWallet(mnemonic?: string): Promise<WalletData> {
+		if(!mnemonic) {
+			mnemonic = generateMnemonic();
+		}
+		const seed = mnemonicToSeedSync(mnemonic, "");
+		const privateKeyBytes = seed.subarray(0, 32);
+		
+		const keypair = Keypair.fromSeed(new Uint8Array(privateKeyBytes))
+		
+		return {
+			mnemonic: mnemonic,
+			privateKey:  Buffer.from(keypair.secretKey).toString("hex"),
+			publicKey: keypair.publicKey.toBase58(),
+		};
 	}
 	
 	/**
@@ -81,10 +98,6 @@ export default class Solana implements BlockchainInterface {
 	}
 	
 	public async saveMessage(privateKey: string, intDenotation: number, data: string[], isHeader: boolean, dataKey: string): Promise<string[]> {
-		if(!data) {
-			throw new TranslatedException("errorMissingData");
-		}
-		
 		const dataString = this.getDataString(data, isHeader, dataKey);
 		
 		const denotation = generateStringDenotation(intDenotation);
@@ -165,10 +178,5 @@ export default class Solana implements BlockchainInterface {
 		}
 		
 		return output;
-	}
-	
-	public async getPublicKey(privateKey: string): Promise<string> {
-		const keyPair = this.getKeyPair(privateKey);
-		return keyPair.publicKey.toString();
 	}
 }

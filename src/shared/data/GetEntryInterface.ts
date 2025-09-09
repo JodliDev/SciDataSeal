@@ -6,7 +6,6 @@ export interface GetDefinitions {
 			blockchainAccountId: number;
 			blockchainName: string;
 			blockchainType: string;
-			privateKey: string;
 			publicKey: string;
 			highestDenotation: number;
 		}
