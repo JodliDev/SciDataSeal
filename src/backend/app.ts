@@ -68,10 +68,10 @@ async function init() {
 		webServer.use("/api", initialize(db));
 	webServer.use("/api", saveData(db));
 	webServer.use("/api", setQuestionnaireColumns(db));
+	webServer.use("/api", setQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, listEntries(db));
 	webServer.use("/api", authenticateMiddleware, getEntry(db));
 	webServer.use("/api", authenticateMiddleware, deleteEntry(db));
-	webServer.use("/api", authenticateMiddleware, setQuestionnaire(db));
 	webServer.use("/api", authenticateMiddleware, setStudy(db));
 	webServer.use("/api", authenticateMiddleware, userSettings(db));
 	webServer.use("/api", authenticateMiddleware, getQuestionnaireData());
