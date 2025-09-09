@@ -54,7 +54,7 @@ function ListEntries<T extends keyof ListDefinitions>(vNode: m.Vnode<Attributes<
 				}
 				
 				<FeedbackContent callback={feedback} class="fillSpace selfAlignStretch">
-					<div class={vNode.attrs.direction == "table" ? css.table : `${vNode.attrs.direction} vAlignCenter hAlignCenter wrapContent`}>
+					<div class={vNode.attrs.direction == "table" ? css.table : `${vNode.attrs.direction} vAlignCenter hAlignCenter wrapContent fullLine`}>
 						{list.map(entry => vNode.attrs.drawEntry(entry))}
 					</div>
 				</FeedbackContent>
