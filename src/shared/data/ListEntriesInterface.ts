@@ -29,6 +29,7 @@ export interface ListDefinitions {
 			signatures: string;
 			isHeader: boolean;
 			wasSent: boolean;
+			hasError: string | null;
 			wasConfirmed: boolean;
 		}
 	}

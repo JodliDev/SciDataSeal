@@ -16,7 +16,7 @@ export default async function syncBlockchain(db: DbType): Promise<void> {
 }
 
 async function sendDataToBlockchain(db: DbType): Promise<[number, number]> {
-	const saveLogsAsBundle = async (logs: typeof dataLogsToSend) => {
+	async function saveLogsAsBundle(logs: typeof dataLogsToSend): Promise<boolean> {
 		try {
 			const firstLog = logs[0];
 			const data = logs.map(log => log.data);
@@ -32,6 +32,7 @@ async function sendDataToBlockchain(db: DbType): Promise<[number, number]> {
 						wasSent: true,
 						wasConfirmed: isConfirmed,
 						signatures: signaturesJson,
+						hasError: "",
 						data: ""
 					})
 					.where("logId", "=", log.logId)
@@ -39,15 +40,49 @@ async function sendDataToBlockchain(db: DbType): Promise<[number, number]> {
 			}
 			return true;
 		} catch(e) {
-			Logger.error(`Error while sending data to blockchain (logIds: ${JSON.stringify(logs.map(log => log.logId))}): ${e}`);
+			const msg = e instanceof Error ? e.message : e?.toString() ?? "Unknown error";
+			Logger.error(`Error while sending data to blockchain (logIds: ${JSON.stringify(logs.map(log => log.logId))}): ${msg}`);
+			
+			for(const log of logs) {
+				await db.updateTable("DataLog")
+					.set({
+						hasError: msg,
+					})
+					.where("logId", "=", log.logId)
+					.execute();
+			}
+			
 			return false;
 		}
-	};
+	}
+	async function saveHeaderAndDataLogs(logs: typeof dataLogsToSend) {
+		const split = logs.reduce((acc, log) => {
+			if(log.isHeader) {
+				acc.header.push(log);
+			}
+			else {
+				acc.data.push(log);
+			}
+			return acc;
+		}, {header: [] as typeof dataLogsToSend, data: [] as typeof dataLogsToSend});
+		
+		if(split.header.length) {
+			if(await saveLogsAsBundle(split.header)) {
+				successful += split.header.length;
+			}
+		}
+		if(split.data.length) {
+			if(await saveLogsAsBundle(split.data)) {
+				successful += split.data.length;
+			}
+		}
+	}
+	
 	
 	const dataLogsToSend = await db.selectFrom("DataLog")
 		.innerJoin("Questionnaire", "Questionnaire.questionnaireId", "DataLog.questionnaireId")
 		.innerJoin("BlockchainAccount", "BlockchainAccount.blockchainAccountId", "DataLog.blockchainAccountId")
-		.select(["logId", "data", "isHeader", "dataKey", "blockchainType", "privateKey", "blockchainDenotation", "Questionnaire.questionnaireId as questionnaireId"])
+		.select(["logId", "data", "isHeader", "dataKey", "hasError", "blockchainType", "privateKey", "blockchainDenotation", "Questionnaire.questionnaireId as questionnaireId"])
 		.where("wasSent", "=", false)
 		.execute();
 	
@@ -59,18 +94,23 @@ async function sendDataToBlockchain(db: DbType): Promise<[number, number]> {
 	let successful = 0;
 	for(const questionnaireId in grouped) {
 		const logs = grouped[questionnaireId]!;
-		const headerLogs = logs.filter(log => log.isHeader);
-		const dataLogs = logs.filter(log => !log.isHeader);
 		
-		if(headerLogs.length) {
-			if(await saveLogsAsBundle(headerLogs)) {
-				successful += headerLogs.length;
+		// We save faulty logs separately because they are likely to fail, which will prevent further logs to be saved as well
+		const split = logs.reduce((acc, log) => {
+			if(log.hasError) {
+				acc.withError.push(log);
 			}
+			else {
+				acc.withoutError.push(log);
+			}
+			return acc;
+		}, {withError: [] as typeof dataLogsToSend, withoutError: [] as typeof dataLogsToSend});
+		
+		if(split.withError.length) {
+			await saveHeaderAndDataLogs(split.withError);
 		}
-		if(dataLogs.length) {
-			if(await saveLogsAsBundle(dataLogs)) {
-				successful += dataLogs.length;
-			}
+		if(split.withoutError.length) {
+			await saveHeaderAndDataLogs(split.withoutError);
 		}
 	}
 	
@@ -104,6 +144,7 @@ async function confirmDataInBlockchain(db: DbType): Promise<[number, number]> {
 				await db.updateTable("DataLog")
 					.set({
 						wasConfirmed: wasConfirmed,
+						hasError: "",
 					})
 					.where("logId", "=", log.logId)
 					.execute();
@@ -114,7 +155,15 @@ async function confirmDataInBlockchain(db: DbType): Promise<[number, number]> {
 			}
 			++successful;
 		} catch(e) {
-			Logger.error(`Error while confirming data (logId: ${log.logId}): ${e}`);
+			const msg = e instanceof Error ? e.message : e?.toString() ?? "Unknown error";
+			Logger.error(`Error while confirming data (logId: ${log.logId}): ${msg}`);
+			
+			await db.updateTable("DataLog")
+				.set({
+					hasError: msg,
+				})
+				.where("logId", "=", log.logId)
+				.execute();
 		}
 	}
 	

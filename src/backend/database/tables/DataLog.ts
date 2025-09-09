@@ -15,6 +15,7 @@ export default interface DataLog {
 	isHeader: boolean;
 	wasSent: boolean;
 	wasConfirmed: boolean;
+	hasError: string | null;
 }
 
 @TableClass("DataLog", "logId")
@@ -32,4 +33,5 @@ export class DataLogTable implements Insertable<DataLog> {
 	isHeader = false;
 	wasSent = false;
 	wasConfirmed = false;
+	hasError = null;
 }

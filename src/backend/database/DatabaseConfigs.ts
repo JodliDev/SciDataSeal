@@ -23,7 +23,7 @@ export interface KyselyTables {
  */
 export const SqlMorpheusConfig = {
 	dialect: "Sqlite",
-	version: 19,
+	version: 20,
 	configPath: `${process.cwd()}/config`,
 	tables: [
 		UserTable,

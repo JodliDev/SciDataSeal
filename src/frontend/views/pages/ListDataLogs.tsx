@@ -35,16 +35,23 @@ export default PrivatePage(async query => {
 			drawEntry={(entry) => {
 				const signatures: string[] = JSON.parse(entry.signatures || "[]") ?? [];
 				
+				let icon = <Btn.Empty/>;
+				
+				
+				if(entry.hasError) {
+					icon = <div class="warn" {...tooltip(entry.hasError)}><Icon iconKey="warn"/></div>;
+				}
+				else if(!entry.wasSent) {
+					icon = <div {...tooltip(Lang.get("wasNotSent"))}><Icon iconKey="pending"/></div>;
+				}
+				else if(!entry.wasConfirmed) {
+					icon = <div {...tooltip(Lang.get("wasNotConfirmed"))}><Icon iconKey="wasNotConfirmed"/></div>;
+				}
+				
+				
 				return <div class={`${css.line} ${entry.isHeader ? css.isHeader : ""}`} {...entry.isHeader ? tooltip(Lang.get("columns")) : {}}>
 					<div class={css.cell}>
-						{!entry.wasSent
-							? <div {...tooltip(Lang.get("wasNotSent"))}><Icon iconKey="pending"/></div>
-							: (
-								!entry.wasConfirmed
-									? <div {...tooltip(Lang.get("wasNotConfirmed"))}><Icon iconKey="wasNotConfirmed"/></div>
-									: <Btn.Empty/>
-							)
-						}
+						{icon}
 					</div>
 					<div class={`${css.cell} ${css.date}`}>{(new Date(entry.label)).toLocaleString()}</div>
 					<div class={`${css.cell} ${css.url}`}>
