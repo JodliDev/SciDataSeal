@@ -5,6 +5,7 @@ import FeedbackIcon, {FeedbackCallBack} from "./FeedbackIcon.tsx";
 
 interface Attributes {
 	callback: FeedbackCallBack
+	waitForSuccessDelay?: boolean
 	class?: string
 }
 
@@ -16,7 +17,7 @@ export default TsClosureComponent<Attributes>(() => {
 		view: (vNode) => {
 			const feedback = vNode.attrs.callback;
 			return <div class={`${vNode.attrs.class ?? "vertical hAlignCenter vAlignCenter"}`}>
-				{feedback.isReady()
+				{feedback.isReady(vNode.attrs.waitForSuccessDelay)
 					? vNode.children
 					: <FeedbackIcon callback={feedback}/>
 				}

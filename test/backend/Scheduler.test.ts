@@ -13,7 +13,7 @@ describe("Scheduler", () => {
 		const scheduler = new Scheduler();
 		const mockAction = vi.fn();
 		
-		scheduler.add(10, mockAction); // Schedule with a 10-minute interval
+		scheduler.add("test", 10, mockAction); // Schedule with a 10-minute interval
 		
 		vi.advanceTimersByTime(1); // Schedule calls run() asynchronously, so advance by 1 millisecond
 		expect(mockAction).toHaveBeenCalledTimes(0);
@@ -38,13 +38,13 @@ describe("Scheduler", () => {
 		const mockAction3 = vi.fn();
 		
 		// First timeout
-		scheduler.add(60, mockAction1); // Schedule with a 60-minute interval
+		scheduler.add("test", 60, mockAction1); // Schedule with a 60-minute interval
 		expect(scheduler["nextRun"]).toBe(Date.now() + 60 * 60 * 1000);
 		expect(spySetTimeout).toHaveBeenCalledWith(expect.any(Function), 60 * 60 * 1000);
 		expect(spyClearTimeout).not.toHaveBeenCalled();
 		
 		// Corrected timeout
-		scheduler.add(10, mockAction2); // Schedule with a 10-minute interval
+		scheduler.add("test", 10, mockAction2); // Schedule with a 10-minute interval
 		expect(scheduler["nextRun"]).toBe(Date.now() + 10 * 60 * 1000);
 		expect(spySetTimeout).toHaveBeenCalledWith(expect.any(Function), 10 * 60 * 1000);
 		expect(spyClearTimeout).toHaveBeenCalled();
@@ -53,7 +53,7 @@ describe("Scheduler", () => {
 		spyClearTimeout.mockClear();
 		
 		// Timeout without correction
-		scheduler.add(20, mockAction3); // Schedule with a 20-minute interval
+		scheduler.add("test", 20, mockAction3); // Schedule with a 20-minute interval
 		expect(scheduler["nextRun"]).toBe(Date.now() + 10 * 60 * 1000); // Should be unchanged
 		expect(spySetTimeout).not.toHaveBeenCalled();
 		expect(spyClearTimeout).not.toHaveBeenCalled();
@@ -79,8 +79,8 @@ describe("Scheduler", () => {
 		const mockAction1 = vi.fn();
 		const mockAction2 = vi.fn();
 		
-		scheduler.add(2, mockAction1); // Schedule with a 2-minute interval
-		scheduler.add(3, mockAction2); // Schedule with a 3-minute interval
+		scheduler.add("test", 2, mockAction1); // Schedule with a 2-minute interval
+		scheduler.add("test", 3, mockAction2); // Schedule with a 3-minute interval
 		
 		vi.advanceTimersByTime(2 * 60 * 1000); // Fast-forward 2 minutes
 		expect(mockAction1).toHaveBeenCalledTimes(1);
@@ -90,4 +90,21 @@ describe("Scheduler", () => {
 		expect(mockAction1).toHaveBeenCalledTimes(1);
 		expect(mockAction2).toHaveBeenCalledTimes(1);
 	});
+	
+	it("should run the correct queue entries when runNow is called", () => {
+		const scheduler = new Scheduler();
+		const mockAction1 = vi.fn();
+		const mockAction2 = vi.fn();
+		
+		scheduler.add("test1", 2, mockAction1);
+		scheduler.add("test2", 3, mockAction2);
+		
+		scheduler.runNow("test1");
+		expect(mockAction1).toHaveBeenCalledTimes(1);
+		expect(mockAction2).toHaveBeenCalledTimes(0);
+		
+		scheduler.runNow("test2");
+		expect(mockAction1).toHaveBeenCalledTimes(1);
+		expect(mockAction2).toHaveBeenCalledTimes(1);
+	})
 });

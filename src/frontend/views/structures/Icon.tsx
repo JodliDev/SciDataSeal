@@ -12,6 +12,7 @@ import prevSvg from "../../assets/icons/prev.svg?raw";
 import removeSvg from "../../assets/icons/remove.svg?raw";
 import saveSvg from "../../assets/icons/save.svg?raw";
 import settingsSvg from "../../assets/icons/settings.svg?raw";
+import syncSvg from "../../assets/icons/sync.svg?raw";
 import toEndSvg from "../../assets/icons/toEnd.svg?raw";
 import toStartSvg from "../../assets/icons/toStart.svg?raw";
 import userListSvg from "../../assets/icons/userList.svg?raw";
@@ -37,6 +38,7 @@ const IconType = {
 	remove: removeSvg,
 	save: saveSvg,
 	settings: settingsSvg,
+	sync: syncSvg,
 	toEnd: toEndSvg,
 	toStart: toStartSvg,
 	userList: userListSvg,

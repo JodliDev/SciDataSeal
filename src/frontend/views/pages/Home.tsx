@@ -5,9 +5,25 @@ import A from "../structures/A.tsx";
 import {tooltip} from "../../actions/floatingMenu.ts";
 import Icon from "../structures/Icon.tsx";
 import {SiteTools} from "../../singleton/SiteTools.ts";
+import {FeedbackCallBack} from "../structures/FeedbackIcon.tsx";
+import getData from "../../actions/getData.ts";
+import ManuallySyncBlockchain from "../../../shared/data/ManuallySyncBlockchain.ts";
+import FeedbackContent from "../structures/FeedbackContent.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
+	const syncBlockchainFeedback = new FeedbackCallBack();
+	async function syncBlockchainNow() {
+		try {
+			syncBlockchainFeedback.setLoading(true);
+			const response = await getData<ManuallySyncBlockchain>("/syncBlockchainNow");
+			syncBlockchainFeedback.setSuccess(!!response);
+		}
+		catch {
+			syncBlockchainFeedback.setSuccess(false);
+		}
+	}
+	
 	return {
 		history: [
 			{label: Lang.get("home"), page: "Home"}
@@ -30,12 +46,23 @@ export default PrivatePage(async () => {
 					<A page="ListUsers" class="bigButton">
 						<Icon iconKey="userList"/>
 						{Lang.get("listUsers")}
-					</A>}
+					</A>
+				}
 			</div>
 			<div class="fillSpace"></div>
-			<A page="UserSettings" class="clickable selfAlignEnd">
-				<Icon iconKey="userSettings"/>
-			</A>
+			<div class="horizontal">
+				{!!SiteTools.session.isAdmin &&
+					<FeedbackContent callback={syncBlockchainFeedback} waitForSuccessDelay={true}>
+						<div class="clickable" {...tooltip(Lang.get("tooltipSyncBlockchainNow"))} onclick={syncBlockchainNow}>
+							<Icon iconKey="sync"/>
+						</div>
+					</FeedbackContent>
+				}
+				<div class="fillSpace"></div>
+				<A page="UserSettings" class="clickable selfAlignEnd" {...tooltip(Lang.get("tooltipUserSettingsDesc"))}>
+					<Icon iconKey="userSettings"/>
+				</A>
+			</div>
 		</>
 	};
 });

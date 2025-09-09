@@ -29,6 +29,7 @@ import listEntries from "./routes/listEntries.ts";
 import getEntry from "./routes/getEntry.ts";
 import {Logger} from "./Logger.ts";
 import syncBlockchain from "./actions/syncBlockchain.ts";
+import syncBlockchainNow from "./routes/syncBlockchainNow.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -38,7 +39,7 @@ async function init() {
 	const scheduler = new Scheduler();
 	await recreateOptionsString(db);
 	
-	scheduler.add(Options.blockchainSyncIntervalMinutes, () => {
+	scheduler.add("syncBlockchain", Options.blockchainSyncIntervalMinutes, () => {
 		try {
 			Logger.log("Syncing blockchain...");
 			syncBlockchain(db);
@@ -48,7 +49,7 @@ async function init() {
 		}
 	});
 	
-	scheduler.add(24 * 60, () => {
+	scheduler.add("deleteSessions", 24 * 60, () => {
 		try {
 			Logger.log("Deleting outdated sessions...");
 			deleteOutdatedSessions(db);
@@ -76,6 +77,7 @@ async function init() {
 	webServer.use("/api", authenticateMiddleware, getQuestionnaireData());
 	webServer.use("/api", authenticateMiddleware, generateRandomString());
 	webServer.use("/api", authenticateMiddleware, getNewDenotation(db));
+	webServer.use("/api", adminMiddleware, syncBlockchainNow(scheduler));
 	webServer.use("/api", adminMiddleware, setBlockchainAccount(db));
 	webServer.use("/api", adminMiddleware, setUser(db));
 	

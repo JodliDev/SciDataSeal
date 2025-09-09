@@ -30,8 +30,8 @@ export class FeedbackCallBack {
 		this.isLoadingState = isLoading;
 		m.redraw();
 	}
-	isReady() {
-		return !this.isLoadingState && (!this.showIconState || this.successState);
+	isReady(waitForSuccessDelay: boolean = false) {
+		return !this.isLoadingState && (!this.showIconState || (!waitForSuccessDelay && this.successState));
 	}
 }
 

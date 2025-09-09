@@ -1,4 +1,5 @@
 interface SchedulerEntry {
+	id: string;
 	action: () => void;
 	nextRun: number;
 	repeatEveryMinutes: number;
@@ -20,11 +21,13 @@ export default class Scheduler {
 	 * Adds a function to the queue that should be repeated at the specified interval.
 	 * Also schedules / corrects the next Scheduler execution.
 	 *
+	 * @param id - an id that can be used in {@runNow}.
 	 * @param repeatEveryMinutes - The interval in minutes at which the function should be executed.
 	 * @param action - The function to be added to the queue.
 	 */
-	public add(repeatEveryMinutes: number, action: () => void) {
+	public add(id: string, repeatEveryMinutes: number, action: () => void) {
 		const entry = {
+			id: id,
 			action: action,
 			repeatEveryMinutes: repeatEveryMinutes,
 			nextRun: Date.now() + repeatEveryMinutes * 60 * 1000
@@ -32,6 +35,20 @@ export default class Scheduler {
 		this.queue.push(entry);
 		
 		this.queueNextRun();
+	}
+	
+	/**
+	 * Sets all entries with the given id to run immediately and calls {@link run}.
+	 * @param id - the id of one or multiple entries to run immediately.
+	 */
+	public runNow(id: string): void {
+		const now = Date.now();
+		for(const entry of this.queue) {
+			if(entry.id == id) {
+				entry.nextRun = now;
+			}
+		}
+		this.run();
 	}
 	
 	/**
