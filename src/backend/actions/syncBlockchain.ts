@@ -1,6 +1,7 @@
 import {DbType} from "../database/setupDb.ts";
 import getBlockchain from "./getBlockchain.ts";
 import {Logger} from "../Logger.ts";
+import {ConfirmationState} from "../blockchains/BlockchainInterface.ts";
 
 /**
  * Sends pending data logs to the blockchain and checks the confirmation status of
@@ -9,10 +10,10 @@ import {Logger} from "../Logger.ts";
  * @param {DbType} db - The database instance used for querying and updating DataLog records.
  */
 export default async function syncBlockchain(db: DbType): Promise<void> {
-	const confirmedNum = await confirmDataInBlockchain(db); // We confirm first because sendData also tries to confirm data
 	const sentNum = await sendDataToBlockchain(db);
+	const confirmedNum = await confirmDataInBlockchain(db);
 	
-	Logger.log(`Confirmed ${confirmedNum[0]}/${confirmedNum[1]} data logs and sent ${sentNum[0]}/${sentNum[1]} data logs to the blockchain`);
+	Logger.log(`Sent ${sentNum[0]}/${sentNum[1]} data logs to the blockchain and confirmed ${confirmedNum[0]}/${confirmedNum[1]} data logs.`);
 }
 
 async function sendDataToBlockchain(db: DbType): Promise<[number, number]> {
@@ -24,16 +25,13 @@ async function sendDataToBlockchain(db: DbType): Promise<[number, number]> {
 			
 			const signatures = await blockChain.saveMessage(firstLog.privateKey, firstLog.blockchainDenotation, data, firstLog.isHeader, firstLog.dataKey);
 			const signaturesJson = JSON.stringify(signatures);
-			const isConfirmed = await blockChain.isConfirmed(signatures);
 			
 			for(const log of logs) {
 				await db.updateTable("DataLog")
 					.set({
 						wasSent: true,
-						wasConfirmed: isConfirmed,
 						signatures: signaturesJson,
-						hasError: "",
-						data: ""
+						hasError: ""
 					})
 					.where("logId", "=", log.logId)
 					.execute();
@@ -126,34 +124,49 @@ async function confirmDataInBlockchain(db: DbType): Promise<[number, number]> {
 		.limit(100)
 		.execute();
 	
-	const alreadyConfirmed: Record<string, boolean> = {};
+	const wereChecked: Record<string, ConfirmationState> = {};
 	
 	let successful = 0;
 	for(const log of dataLogsForConfirmation) {
 		try {
 			const blockChain = getBlockchain(log.blockchainType);
 			const signatures: string[] = JSON.parse(log.signatures);
-			const unconfirmed = signatures.filter(sig => !alreadyConfirmed[sig]); // Should always be all or nothing
+			const unconfirmed = signatures.filter(sig => !wereChecked[sig]); // Should always be all or nothing
 			
-			if(!unconfirmed.length) {
-				continue;
+			if(unconfirmed.length) {
+				const wasConfirmed = await blockChain.isConfirmed(unconfirmed);
+				
+				for(const sig of unconfirmed) {
+					wereChecked[sig] = wasConfirmed;
+				}
 			}
-			const wasConfirmed = await blockChain.isConfirmed(unconfirmed);
 			
-			if(wasConfirmed) {
+			
+			if(!signatures.find(sig => wereChecked[sig] != "confirmed")) { // check if all messages are confirmed
 				await db.updateTable("DataLog")
 					.set({
-						wasConfirmed: wasConfirmed,
+						wasConfirmed: true,
 						hasError: "",
+						data: ""
 					})
 					.where("logId", "=", log.logId)
 					.execute();
 				
-				for(const sig of unconfirmed) {
-					alreadyConfirmed[sig] = true;
-				}
+				++successful;
 			}
-			++successful;
+			else if(signatures.find(sig => wereChecked[sig] == "lost")) { // check if there is a message that is lost
+				// if there is one entry that was lost, we will have to save everything again.
+				// This could lead to data fragments being saved multiple times
+				
+				Logger.log(`Log ${log.logId} was lost and will be saved again.`)
+				await db.updateTable("DataLog")
+					.set({
+						wasSent: false
+					})
+					.where("logId", "=", log.logId)
+					.execute();
+			}
+			
 		} catch(e) {
 			const msg = e instanceof Error ? e.message : e?.toString() ?? "Unknown error";
 			Logger.error(`Error while confirming data (logId: ${log.logId}): ${msg}`);

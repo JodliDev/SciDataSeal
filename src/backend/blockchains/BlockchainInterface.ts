@@ -3,6 +3,8 @@ export interface WalletData {
 	privateKey: string;
 	publicKey: string;
 }
+
+export type ConfirmationState = "waiting" | "confirmed" | "lost";
 /**
  * Interface representing a blockchain interaction layer.
  */
@@ -31,7 +33,7 @@ export default interface BlockchainInterface {
 	/**
 	 * Checks if the blockchain transaction has been confirmed.
 	 */
-	isConfirmed(signatures: string[]): Promise<boolean>;
+	isConfirmed(signatures: string[]): Promise<ConfirmationState>;
 	
 	/**
 	 * Retrieves all data for a given questionnaire.

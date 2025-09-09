@@ -8,8 +8,8 @@ import {compare, mockKysely} from "../../MockKysely.ts";
 describe("syncBlockchain", () => {
 	vi.mock("../../../src/backend/actions/getBlockchain.ts", () => ({
 		default: vi.fn(() => ({
-			saveMessage: vi.fn().mockResolvedValue(["signature1"]),
-			isConfirmed: vi.fn().mockResolvedValue(true),
+			saveMessage: vi.fn(() => Promise.resolve(["signature1"])),
+			isConfirmed: vi.fn(() => Promise.resolve("confirmed")),
 		}))
 	}));
 	
@@ -55,9 +55,7 @@ describe("syncBlockchain", () => {
 			await syncBlockchain(mockDb);
 			
 			expect(updateTableMock).toHaveBeenCalledWith({
-				data: "",
 				wasSent: true,
-				wasConfirmed: true,
 				hasError: "",
 				signatures: JSON.stringify(["signature1"]),
 			});
@@ -216,7 +214,7 @@ describe("syncBlockchain", () => {
 			mockDb.resetMocks();
 		});
 		
-		it("should confirm logs", async() => {
+		it("should confirm logs when all transactions are confirmed", async() => {
 			mockSelectDataLogs([], [{
 				logId: 1,
 				blockchainType: "type1",
@@ -232,7 +230,62 @@ describe("syncBlockchain", () => {
 			expect(updateTableMock).toHaveBeenCalled();
 		});
 		
+		it("should not confirm logs when some transactions are not confirmed", async() => {
+			vi.mocked(getBlockchain).mockReturnValueOnce({
+				saveMessage: vi.fn(() => Promise.resolve(["signature1"])),
+				isConfirmed: vi.fn(() =>  Promise.resolve("waiting"))
+			} as any);
+			
+			mockSelectDataLogs([], [{
+				logId: 1,
+				blockchainType: "type1",
+				signatures: JSON.stringify(["signature1", "signature2"]),
+			}]);
+			
+			const updateTableMock = mockDb
+				.updateTable.chain("DataLog")
+				.execute;
+			
+			await syncBlockchain(mockDb);
+			
+			expect(updateTableMock).not.toHaveBeenCalled();
+			
+			// cleanup:
+			vi.mocked(getBlockchain).mockReset();
+		});
+		
+		it("should set log to be sent again when data was lost", async() => {
+			vi.mocked(getBlockchain).mockReturnValueOnce({
+				saveMessage: vi.fn(() => Promise.resolve(["signature1"])),
+				isConfirmed: vi.fn(() =>  Promise.resolve("lost"))
+			} as any);
+			
+			mockSelectDataLogs([], [{
+				logId: 1,
+				blockchainType: "type1",
+				signatures: JSON.stringify(["signature1", "signature2"]),
+			}]);
+			
+			const updateTableMock = mockDb
+				.updateTable.chain("DataLog")
+				.set.chain(compare.objectContains({wasSent: false}))
+				.where.chain("logId", "=", 1)
+				.execute;
+			
+			await syncBlockchain(mockDb);
+			
+			expect(updateTableMock).toHaveBeenCalled();
+			
+			// cleanup:
+			vi.mocked(getBlockchain).mockReset();
+		});
+		
 		it("should confirm signatures only once", async() => {
+			const mockIsConfirmed = vi.fn(() =>  Promise.resolve("confirmed"));
+			vi.mocked(getBlockchain).mockReturnValue({
+				saveMessage: vi.fn(() => Promise.resolve(["signature1"])),
+				isConfirmed: mockIsConfirmed
+			} as any);
 			mockSelectDataLogs([], [
 				{
 					logId: 1,
@@ -259,7 +312,12 @@ describe("syncBlockchain", () => {
 			await syncBlockchain(mockDb);
 			
 			expect(updateTableMock1).toHaveBeenCalled();
-			expect(updateTableMock2).not.toHaveBeenCalled();
+			expect(updateTableMock2).toHaveBeenCalled();
+			expect(mockIsConfirmed).toHaveBeenCalledWith(["signature1", "signature2"]);
+			expect(mockIsConfirmed).toHaveBeenCalledTimes(1);
+			
+			// cleanup:
+			vi.mocked(getBlockchain).mockReset();
 		});
 		
 		it("should handle errors while confirming logs", async() => {
