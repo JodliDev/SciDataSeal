@@ -1,4 +1,4 @@
-import BlockchainInterface, {LineData, WalletData} from "./BlockchainInterface.ts";
+import BlockchainInterface, {ConfirmationState, LineData, WalletData} from "./BlockchainInterface.ts";
 import {clusterApiUrl, Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction, Transaction} from "@solana/web3.js";
 import {createMemoInstruction} from "@solana/spl-memo";
 import generateStringDenotation from "../../shared/actions/generateStringDenotation.ts";
@@ -6,9 +6,9 @@ import TranslatedException from "../../shared/exceptions/TranslatedException.ts"
 import {compressAndEncrypt, decompressAndDecrypt} from "../actions/compressAndEncrypt.ts";
 import {generateMnemonic, mnemonicToSeedSync} from "bip39";
 
-const DATA_MAX_BYTE_LENGTH = 560;
+const DATA_MAX_BYTE_LENGTH = 560; //Memo limit is 566 bytes. 2*CONTINUE_TAG needs 2 bytes. Denotation needs 2 bytes. So we have 2 bytes to spare just to be sure.
 const CONTINUE_TAG = "~";
-const HEADER_TAG = "~~";
+const HEADER_TAG = ";";
 const DATA_SEPARATOR = "\n";
 
 /**
@@ -115,15 +115,16 @@ export default class Solana implements BlockchainInterface {
 		const signatures: string[] = [];
 		for(let i = 0; i < neededMessages; ++i) {
 			const part = dataString.substring(i * partLength, (i + 1) * partLength);
-			const endTag = i < neededMessages - 1 ? CONTINUE_TAG : "";
-			signatures.push(await this.uploadMessage(privateKey, denotation + part + endTag));
+			const startTag = i != 0 ? CONTINUE_TAG : "";
+			const endTag = i != neededMessages - 1 ? CONTINUE_TAG : "";
+			signatures.push(await this.uploadMessage(privateKey, denotation + startTag + part + endTag));
 		}
 		
 		return signatures;
     }
 	
-	public isConfirmed(_: string[]): Promise<boolean> {
-		return Promise.resolve(true); //Solana is always confirmed
+	public isConfirmed(_: string[]): Promise<ConfirmationState> {
+		return Promise.resolve("confirmed"); //Solana is always confirmed
 	}
 	
 	private decipherMessage(original: string, dataKey: string, timestamp: number): LineData[] {
@@ -164,17 +165,21 @@ export default class Solana implements BlockchainInterface {
 			}
 			const message = memo.substring(denotationLength);
 			
-			if(message.endsWith(CONTINUE_TAG)) {
-				temp += message.substring(0, message.length - CONTINUE_TAG.length);
+			if(message.startsWith(CONTINUE_TAG)) { // this message is meant to continue the last message
+				if(message.endsWith(CONTINUE_TAG)) { // there are more messages after this one
+					temp += message.substring(CONTINUE_TAG.length, message.length - CONTINUE_TAG.length);
+				}
+				else { // this is the last message
+					output.push(...this.decipherMessage(temp + message, dataKey, sig.blockTime ?? 0));
+					temp = "";
+				}
 			}
-			else {
-				output.push(...this.decipherMessage(temp + message, dataKey, sig.blockTime ?? 0));
-				temp = "";
+			else if(message.endsWith(CONTINUE_TAG)) { // this is the first message of a sequence
+				temp = message.substring(0, message.length - CONTINUE_TAG.length);
 			}
-		}
-		
-		if(temp) { //this should never happen
-			output.push(...this.decipherMessage(temp, dataKey, signatures[0].blockTime ?? 0));
+			else { //this is just a single message
+				output.push(...this.decipherMessage(message, dataKey, sig.blockTime ?? 0));
+			}
 		}
 		
 		return output;

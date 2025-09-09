@@ -96,7 +96,7 @@ describe("Solana", () => {
 			const instance = new Solana();
 			
 			const headerString = (instance as any).getDataString(data, true, dataKey);
-			expect(decompressAndDecrypt(headerString, dataKey)).toBe("~~" + data.join("\n"));
+			expect(decompressAndDecrypt(headerString, dataKey)).toBe(";" + data.join("\n"));
 			
 			const notHeaderString = (instance as any).getDataString(data, false, dataKey);
 			expect(decompressAndDecrypt(notHeaderString, dataKey)).toBe(data.join("\n"));
@@ -130,11 +130,19 @@ describe("Solana", () => {
 			});
 			mockConnection.getBalance.mockResolvedValueOnce(2 * 1_000_000_000);
 			vi.mocked(sendAndConfirmTransaction).mockResolvedValue("signature");
-			const data = randomBytes(561).toString("base64");
+			const data = "Will be set by getDataString";
+			const part1 = "q".repeat(560);
+			const part2 = "w".repeat(560);
+			const part3 = "e".repeat(560);
 			const instance = new Solana();
+			(instance as any).getDataString = () => part1 + part2 + part3;
+			const mockUploadMessage = vi.spyOn(instance as any, "uploadMessage");
 			const result = await instance.saveMessage(privateKey, 1, [data], false, dataKey);
 
-			expect(result).toEqual(["signature", "signature"]);
+			expect(result).toEqual(["signature", "signature", "signature"]);
+			expect(mockUploadMessage).toHaveBeenCalledWith(privateKey, expect.stringMatching(new RegExp(`1${part1}~`)));
+			expect(mockUploadMessage).toHaveBeenCalledWith(privateKey, expect.stringMatching(new RegExp(`1~${part2}~`)));
+			expect(mockUploadMessage).toHaveBeenCalledWith(privateKey, expect.stringMatching(new RegExp(`1~${part3}`)));
 		});
 		
 		it("should throw if message needs to be split into too many parts", async() => {
@@ -189,10 +197,10 @@ describe("Solana", () => {
 			const denotation = 62;
 			const testData = "testData";
 			const compressedData = compressAndEncrypt(testData, dataKey);
-			const splitPos = Math.round(compressedData.length / 2);
 			mockConnection.getSignaturesForAddress.mockResolvedValue([ //Solana returns data reversed
-				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}${compressedData.substring(splitPos)}`},
-				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}${compressedData.substring(0, splitPos)}~`},
+				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}~${compressedData.substring(4)}`},
+				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}~${compressedData.substring(2, 4)}~`},
+				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}${compressedData.substring(0, 2)}~`}
 			]);
 			
 			const instance = new Solana();
@@ -203,11 +211,34 @@ describe("Solana", () => {
 			]);
 		});
 		
-		it("should try to recover if split data is missing a part", async() => {
+		it("should not concat messages without continue tag", async() => {
+			const denotation = 62;
+			const testData = "testData";
+			const testData2 = "other";
+			const compressedData = compressAndEncrypt(testData, dataKey);
+			const compressedData2 = compressAndEncrypt(testData2, dataKey);
+			mockConnection.getSignaturesForAddress.mockResolvedValue([ //Solana returns data reversed
+				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}~${compressedData.substring(3)}`},
+				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}${compressedData2}`},
+				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}${compressedData.substring(0, 3)}~`}
+			]);
+			
+			const instance = new Solana();
+			const result = await instance.listData(publicKey, denotation, dataKey);
+			
+			expect(result).toEqual([
+				{timestamp: 1780704000, data: testData2, isHeader: false},
+				{timestamp: 1709519880, data: testData, isHeader: false},
+			]);
+		});
+		
+		it("should ignore data if split data is missing a part", async() => {
 			const denotation = 62;
 			const testData = "testData";
 			mockConnection.getSignaturesForAddress.mockResolvedValue([ //Solana returns data reversed
-				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}${compressAndEncrypt(testData, dataKey)}~`},
+				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}~${compressAndEncrypt("notUsed1", dataKey)}~`},
+				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}${compressAndEncrypt(testData, dataKey)}`},
+				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}${compressAndEncrypt("notUsed2", dataKey)}~`},
 			]);
 			
 			const instance = new Solana();
@@ -225,11 +256,11 @@ describe("Solana", () => {
 			const splitPos = Math.round(compressedData.length / 2);
 			const subString = compressedData.substring(0, splitPos);
 			mockConnection.getSignaturesForAddress.mockResolvedValue([ //Solana returns data reversed
-				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}${subString}~`},
+				{blockTime: 1709519880, memo: `[1] ${generateStringDenotation(denotation)}${subString}`},
 			]);
 			
 			const instance = new Solana();
-			const result = await instance.listData(publicKey, denotation, dataKey);
+			const result = await instance.listData(publicKey, denotation, "wrong key");
 			
 			expect(result).toEqual([
 				{timestamp: 1709519880, data: `Cannot decipher: ${subString}`, isHeader: false}
@@ -258,7 +289,7 @@ describe("Solana", () => {
 			const testData = "testData";
 			mockConnection.getSignaturesForAddress.mockResolvedValue([ //Solana returns data reversed
 				{blockTime: 1780704000, memo: `[1] ${generateStringDenotation(denotation)}${compressAndEncrypt(testData, dataKey)}`},
-				{blockTime: 1709519880, memo: `[100] ${generateStringDenotation(denotation)}${compressAndEncrypt("~~" + headerData, dataKey)}`},
+				{blockTime: 1709519880, memo: `[100] ${generateStringDenotation(denotation)}${compressAndEncrypt(";" + headerData, dataKey)}`},
 			]);
 			
 			const instance = new Solana();

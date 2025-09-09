@@ -7,6 +7,14 @@ export interface WalletData {
 export type ConfirmationState = "waiting" | "confirmed" | "lost";
 /**
  * Interface representing a blockchain interaction layer.
+ * Note: When data has to be split into multiple transactions, the current implementation assumes that
+ * 	- all transactions are either fully saved or not saved at all (either instantly or when being confirmed)
+ * 	- Their order will remain the same in the blockchain
+ * 	This is true for Solana:
+ * 	 - data does not need to be confirmed
+ * 	 - if one part fails, the following parts are not being sent. Which might lead to first parts being saved multiple times but the Solana implementation will skip incomplete parts
+ * @see Solana
+ * @see syncBlockchain
  */
 export default interface BlockchainInterface {
 	
