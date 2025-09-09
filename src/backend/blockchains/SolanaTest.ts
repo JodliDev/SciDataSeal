@@ -1,5 +1,6 @@
 import {clusterApiUrl, Connection, LAMPORTS_PER_SOL, PublicKey} from "@solana/web3.js";
 import Solana from "./Solana.ts";
+import {Logger} from "../Logger.ts";
 
 
 /**
@@ -22,6 +23,7 @@ export default class SolanaTest extends Solana {
 	 * @param publicKey - The public key to receive the airdrop.
 	 */
 	private async requestAirdrop(connection: Connection, publicKey: PublicKey): Promise<void> {
+		Logger.log(`Requesting airdrop for ${publicKey.toBase58()}`);
 		const airdropSignature = await connection.requestAirdrop(
 			publicKey,
 			LAMPORTS_PER_SOL

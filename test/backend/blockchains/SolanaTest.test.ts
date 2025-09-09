@@ -48,7 +48,7 @@ describe("SolanaTest", () => {
 		});
 		
 		it("should request an airdrop when the balance is below the required threshold", async () => {
-			vi.mocked(Keypair.fromSecretKey).mockReturnValue({publicKey: {toString: () => publicKey}} as Keypair);
+			vi.mocked(Keypair.fromSecretKey).mockReturnValue({publicKey: {toBase58: () => publicKey}} as Keypair);
 			mockConnection.getBalance.mockResolvedValueOnce(0.01 * 1_000_000_000);
 			mockConnection.requestAirdrop.mockResolvedValueOnce("airdropSignature");
 			mockConnection.confirmTransaction.mockResolvedValueOnce(null);
