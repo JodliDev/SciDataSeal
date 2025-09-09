@@ -29,6 +29,39 @@ interface ExtendedMock<T extends Procedure = Procedure> extends Mock<T> {
 
 type MockKyselyFn = Omit<ExtendedMock, "___lastChain" | "___mockedArgs">;
 
+abstract class Comparer {
+	protected readonly source: unknown;
+	
+	constructor(value: unknown) {
+		this.source = value;
+	}
+	
+	abstract compareWith(value: unknown): boolean;
+}
+class Exact extends Comparer {
+	compareWith(value: unknown): boolean {
+		return JSON.stringify(value) == JSON.stringify(this.source);
+	}
+}
+class ObjectContains extends Comparer {
+	constructor(value: object) {
+		super(value);
+	}
+	compareWith(value: object): boolean {
+		const objValue = value as object;
+		const objSource = this.source as object;
+		for(const key in objSource) {
+			if(objValue[key as keyof object] != objSource[key as keyof object]) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+
+export const compare = {
+	objectContains: (value: object) => new ObjectContains(value)
+};
 
 /**
  * Mock class for Kysely that can mock chain method calls.
@@ -55,6 +88,7 @@ type MockKyselyFn = Omit<ExtendedMock, "___lastChain" | "___mockedArgs">;
  * ```
  */
 class MockKysely {
+	
 	selectFrom = this.makeChainable();
 	select = this.makeChainable();
 	insertInto = this.makeChainable();
@@ -94,6 +128,19 @@ class MockKysely {
 		return fn;
 	}
 	private chainMethod(fn: ExtendedMock, ...compareArgs: unknown[]): MockKysely {
+		function argsAreEqual(argsSource: unknown[], argsReceived: unknown[]): boolean {
+			if(argsSource.length !== argsReceived.length) {
+				return false;
+			}
+			for(let i = 0; i < argsSource.length; ++i) {
+				const source: Comparer = argsSource[i] instanceof Comparer ? argsSource[i] as Comparer : new Exact(argsSource[i]);
+				if(!source.compareWith(argsReceived[i])) {
+					return false;
+				}
+			}
+			return true;
+		}
+		
 		const argsString = JSON.stringify(compareArgs);
 		if(fn.___mockedArgs.hasOwnProperty(argsString)) {
 			return fn.___mockedArgs[argsString];
@@ -103,14 +150,14 @@ class MockKysely {
 		fn.___mockedArgs[argsString] = instance;
 		const oldImplementation = fn.___lastChain;
 		const newImplementation = (...args: any[]) => {
-			if(!compareArgs.length || JSON.stringify(args) == argsString) {
+			if(!compareArgs.length || argsAreEqual(compareArgs, args)) {
 				return instance;
 			}
 			else if(oldImplementation) {
 				return oldImplementation(...args);
 			}
 			else {
-				console.trace(`Could not find chain with arguments:\n${JSON.stringify(args)}.\nExpected (in first chain):\n${JSON.stringify(compareArgs)}`);
+				console.trace(`Could not find chain with arguments:\n${JSON.stringify(args)}.`);
 				return this;
 			}
 		};
