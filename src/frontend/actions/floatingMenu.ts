@@ -260,7 +260,7 @@ export default function floatingMenu(id: string, menu: (close: () => void) => Ch
  * @param description - The text to display in the tooltip.
  */
 export function tooltip(description: string): OutputEvents {
-	return floatingMenu(description, () => description, {eventName: "mousemove"});
+	return floatingMenu("tooltip", () => description, {eventName: "mousemove"});
 }
 
 /**
