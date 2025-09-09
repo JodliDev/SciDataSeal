@@ -2,7 +2,8 @@ import {afterAll, beforeEach, describe, expect, it, vi} from "vitest";
 import request from "supertest";
 import setQuestionnaireColumns from "../../../src/backend/routes/setQuestionnaireColumns.ts";
 import express from "express";
-import {mockKysely} from "../../convenience.ts";
+
+import {mockKysely} from "../../MockKysely.ts";
 
 
 describe("setQuestionnaireColumns", () => {

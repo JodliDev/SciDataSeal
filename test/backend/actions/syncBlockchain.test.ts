@@ -1,8 +1,8 @@
 import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
-import {compare, mockKysely} from "../../convenience.ts";
 import syncBlockchain from "../../../src/backend/actions/syncBlockchain.ts";
 import getBlockchain from "../../../src/backend/actions/getBlockchain.ts";
 import {Logger} from "../../../src/backend/Logger.ts";
+import {compare, mockKysely} from "../../MockKysely.ts";
 
 
 describe("syncBlockchain", () => {

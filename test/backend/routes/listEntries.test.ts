@@ -1,12 +1,12 @@
 import express from "express";
 import request from "supertest";
 import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
-import {mockKysely} from "../../convenience.ts";
 import listEntries from "../../../src/backend/routes/listEntries.ts";
 import {getLoggedInSessionData} from "../../../src/backend/actions/authentication/getSessionData.ts";
 import {ListDefinitions} from "../../../src/shared/data/ListEntriesInterface.ts";
 import {KyselyTables} from "../../../src/backend/database/DatabaseConfigs.ts";
 import {ComparisonOperatorExpression} from "kysely";
+import {mockKysely} from "../../MockKysely.ts";
 
 describe("listEntries", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({

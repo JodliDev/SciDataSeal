@@ -1,10 +1,10 @@
 import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import request from "supertest";
 import express from "express";
-import {mockKysely} from "../../convenience.ts";
 import setBlockchainAccount from "../../../src/backend/routes/setBlockchainAccount.ts";
 import {WalletData} from "../../../src/backend/blockchains/BlockchainInterface.ts";
 import getBlockchain from "../../../src/backend/actions/getBlockchain.ts";
+import {mockKysely} from "../../MockKysely.ts";
 
 
 describe("setBlockchainAccount", () => {

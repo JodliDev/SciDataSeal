@@ -1,9 +1,9 @@
 import express from "express";
 import request from "supertest";
 import {afterAll, beforeEach, describe, expect, it, vi} from "vitest";
-import {mockKysely} from "../../convenience.ts";
 import userSettings from "../../../src/backend/routes/userSettings.ts";
 import encryptPassword from "../../../src/backend/actions/authentication/encryptPassword.ts";
+import {mockKysely} from "../../MockKysely.ts";
 
 
 

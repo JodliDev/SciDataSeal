@@ -1,8 +1,8 @@
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
-import {mockKysely} from "../../../convenience.ts";
 import {AuthenticatedRequest} from "../../../../src/backend/AuthenticatedRequest.ts";
 import isLoggedIn from "../../../../src/backend/actions/authentication/isLoggedIn.ts";
 import authenticateRequest from "../../../../src/backend/actions/authentication/authenticateRequest.ts";
+import {mockKysely} from "../../../MockKysely.ts";
 
 describe("isLoggedIn", () => {
 	beforeAll(() => {

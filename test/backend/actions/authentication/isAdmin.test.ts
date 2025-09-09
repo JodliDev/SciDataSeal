@@ -1,8 +1,8 @@
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 import isAdmin from "../../../../src/backend/actions/authentication/isAdmin.ts";
 import authenticateRequest from "../../../../src/backend/actions/authentication/authenticateRequest.ts";
-import {mockKysely} from "../../../convenience.ts";
 import {AuthenticatedRequest} from "../../../../src/backend/AuthenticatedRequest.ts";
+import {mockKysely} from "../../../MockKysely.ts";
 
 vi.mock("../../../../src/backend/actions/authentication/authenticateRequest.ts", () => ({
 	default: vi.fn(async(_, request) => {

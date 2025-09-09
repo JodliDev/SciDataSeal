@@ -1,7 +1,7 @@
 import {afterEach, describe, expect, it} from "vitest";
 import {FrontendOptionsString, recreateOptionsString} from "../../../src/backend/actions/recreateOptionsString.ts";
-import {mockKysely} from "../../convenience.ts";
 import {Options} from "../../../src/backend/Options.ts";
+import {mockKysely} from "../../MockKysely.ts";
 
 describe("recreateOptionsString", () => {
 	afterEach(() => {

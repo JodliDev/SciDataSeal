@@ -1,7 +1,7 @@
 import {describe, expect, it, vi} from "vitest";
 import createNewSession from "../../../../src/backend/actions/authentication/createNewSession.ts";
-import {mockKysely} from "../../../convenience.ts";
 import {SESSION_MAX_AGE} from "../../../../src/shared/definitions/Constants.ts";
+import {mockKysely} from "../../../MockKysely.ts";
 
 describe("createNewSession", () => {
 	it("should create a new session and return a token", async() => {

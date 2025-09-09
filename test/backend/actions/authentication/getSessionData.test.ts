@@ -1,9 +1,9 @@
 import {describe, expect, it, vi} from "vitest";
-import {mockKysely} from "../../../convenience.ts";
 import {AuthenticatedRequest} from "../../../../src/backend/AuthenticatedRequest.ts";
 import getSessionData, {getLoggedInSessionData} from "../../../../src/backend/actions/authentication/getSessionData.ts";
 import authenticateRequest from "../../../../src/backend/actions/authentication/authenticateRequest.ts";
 import UnauthorizedException from "../../../../src/shared/exceptions/UnauthorizedException.ts";
+import {mockKysely} from "../../../MockKysely.ts";
 
 describe("getSessionData", () => {
 	const mockDb = mockKysely();

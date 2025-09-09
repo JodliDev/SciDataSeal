@@ -1,9 +1,9 @@
 import {afterEach, describe, expect, it} from "vitest";
 import request from "supertest";
 import express from "express";
-import {mockKysely} from "../../convenience.ts";
 import login from "../../../src/backend/routes/login.ts";
 import encryptPassword from "../../../src/backend/actions/authentication/encryptPassword.ts";
+import {mockKysely} from "../../MockKysely.ts";
 
 type MockResult = {
 	password: string;

@@ -1,10 +1,10 @@
 import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
 import {Response} from "express";
 import doLogin from "../../../../src/backend/actions/authentication/doLogin.ts";
-import {mockKysely} from "../../../convenience.ts";
 import {SESSION_MAX_AGE} from "../../../../src/shared/definitions/Constants.ts";
 import createNewSession from "../../../../src/backend/actions/authentication/createNewSession.ts";
 import {Cookies} from "../../../../src/shared/definitions/Cookies.ts";
+import {mockKysely} from "../../../MockKysely.ts";
 
 describe("doLogin", () => {
 	beforeAll(() => {

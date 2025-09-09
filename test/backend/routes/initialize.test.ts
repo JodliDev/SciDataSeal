@@ -1,9 +1,9 @@
 import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import express from "express";
 import supertest from "supertest";
-import {mockKysely} from "../../convenience.ts";
 import initialize from "../../../src/backend/routes/initialize.ts";
 import {Options} from "../../../src/backend/Options.ts";
+import {mockKysely} from "../../MockKysely.ts";
 
 describe("initialize", () => {
 	vi.mock("../../../src/shared/FrontendOptions.ts", () => ({

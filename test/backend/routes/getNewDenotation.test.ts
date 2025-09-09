@@ -2,7 +2,8 @@ import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import request from "supertest";
 import express from "express";
 import getNewDenotation from "../../../src/backend/routes/getNewDenotation.ts";
-import {mockKysely} from "../../convenience.ts";
+
+import {mockKysely} from "../../MockKysely.ts";
 
 describe("getNewDenotation", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({

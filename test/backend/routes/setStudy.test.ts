@@ -1,8 +1,8 @@
 import express from "express";
 import request from "supertest";
 import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
-import {mockKysely} from "../../convenience.ts";
 import setStudy from "../../../src/backend/routes/setStudy.ts";
+import {mockKysely} from "../../MockKysely.ts";
 
 describe("setStudy", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({

@@ -1,6 +1,7 @@
 import {afterEach, describe, expect, it, vi} from "vitest";
 import authenticateRequest from "../../../../src/backend/actions/authentication/authenticateRequest.ts";
-import {mockKysely} from "../../../convenience.ts";
+
+import {mockKysely} from "../../../MockKysely.ts";
 
 const mockDb = mockKysely();
 
