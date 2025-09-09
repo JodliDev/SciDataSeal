@@ -4,9 +4,10 @@ export default interface GenerateRandomString extends GetDataStructureInterface 
 	Endpoint: "/generateRandomString";
 	Query: {
 		length: string
+		count: string
 	}
 	Response: {
-		generatedString: string
+		generatedString: string[]
 	}
 }
 

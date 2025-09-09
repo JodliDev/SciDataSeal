@@ -34,9 +34,7 @@ describe("setQuestionnaire", () => {
 			.send({
 				questionnaireName: "testData$",
 				studyId: 1,
-				blockchainAccountId: 1,
 				blockchainDenotation: 2,
-				dataKey: "dataKey",
 				apiPassword: "password"
 			});
 		expect(response.ok).toBe(false);
@@ -48,9 +46,7 @@ describe("setQuestionnaire", () => {
 		const sendData = {
 			questionnaireName: "test",
 			studyId: 1,
-			blockchainAccountId: 1,
 			blockchainDenotation: 2,
-			dataKey: "dataKey",
 			apiPassword: "password",
 		};
 		mockDb.selectFrom.chain("Study")
@@ -71,9 +67,7 @@ describe("setQuestionnaire", () => {
 		const sendData = {
 			questionnaireName: "test",
 			studyId: 1,
-			blockchainAccountId: 1,
 			blockchainDenotation: 2,
-			dataKey: "dataKey",
 			apiPassword: "password",
 		};
 		mockDb.selectFrom.chain("Study")
@@ -89,31 +83,34 @@ describe("setQuestionnaire", () => {
 	});
 	
 	it("should update an existing questionnaire when being logged in", async() => {
+		const apiPassword = "password";
+		const dataKey = "dataKey";
+		const blockchainAccountId = 1;
 		const sendData = {
 			id: 111,
 			questionnaireName: "test",
 			studyId: 1,
-			blockchainAccountId: 1,
 			blockchainDenotation: 2,
-			dataKey: "dataKey",
-			apiPassword: "password",
+			apiPassword: apiPassword,
 		};
 		
 		mockDb.selectFrom.chain("Study")
 			.where.chain("studyId", "=", 1)
 			.where.chain("userId", "=", 123)
-			.executeTakeFirst.mockResolvedValue({userId: 123});
+			.executeTakeFirst.mockResolvedValue(
+				{userId: 123, blockchainAccountId: blockchainAccountId, apiPassword: apiPassword, dataKey: dataKey}
+		);
 		
 		mockDb.selectFrom.chain("BlockchainAccount")
-			.where.chain("blockchainAccountId", "=", sendData.blockchainAccountId)
+			.where.chain("blockchainAccountId", "=", blockchainAccountId)
 			.executeTakeFirst.mockResolvedValue({highestDenotation: 1});
 		
 		const updateTableMock = mockDb.updateTable.chain("Questionnaire")
 			.set.chain({
 				questionnaireName: sendData.questionnaireName,
-				blockchainAccountId: sendData.blockchainAccountId,
-				apiPassword: sendData.apiPassword,
-				dataKey: sendData.dataKey,
+				blockchainAccountId: blockchainAccountId,
+				apiPassword: apiPassword,
+				dataKey: dataKey,
 				blockchainDenotation: sendData.blockchainDenotation
 			})
 			.where.chain("questionnaireId", "=", 111)
@@ -129,22 +126,25 @@ describe("setQuestionnaire", () => {
 	});
 	
 	it("should create a new questionnaire when being logged in", async() => {
+		const apiPassword = "password";
+		const dataKey = "dataKey";
+		const blockchainAccountId = 1;
 		const sendData = {
 			questionnaireName: "newTest",
 			studyId: 1,
-			blockchainAccountId: 1,
 			blockchainDenotation: 3,
-			dataKey: "dataKey",
-			apiPassword: "password",
+			apiPassword: apiPassword,
 		};
 		
 		mockDb.selectFrom.chain("Study")
 			.where.chain("studyId", "=", 1)
 			.where.chain("userId", "=", 123)
-			.executeTakeFirst.mockResolvedValue({userId: 123});
+			.executeTakeFirst.mockResolvedValue(
+				{userId: 123, blockchainAccountId: blockchainAccountId, apiPassword: apiPassword, dataKey: dataKey}
+		);
 		
 		mockDb.selectFrom.chain("BlockchainAccount")
-			.where.chain("blockchainAccountId", "=", sendData.blockchainAccountId)
+			.where.chain("blockchainAccountId", "=", blockchainAccountId)
 			.executeTakeFirst.mockResolvedValue({highestDenotation: 1});
 		
 		const updateQuestionnaireTableMock = mockDb.updateTable.chain("Questionnaire")
@@ -154,7 +154,7 @@ describe("setQuestionnaire", () => {
 			.set.chain({
 				highestDenotation: sendData.blockchainDenotation
 			})
-			.where.chain("blockchainAccountId", "=", sendData.blockchainAccountId)
+			.where.chain("blockchainAccountId", "=", blockchainAccountId)
 			.execute;
 		
 		const insertTableMock = mockDb.insertInto.chain("Questionnaire")
@@ -162,9 +162,9 @@ describe("setQuestionnaire", () => {
 				userId: 123,
 				questionnaireName: sendData.questionnaireName,
 				studyId: 1,
-				blockchainAccountId: sendData.blockchainAccountId,
+				blockchainAccountId: blockchainAccountId,
 				apiPassword: sendData.apiPassword,
-				dataKey: sendData.dataKey,
+				dataKey: dataKey,
 				columns: "",
 				blockchainDenotation: sendData.blockchainDenotation
 			})
@@ -187,7 +187,6 @@ describe("setQuestionnaire", () => {
 			studyId: 1,
 			blockchainAccountId: 1,
 			blockchainDenotation: 3,
-			dataKey: "dataKey",
 			apiPassword: "password",
 		};
 		
@@ -209,6 +208,8 @@ describe("setQuestionnaire", () => {
 	});
 	
 	it("should create a new questionnaire when not being logged in", async() => {
+		const apiPassword = "password";
+		const dataKey = "dataKey";
 		vi.mocked(getSessionData).mockResolvedValue({isLoggedIn: false});
 		
 		const blockchainAccountId = 44;
@@ -216,13 +217,13 @@ describe("setQuestionnaire", () => {
 		const sendData = {
 			questionnaireName: "newTest",
 			studyId: 1,
-			apiPassword: "password",
+			apiPassword: apiPassword,
 		};
 		
 		mockDb.selectFrom.chain("Study")
 			.where.chain("studyId", "=", sendData.studyId)
 			.where.chain("apiPassword", "=", sendData.apiPassword)
-			.executeTakeFirst.mockResolvedValue({userId: 123, blockchainAccountId: blockchainAccountId});
+			.executeTakeFirst.mockResolvedValue({userId: 123, blockchainAccountId: blockchainAccountId, apiPassword: apiPassword, dataKey: dataKey});
 		
 		mockDb.selectFrom.chain("BlockchainAccount")
 			.where.chain("blockchainAccountId", "=", blockchainAccountId)
@@ -244,8 +245,8 @@ describe("setQuestionnaire", () => {
 				questionnaireName: sendData.questionnaireName,
 				studyId: 1,
 				blockchainAccountId: blockchainAccountId,
-				apiPassword: sendData.apiPassword,
-				dataKey: sendData.apiPassword,
+				apiPassword: apiPassword,
+				dataKey: dataKey,
 				columns: "",
 				blockchainDenotation: highestDenotation + 1
 			})
@@ -263,6 +264,8 @@ describe("setQuestionnaire", () => {
 	});
 	
 	it("should update an existing questionnaire when not being logged in", async() => {
+		const apiPassword = "password";
+		const dataKey = "dataKey";
 		vi.mocked(getSessionData).mockResolvedValue({isLoggedIn: false});
 		
 		const blockchainAccountId = 44;
@@ -271,13 +274,13 @@ describe("setQuestionnaire", () => {
 			id: 111,
 			questionnaireName: "test",
 			studyId: 1,
-			apiPassword: "password",
+			apiPassword: apiPassword,
 		};
 		
 		mockDb.selectFrom.chain("Study")
 			.where.chain("studyId", "=", 1)
 			.where.chain("apiPassword", "=", sendData.apiPassword)
-			.executeTakeFirst.mockResolvedValue({userId: 123, blockchainAccountId: blockchainAccountId});
+			.executeTakeFirst.mockResolvedValue({userId: 123, blockchainAccountId: blockchainAccountId, apiPassword: apiPassword, dataKey: dataKey});
 		
 		mockDb.selectFrom.chain("BlockchainAccount")
 			.where.chain("blockchainAccountId", "=", blockchainAccountId)
@@ -287,8 +290,8 @@ describe("setQuestionnaire", () => {
 			.set.chain({
 				questionnaireName: sendData.questionnaireName,
 				blockchainAccountId: blockchainAccountId,
-				apiPassword: sendData.apiPassword,
-				dataKey: sendData.apiPassword
+				apiPassword: apiPassword,
+				dataKey: dataKey
 			})
 			.where.chain("questionnaireId", "=", 111)
 			.execute;

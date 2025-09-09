@@ -2,7 +2,7 @@ import express from "express";
 import request from "supertest";
 import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import setStudy from "../../../src/backend/routes/setStudy.ts";
-import {mockKysely} from "../../MockKysely.ts";
+import {compare, mockKysely} from "../../MockKysely.ts";
 
 describe("setStudy", () => {
 	vi.mock("../../../src/backend/actions/authentication/getSessionData.ts", () => ({
@@ -33,7 +33,8 @@ describe("setStudy", () => {
 			.send({
 				studyName: "testData$",
 				blockchainAccountId: 1,
-				apiPassword: "password"
+				apiPassword: "password",
+				dataKey: "dataKey"
 			});
 		
 		expect(response.ok).toBe(false);
@@ -46,15 +47,17 @@ describe("setStudy", () => {
 			id: 111,
 			studyName: "testData",
 			blockchainAccountId: 1,
-			apiPassword: "password"
+			apiPassword: "password",
+			dataKey: "dataKey"
 		};
 		
 		const updateTableMock = mockDb.updateTable.chain("Study")
-			.set.chain({
+			.set.chain(compare.objectContains({
 				studyName: sendData.studyName,
 				apiPassword: sendData.apiPassword,
+				dataKey: sendData.dataKey,
 				blockchainAccountId: sendData.blockchainAccountId
-			})
+			}))
 			.where.chain("studyId", "=", sendData.id)
 			.execute;
 		
@@ -71,16 +74,18 @@ describe("setStudy", () => {
 		const sendData = {
 			studyName: "testData",
 			blockchainAccountId: 1,
-			apiPassword: "password"
+			apiPassword: "password",
+			dataKey: "dataKey"
 		};
 		
 		const insertTableMock = mockDb.insertInto.chain("Study")
-			.values.chain({
+			.values.chain(compare.objectContains({
 				userId: 123,
 				studyName: sendData.studyName,
 				apiPassword: sendData.apiPassword,
+				dataKey: sendData.dataKey,
 				blockchainAccountId: sendData.blockchainAccountId
-			})
+			}))
 			.executeTakeFirst.mockResolvedValue({insertId: 42});
 		
 		const response = await request(app)

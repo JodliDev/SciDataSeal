@@ -114,7 +114,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 								<pre class={`${css.box} ${css.postDataBox} inputLike`}>
 										&#123;
 									<br/>&nbsp;&nbsp;"id": {questionnaire.questionnaireId},
-									<br/>&nbsp;&nbsp;"pass": "{questionnaire.apiPassword}",
+									<br/>&nbsp;&nbsp;"pass": "{study.apiPassword}",
 									<br/>&nbsp;&nbsp;"columns": {formatData('["column1", "column2"]')}
 									<br/>&#125;
 									</pre>
@@ -137,7 +137,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 								<pre class={`${css.box} ${css.postDataBox} inputLike`}>
 										&#123;
 									<br/>&nbsp;&nbsp;"id": {questionnaire.questionnaireId},
-									<br/>&nbsp;&nbsp;"pass": "{questionnaire.apiPassword}",
+									<br/>&nbsp;&nbsp;"pass": "{study.apiPassword}",
 									<br/>&nbsp;&nbsp;"data": {formatData('{"column1":"data", "column2":"more data"}')}
 										<br/>&#125;
 									</pre>

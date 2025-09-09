@@ -8,7 +8,6 @@ import Form from "../structures/Form.tsx";
 import GetNewDenotation from "../../../shared/data/GetNewDenotation.ts";
 import {tooltip} from "../../actions/floatingMenu.ts";
 import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
-import listEntries from "../../actions/listEntries.ts";
 import getEntry from "../../actions/getEntry.ts";
 import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
 import generateStringDenotation, {MAX_DENOTATION_NUMBER} from "../../../shared/actions/generateStringDenotation.ts";
@@ -24,45 +23,22 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	function onDeleted() {
 		SiteTools.switchPage("ListQuestionnaires");
 	}
-	async function getDenotation(index: number): Promise<number | undefined> {
-		const entry = blockchainAccounts?.[index];
-		if(entry) {
-			const response = await getData<GetNewDenotation>("/getNewDenotation", `?blockchainAccountId=${entry.id}`);
-			return response?.denotation;
-		}
-	}
-	async function changeAccount(event: Event) {
-		if(id) {
-			return;
-		}
-		
-		const target = event.target as HTMLSelectElement;
-		disableAccountSwitch = true;
-		m.redraw();
-		const accountId = parseInt(target.value);
-		const index = blockchainAccounts?.findIndex(entry => entry.id == accountId)
-		questionnaire.blockchainDenotation = await getDenotation(index ?? 0);
-		disableAccountSwitch = false;
-		m.redraw();
+	async function getDenotation(blockchainAccountId: number): Promise<number | undefined> {
+		const response = await getData<GetNewDenotation>("/getNewDenotation", `?blockchainAccountId=${blockchainAccountId}`);
+		return response?.denotation;
 	}
 	
 	const id = parseInt(query.get("id") ?? "0");
-	const blockchainAccounts = await listEntries("blockchainAccounts");
 	const questionnaire: Partial<GetEntryInterface<"questionnaire">["Response"]> = id
 		? await getEntry("questionnaire", id) ?? {}
 		: {};
 	const studyId = questionnaire.studyId ?? parseInt(query.get("studyId") ?? "0");
 	const study = await getEntry("study", studyId);
 	const originalDenotation = questionnaire?.blockchainDenotation;
-	const originalBlockchainAccount = questionnaire?.blockchainAccountId;
 	
-	let disableAccountSwitch = false;
 	
 	if(!id) {
-		questionnaire.blockchainAccountId = study?.blockchainAccountId;
-		questionnaire.blockchainDenotation = await getDenotation(0);
-		questionnaire.apiPassword = study?.apiPassword;
-		questionnaire.dataKey = questionnaire.apiPassword
+		questionnaire.blockchainDenotation = await getDenotation(questionnaire.blockchainAccountId ?? 0);
 	}
 	
 	return {
@@ -85,22 +61,10 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		view: () =>
 			<Form<SetQuestionnaireInterface> id={id} endpoint="/setQuestionnaire" addDeleteBtnFor={id ? "questionnaire" : undefined} onSent={onSent} onDeleted={onDeleted}>
 				<input type="hidden" name="studyId" value={studyId}/>
+				<input type="hidden" name="apiPassword" value={study?.apiPassword}/>
 				<label>
 					<small>{Lang.get("questionnaireName")}</small>
 					<input type="text" name="questionnaireName" {...bindPropertyToInput(questionnaire, "questionnaireName")}/>
-				</label>
-				<label>
-					<small>{Lang.get("blockchainAccount")}</small>
-					<div class="inputLike horizontal vAlignCenter">
-						{originalBlockchainAccount != undefined && originalBlockchainAccount != questionnaire.blockchainAccountId &&
-							<WarnIcon tooltip={Lang.get("warnChangingBlockchainAccount")}/>
-						}
-						<select name="blockchainAccountId" disabled={disableAccountSwitch} {...bindPropertyToInput(questionnaire, "blockchainAccountId", {change: changeAccount})}>
-							{blockchainAccounts?.map(entry =>
-								<option value={entry.id}>{entry.label}</option>
-							)}
-						</select>
-					</div>
 				</label>
 				<label>
 					<small>{Lang.get("denotation")}</small>
@@ -111,14 +75,6 @@ export default PrivatePage(async (query: URLSearchParams) => {
 						<input type="number" min="1" max={MAX_DENOTATION_NUMBER} name="blockchainDenotation" {...bindPropertyToInput(questionnaire, "blockchainDenotation")} {...tooltip(Lang.get("tooltipDenotation"))}/>
 						<span {...tooltip(Lang.get("tooltipStringDenotation"))}>({generateStringDenotation(questionnaire.blockchainDenotation ?? 0)})</span>
 					</div>
-				</label>
-				<label {...tooltip(Lang.get("tooltipApiPassword"))}>
-					<small>{Lang.get("apiPassword")}</small>
-					<textarea name="apiPassword">{questionnaire.apiPassword ?? ""}</textarea>
-				</label>
-				<label {...tooltip(Lang.get("tooltipDataKey"))}>
-					<small>{Lang.get("dataKey")}</small>
-					<textarea name="dataKey">{questionnaire.dataKey ?? ""}</textarea>
 				</label>
 			</Form>
 	};

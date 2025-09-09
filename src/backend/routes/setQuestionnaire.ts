@@ -27,13 +27,13 @@ export default function setQuestionnaire(db: DbType): express.Router {
 		
 		const study = session.isLoggedIn
 			? await db.selectFrom("Study")
-				.select(["blockchainAccountId", "userId"])
+				.select(["blockchainAccountId", "userId", "dataKey", "apiPassword"])
 				.where("studyId", "=", data.studyId)
 				.where("userId", "=", session.userId!)
 				.limit(1)
 				.executeTakeFirst()
 			: await db.selectFrom("Study")
-				.select(["blockchainAccountId", "userId"])
+				.select(["blockchainAccountId", "userId", "dataKey", "apiPassword"])
 				.where("studyId", "=", data.studyId)
 				.where("apiPassword", "=", data.apiPassword)
 				.limit(1)
@@ -44,13 +44,9 @@ export default function setQuestionnaire(db: DbType): express.Router {
 			throw new TranslatedException("errorFaultyData", "studyId");
 		}
 		
-		const blockchainAccountId = data.blockchainAccountId || study.blockchainAccountId;
-		const dataKey = data.dataKey || data.apiPassword;
-		
-		
 		const account = await db.selectFrom("BlockchainAccount")
 			.select(["highestDenotation"])
-			.where("blockchainAccountId", "=", blockchainAccountId)
+			.where("blockchainAccountId", "=", study.blockchainAccountId)
 			.limit(1)
 			.executeTakeFirst();
 		
@@ -62,9 +58,9 @@ export default function setQuestionnaire(db: DbType): express.Router {
 		if(data.id) {
 			const values: Record<string, unknown> = {
 				questionnaireName: data.questionnaireName,
-				blockchainAccountId: blockchainAccountId,
-				apiPassword: data.apiPassword,
-				dataKey: dataKey,
+				blockchainAccountId: study.blockchainAccountId,
+				apiPassword: study.apiPassword,
+				dataKey: study.dataKey,
 			};
 			
 			if(data.blockchainDenotation) {
@@ -89,7 +85,7 @@ export default function setQuestionnaire(db: DbType): express.Router {
 			
 			await db.updateTable("BlockchainAccount")
 				.set({highestDenotation: blockchainDenotation})
-				.where("blockchainAccountId", "=", blockchainAccountId)
+				.where("blockchainAccountId", "=", study.blockchainAccountId)
 				.execute();
 			
 			const insert = await db
@@ -98,9 +94,9 @@ export default function setQuestionnaire(db: DbType): express.Router {
 					userId: study.userId,
 					questionnaireName: data.questionnaireName,
 					studyId: data.studyId,
-					blockchainAccountId: blockchainAccountId,
+					blockchainAccountId: study.blockchainAccountId,
 					apiPassword: data.apiPassword,
-					dataKey: dataKey,
+					dataKey: study.dataKey,
 					columns: "",
 					blockchainDenotation: blockchainDenotation
 				})

@@ -78,7 +78,7 @@ describe("ViewQuestionnaireData", async () => {
 			vi.mocked(getEntry).mockImplementation(async (type) => {
 				if(type == "questionnaire") {
 					return {
-						apiPassword: "mockPassword",
+						dataKey: "mockPassword",
 						blockchainDenotation: 5
 					} as GetDefinitions["questionnaire"]["Response"];
 				}
@@ -149,7 +149,7 @@ describe("ViewQuestionnaireData", async () => {
 			vi.mocked(getEntry).mockImplementation(async (type) => {
 				if(type == "questionnaire") {
 					return {
-						apiPassword: "mockPassword",
+						dataKey: "mockPassword",
 						blockchainDenotation: 5
 					} as GetDefinitions["questionnaire"]["Response"];
 				}

@@ -19,7 +19,6 @@ describe("ConnectAppHelp.tsx", async () => {
 				case "questionnaire":
 					return {
 						questionnaireId: 6,
-						apiPassword: "test"
 					}
 			}
 		})
@@ -64,11 +63,9 @@ describe("ConnectAppHelp.tsx", async () => {
 			const component = await createPage(tab);
 			let box = component.dom.querySelector(`.${css.postDataBox}`)! as HTMLElement;
 			expect(box.innerText, `tab: ${tab}`).toContain('"id": 6');
-			expect(box.innerText, `tab: ${tab}`).toContain('"pass": "test"');
 			
 			vi.mocked(getEntry).mockResolvedValue({
 				questionnaireId: 16,
-				apiPassword: "test2"
 			} as any);
 			
 			const select = component.dom.querySelector("select")!;
@@ -78,7 +75,6 @@ describe("ConnectAppHelp.tsx", async () => {
 			
 			box = component.dom.querySelector(`.${css.postDataBox}`)! as HTMLElement;
 			expect(box.innerText, `tab: ${tab}`).toContain('"id": 16');
-			expect(box.innerText, `tab: ${tab}`).toContain('"pass": "test2"');
 			
 			vi.mocked(getEntry).mockReset();
 		}

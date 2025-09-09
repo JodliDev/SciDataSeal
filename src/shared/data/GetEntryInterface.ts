@@ -17,7 +17,6 @@ export interface GetDefinitions {
 			questionnaireName: string;
 			blockchainAccountId: number;
 			blockchainDenotation: number;
-			apiPassword: string;
 			dataKey: string;
 			columns: string | null;
 		}
@@ -27,6 +26,7 @@ export interface GetDefinitions {
 			studyId: number;
 			studyName: string;
 			apiPassword: string;
+			dataKey: string;
 			blockchainAccountId: number;
 		}
 	}

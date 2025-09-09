@@ -48,7 +48,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		view: () => <Form<SetQuestionnaireColumnsInterface>
 			endpoint="/setQuestionnaireColumns"
 			query={`?id=${questionnaire?.questionnaireId}`}
-			headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}
+			headers={{authorization: `Bearer ${study?.apiPassword}`}}
 			onBeforeSend={confirmSend}
 			onSent={onSent}
 		>

@@ -33,7 +33,7 @@ export default function getEntry(db: DbType): express.Router {
 					
 				case "questionnaire":
 					return await db.selectFrom("Questionnaire")
-						.select(["questionnaireId", "questionnaireName", "blockchainDenotation", "blockchainAccountId", "studyId", "apiPassword", "dataKey", "columns"])
+						.select(["questionnaireId", "questionnaireName", "blockchainDenotation", "blockchainAccountId", "studyId", "dataKey", "columns"])
 						.where("questionnaireId", "=", id)
 						.where("userId", "=", session.userId)
 						.limit(1)
@@ -41,7 +41,7 @@ export default function getEntry(db: DbType): express.Router {
 					
 				case "study":
 					return await db.selectFrom("Study")
-						.select(["studyId", "studyName", "apiPassword", "blockchainAccountId"])
+						.select(["studyId", "studyName", "apiPassword", "dataKey", "blockchainAccountId"])
 						.where("studyId", "=", id)
 						.where("userId", "=", session.userId)
 						.limit(1)

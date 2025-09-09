@@ -11,6 +11,7 @@ import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 import listEntries from "../../actions/listEntries.ts";
 import getEntry from "../../actions/getEntry.ts";
 import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
+import WarnIcon from "../structures/WarnIcon.tsx";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
@@ -28,11 +29,14 @@ export default PrivatePage(async (query: URLSearchParams) => {
 		? (await getEntry("study", id)) ?? {}
 		: {};
 	const blockchainAccounts = await listEntries("blockchainAccounts");
-	
-	let apiPassword = study?.apiPassword;
+	const originalApiPassword = study?.apiPassword;
+	const originalDataKey = study?.dataKey;
+	const originalBlockchainAccount = study?.blockchainAccountId;
 	
 	if(!id) {
-		apiPassword = (await getData<GenerateRandomString>("/generateRandomString"))?.generatedString;
+		const strings = (await getData<GenerateRandomString>("/generateRandomString", "?count=2"))?.generatedString;
+		study.apiPassword = strings?.[0];
+		study.dataKey = strings?.[1];
 	}
 	
 	return {
@@ -57,15 +61,34 @@ export default PrivatePage(async (query: URLSearchParams) => {
 					</label>
 					<label {...tooltip(Lang.get("tooltipApiPassword"))}>
 						<small>{Lang.get("apiPassword")}</small>
-						<textarea name="apiPassword">{apiPassword ?? ""}</textarea>
+						<div class="inputLike horizontal vAlignCenter">
+							<textarea name="apiPassword" {...bindPropertyToInput(study, "apiPassword")}/>
+							{originalApiPassword != undefined && originalApiPassword != study.apiPassword &&
+								<WarnIcon tooltip={Lang.get("warnChangingApiPassword")}/>
+							}
+						</div>
+					</label>
+					<label {...tooltip(Lang.get("tooltipDataKey"))}>
+						<small>{Lang.get("dataKey")}</small>
+						<div class="inputLike horizontal vAlignCenter">
+							<textarea name="dataKey" {...bindPropertyToInput(study, "dataKey")}/>
+							{originalDataKey != undefined && originalDataKey != study.dataKey &&
+								<WarnIcon tooltip={Lang.get("warnChangingDataKey")}/>
+							}
+						</div>
 					</label>
 					<label>
 						<small>{Lang.get("blockchainAccount")}</small>
-						<select name="blockchainAccountId" {...bindPropertyToInput(study, "blockchainAccountId")}>
-							{blockchainAccounts?.map(entry =>
-								<option value={entry.id}>{entry.label}</option>
-							)}
-						</select>
+						<div class="inputLike horizontal vAlignCenter">
+							<select name="blockchainAccountId" {...bindPropertyToInput(study, "blockchainAccountId")}>
+								{blockchainAccounts?.map(entry =>
+									<option value={entry.id}>{entry.label}</option>
+								)}
+							</select>
+							{originalBlockchainAccount != undefined && originalBlockchainAccount != study.blockchainAccountId &&
+								<WarnIcon tooltip={Lang.get("warnChangingBlockchainAccount")}/>
+							}
+						</div>
 					</label>
 				</Form>
 				: <div class="textCentered">{Lang.get("errorNoBlockchainAccounts")}</div>

@@ -13,11 +13,20 @@ export default function generateRandomString(): express.Router {
 	
 	addGetRoute<GenerateRandomString>("/generateRandomString", router, async (data) => {
 		const length = parseInt(data.length ?? "32");
+		const count = parseInt(data.count ?? "1");
 		if(!length)
 			throw new TranslatedException("errorFaultyData", "length");
+		if(!count)
+			throw new TranslatedException("errorFaultyData", "count");
+		
+		const output: string[] = [];
+		
+		for(let i = 0; i < count; ++i) {
+			output[i] = randomBytes(length).toString("base64url")
+		}
 		
 		return {
-			generatedString: randomBytes(length).toString("base64url")
+			generatedString: output
 		}
 	});
 	return router;

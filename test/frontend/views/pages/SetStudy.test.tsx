@@ -22,6 +22,7 @@ describe("SetStudy.tsx", async () => {
 	vi.mock("../../../../src/frontend/actions/getEntry.ts", () => ({
 		default: vi.fn(() => ({
 			apiPassword: "pass",
+			dataKey: "dataKey",
 			studyName: "Name",
 			blockchainAccountId: 34
 		}))
@@ -135,6 +136,59 @@ describe("SetStudy.tsx", async () => {
 			await createAndPressDelete(123);
 			
 			expect(calledSwitchPage).toBe(true);
+		});
+	});
+	
+	describe("Warnings when data is changed", () => {
+		async function testWithId(name: string, elementType: string = "input") {
+			const component = await renderPage(SetStudy, "id=66");
+			
+			let input = component.dom.querySelector(`${elementType}[name=${name}]`) as HTMLInputElement;
+			let warnSymbol = input.parentNode?.querySelector(".warn");
+			expect(warnSymbol).toBeNull();
+			
+			input.value = "99";
+			input.dispatchEvent(new Event("change"))
+			await wait(1);
+			component.redraw();
+			
+			input = component.dom.querySelector(`${elementType}[name=${name}]`) as HTMLInputElement;
+			warnSymbol = input.parentNode?.querySelector(".warn");
+			expect(warnSymbol).not.toBeNull();
+		}
+		async function testWithoutId(name: string, elementType: string = "input") {
+			const component = await renderPage(SetStudy);
+			let input = component.dom.querySelector(`${elementType}[name=${name}]`) as HTMLInputElement;
+			
+			input.value = "99";
+			input.dispatchEvent(new Event("change"))
+			await wait(1);
+			component.redraw();
+			
+			input = component.dom.querySelector(`${elementType}[name=${name}]`) as HTMLInputElement;
+			const warnSymbol = input.parentNode?.querySelector(".warn");
+			expect(warnSymbol).toBeNull();
+		}
+		
+		it("should show warning when apiPassword was changed questionnaire id was provided", async () => {
+			await testWithId("apiPassword", "textarea");
+		});
+		it("should show no warning when apiPassword was changed and no questionnaire id was provided", async () => {
+			await testWithoutId("apiPassword", "textarea");
+		});
+		
+		it("should show warning when dataKey was changed questionnaire id was provided", async () => {
+			await testWithId("dataKey", "textarea");
+		});
+		it("should show no warning when dataKey was changed and no questionnaire id was provided", async () => {
+			await testWithoutId("dataKey", "textarea");
+		});
+		
+		it("should show warning when blockchainAccountId was changed questionnaire id was provided", async () => {
+			await testWithId("blockchainAccountId", "select");
+		});
+		it("should show no warning when blockchainAccountId was changed and no questionnaire id was provided", async () => {
+			await testWithoutId("blockchainAccountId", "select");
 		});
 	});
 });

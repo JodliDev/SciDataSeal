@@ -9,6 +9,7 @@ export default interface Study {
 	studyName: string;
 	blockchainAccountId: number;
 	apiPassword: string;
+	dataKey: string;
 }
 
 @TableClass("Study", "studyId")
@@ -20,4 +21,5 @@ export class StudyTable implements Insertable<Study> {
 	@ForeignKey(BlockchainAccountTable, "blockchainAccountId", {onDelete: "CASCADE"})
 	blockchainAccountId: number = 1;
 	apiPassword: string = "";
+	dataKey: string = "";
 }

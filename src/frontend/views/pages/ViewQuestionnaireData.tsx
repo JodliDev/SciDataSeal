@@ -91,7 +91,7 @@ export default PrivatePage(async query => {
 		}
 		
 		publicKey = blockchain.publicKey;
-		dataKey = questionnaire.apiPassword;
+		dataKey = questionnaire.dataKey;
 		denotation = questionnaire.blockchainDenotation;
 		blockchainType = blockchain.blockchainType;
 		

@@ -19,6 +19,10 @@ abstract class Comparer {
 	}
 	
 	abstract compareWith(value: unknown): boolean;
+	
+	toString(): string {
+		return JSON.stringify(this.source);
+	}
 }
 
 class Exact extends Comparer {
@@ -122,8 +126,21 @@ class MockKysely {
 			}
 			return true;
 		}
+		function stringifyArgs(args: unknown[]): string {
+			const content: string[] = [];
+			
+			for(let i = 0; i < args.length; ++i) {
+				if(args[i] instanceof Comparer) {
+					content.push((args[i] as Comparer).toString());
+				}
+				else {
+					content.push(JSON.stringify(args[i]));
+				}
+			}
+			return `[${content.join(", ")}]`;
+		}
 		
-		const argsString = JSON.stringify(compareArgs);
+		const argsString = stringifyArgs(compareArgs);
 		if(fn.___mockedArgs.hasOwnProperty(argsString)) {
 			return fn.___mockedArgs[argsString];
 		}
@@ -137,7 +154,7 @@ class MockKysely {
 			} else if(oldImplementation) {
 				return oldImplementation(...args);
 			} else {
-				console.trace(`Could not find chain with arguments:\n${JSON.stringify(args)}.`);
+				console.trace(`Could not find chain with arguments:\nActual: ${JSON.stringify(args)}.\nExpect: ${argsString}`);
 				return this;
 			}
 		};

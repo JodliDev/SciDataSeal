@@ -6,6 +6,7 @@ export default interface SetStudyInterface extends PostDataStructureInterface {
 		id?: number;
 		studyName: string;
 		apiPassword: string;
+		dataKey: string;
 		blockchainAccountId: number;
 	}
 	Response: {

@@ -1,11 +1,10 @@
 import {describe, it, vi, expect, afterAll, afterEach, beforeAll} from "vitest";
-import {RenderModel, renderPage} from "../../testRender.ts";
+import {renderPage} from "../../testRender.ts";
 import {wait} from "../../../convenience.ts";
 import postData from "../../../../src/frontend/actions/postData.ts";
 import {SiteTools} from "../../../../src/frontend/singleton/SiteTools.ts";
 import cssButton from "../../../../src/frontend/views/structures/Btn.module.css";
 import SetQuestionnaire from "../../../../src/frontend/views/pages/SetQuestionnaire.tsx";
-import getData from "../../../../src/frontend/actions/getData.ts";
 
 describe("SetQuestionnaire", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
@@ -124,78 +123,6 @@ describe("SetQuestionnaire", async () => {
 			await createAndPressDelete(123);
 			
 			expect(calledSwitchPage).toBe(true);
-		});
-	});
-	
-	describe("change blockchain account", () => {
-		afterEach(() => {
-			vi.clearAllMocks();
-		});
-		
-		async function changeAccountSelection(component: RenderModel, accountId: number) {
-			const accountSelect = component.dom.querySelector("select[name=blockchainAccountId]")! as HTMLSelectElement;
-			accountSelect.value = accountId.toString();
-			accountSelect.dispatchEvent(new Event("change"));
-			await wait(1);
-			component.redraw();
-		}
-		
-		it("should update denotation when account was changed", async () => {
-			const component = await renderPage(SetQuestionnaire);
-			
-			let denotationInput = component.dom.querySelector("input[name=blockchainDenotation]")! as HTMLInputElement;
-			expect(denotationInput.value).toBe("10");
-			
-			vi.mocked(getData).mockClear();
-			vi.mocked(getData).mockResolvedValue({
-				denotation: 33
-			});
-			
-			await changeAccountSelection(component, 5);
-			
-			expect(getData).toHaveBeenCalledWith("/getNewDenotation", "?blockchainAccountId=5");
-			
-			denotationInput = component.dom.querySelector("input[name=blockchainDenotation]")! as HTMLInputElement;
-			expect(denotationInput.value).toBe("33");
-			
-			vi.mocked(getData).mockRestore();
-		});
-		
-		it("should not update denotation if questionnaire id was provided", async () => {
-			const component = await renderPage(SetQuestionnaire, "id=66");
-			let denotationInput = component.dom.querySelector("input[name=blockchainDenotation]")! as HTMLInputElement;
-			expect(denotationInput.value).toBe("4");
-			
-			vi.mocked(getData).mockClear();
-			
-			await changeAccountSelection(component, 5);
-			
-			expect(getData).not.toHaveBeenCalled();
-			denotationInput = component.dom.querySelector("input[name=blockchainDenotation]")! as HTMLInputElement;
-			expect(denotationInput.value).toBe("4");
-		});
-		
-		it("should show warning if blockchainAccountId was changed and questionnaire id was provided", async () => {
-			const component = await renderPage(SetQuestionnaire, "id=66");
-			let select = component.dom.querySelector("select[name=blockchainAccountId]") as HTMLElement;
-			let warnSymbol = select.parentNode?.querySelector(".warn");
-			expect(warnSymbol).toBeNull();
-			
-			await changeAccountSelection(component, 5);
-			
-			select = component.dom.querySelector("select[name=blockchainAccountId]") as HTMLElement;
-			warnSymbol = select.parentNode?.querySelector(".warn");
-			expect(warnSymbol).not.toBeNull();
-		});
-		
-		it("should show no warning if blockchainAccountId was changed and no questionnaire id was provided", async () => {
-			const component = await renderPage(SetQuestionnaire);
-			
-			await changeAccountSelection(component, 5);
-			
-			const select = component.dom.querySelector("select[name=blockchainAccountId]") as HTMLElement;
-			const warnSymbol = select.parentNode?.querySelector(".warn");
-			expect(warnSymbol).toBeNull();
 		});
 	});
 	

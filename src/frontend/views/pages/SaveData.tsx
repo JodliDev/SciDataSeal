@@ -32,7 +32,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			? <Form<SaveDataInterface>
 				endpoint="/saveData"
 				query={`?id=${questionnaire?.questionnaireId}`}
-				headers={{authorization: `Bearer ${questionnaire?.apiPassword}`}}
+				headers={{authorization: `Bearer ${study?.apiPassword}`}}
 				onBeforeSend={confirmSend}
 				clearFormWhenDone={true}
 			>

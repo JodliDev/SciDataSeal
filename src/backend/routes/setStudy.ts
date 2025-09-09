@@ -15,7 +15,7 @@ export default function setStudy(db: DbType): express.Router {
 	const router = express.Router();
 	
 	addPostRoute<SetStudyInterface>("/setStudy", router, async (data, request) => {
-		if(!data.studyName || !data.apiPassword || !data.blockchainAccountId)
+		if(!data.studyName || !data.apiPassword || !data.dataKey || !data.blockchainAccountId)
 			throw new TranslatedException("errorMissingData");
 		
 		if(!isValidBackendString(data.studyName)) {
@@ -29,6 +29,17 @@ export default function setStudy(db: DbType): express.Router {
 				.set({
 					studyName: data.studyName,
 					apiPassword: data.apiPassword,
+					dataKey: data.dataKey,
+					blockchainAccountId: data.blockchainAccountId
+				})
+				.where("studyId", "=", data.id)
+				.where("userId", "=", session.userId)
+				.execute();
+			
+			await db.updateTable("Questionnaire")
+				.set({
+					apiPassword: data.apiPassword,
+					dataKey: data.dataKey,
 					blockchainAccountId: data.blockchainAccountId
 				})
 				.where("studyId", "=", data.id)
@@ -46,6 +57,7 @@ export default function setStudy(db: DbType): express.Router {
 					userId: session.userId,
 					studyName: data.studyName,
 					apiPassword: data.apiPassword,
+					dataKey: data.dataKey,
 					blockchainAccountId: data.blockchainAccountId
 				})
 				.executeTakeFirst();
