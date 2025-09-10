@@ -22,7 +22,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	const filterData = (data: Record<string, unknown>) => {
 		if(!data.password && !data.passwordRepeat)
 			return {
-				userId: data.id as number,
+				id: data.id as number,
 				username: data.username as string,
 				isAdmin: data.isAdmin as boolean
 			}
@@ -30,7 +30,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			throw new Error(Lang.get("errorPasswordMismatch"));
 		}
 		return {
-			userId: data.id as number,
+			id: data.id as number,
 			username: data.username as string,
 			password: data.password as string,
 			isAdmin: data.isAdmin as boolean

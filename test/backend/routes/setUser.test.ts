@@ -31,7 +31,7 @@ describe("setUser", () => {
 	});
 	
 	it("should throw error if username already exists", async() => {
-		const sendData = {id: 1, username: "existingUser", password: "securePassword"};
+		const sendData = {username: "existingUser", password: "securePassword"};
 		
 		dbMock.selectFrom.chain()
 			.where.chain("username", "=", sendData.username)
@@ -149,7 +149,7 @@ describe("setUser", () => {
 		};
 		
 		const insertMock = dbMock.insertInto.chain("User")
-			.set({
+			.set.chain({
 				username: sendData.username,
 				isAdmin: sendData.isAdmin,
 			})

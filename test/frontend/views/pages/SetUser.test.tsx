@@ -86,7 +86,7 @@ describe("SetUser.tsx", async () => {
 			
 			expect(postData).toHaveBeenCalledWith("/setUser",
 				{
-					userId: expect.anything(),
+					id: expect.anything(),
 					username: expect.anything(),
 					password: "qwe",
 					isAdmin: expect.anything()

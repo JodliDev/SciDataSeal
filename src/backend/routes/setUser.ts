@@ -24,15 +24,6 @@ export default function setUser(db: DbType): express.Router {
 		
 		validateUserData(data.username, data.password);
 		
-		const existingUser = await db.selectFrom("User")
-			.select("userId")
-			.where("username", "=", data.username)
-			.executeTakeFirst();
-		
-		if(existingUser && existingUser.userId != data.id) {
-			throw new TranslatedException("errorUsernameAlreadyExists");
-		}
-		
 		if(data.id) {
 			const session = await getLoggedInSessionData(db, request);
 			if(session.userId == data.id) {
@@ -40,7 +31,7 @@ export default function setUser(db: DbType): express.Router {
 			}
 			const updateData: Record<string, unknown> = {
 				username: data.username,
-				isAdmin: data.isAdmin ?? false,
+				isAdmin: !!data.isAdmin,
 			}
 			if(data.password) {
 				updateData.password = await encryptPassword(data.password);
@@ -57,6 +48,15 @@ export default function setUser(db: DbType): express.Router {
 			};
 		}
 		else {
+			const existingUser = await db.selectFrom("User")
+				.select("userId")
+				.where("username", "=", data.username)
+				.executeTakeFirst();
+			
+			if(existingUser && existingUser.userId != data.id) {
+				throw new TranslatedException("errorUsernameAlreadyExists");
+			}
+			
 			if(!data.password) {
 				throw new TranslatedException("errorMissingData");
 			}
