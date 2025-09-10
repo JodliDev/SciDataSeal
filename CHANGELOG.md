@@ -1,2 +1,7 @@
-- Save and confirm via Scheduler and speedup endpoints
-- Bundle data in blockchain that were received between blockchain syncs (the intervall can be changed via [blockchainSyncIntervalMinutes])
+- Add an option to manually sync data to the blockchain without having to wait.
+- Change continue tag usage in Solana blockchain.
+- Simplify questionnaire creation by removing options for dataKey and blockchain id and use values from study instead.
+- Create wallets through SciDataSeal and generate their seed phrase.
+- Show errors in data log.
+- Resend data when data was lost before confirming.
+- Show balance for blockchain accounts.
