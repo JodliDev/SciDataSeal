@@ -5,7 +5,7 @@ import Loading from "./pages/fallback/Loading.tsx";
 import {PageContent, PageImport} from "../PageComponent.ts";
 import SessionData from "../../shared/SessionData.ts";
 import {SiteTools} from "../singleton/SiteTools.ts";
-import Login from "./pages/fallback/Login.tsx";
+import Login from "./pages/Login.tsx";
 import Init from "./pages/fallback/Init.tsx";
 import About from "./pages/About.tsx";
 import Navigation from "./Navigation.tsx";
@@ -58,7 +58,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 			const imported = await import(`./pages/${pageName}.tsx`) as PageImport;
 			const bundle = imported.default;
 			
-			currentPage = bundle.isAllowed(session) ? await bundle.component(searchParams) : Login();
+			currentPage = bundle.isAllowed(session) ? await bundle.component(searchParams) : await Login.component(searchParams);
 		}
 		catch(e) {
 			console.error(e);

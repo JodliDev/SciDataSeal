@@ -1,8 +1,8 @@
 import {describe, it, vi, expect, afterAll, afterEach, beforeAll} from "vitest";
-import {renderComponent} from "../../../testRender.ts";
+import {renderPage} from "../../../testRender.ts";
 import {wait} from "../../../../convenience.ts";
 import postData from "../../../../../src/frontend/actions/postData.ts";
-import Login from "../../../../../src/frontend/views/pages/fallback/Login.tsx";
+import Login from "../../../../../src/frontend/views/pages/Login.tsx";
 import {SiteTools} from "../../../../../src/frontend/singleton/SiteTools.ts";
 
 describe("Login", async () => {
@@ -24,7 +24,7 @@ describe("Login", async () => {
 	});
 	
 	async function createAndSubmitForm() {
-		const component = renderComponent(Login, {});
+		const component = await renderPage(Login, "");
 		const form = component.dom.querySelector("form")! as HTMLFormElement;
 		
 		form.dispatchEvent(new Event("submit"));

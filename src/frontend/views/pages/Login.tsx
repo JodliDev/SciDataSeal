@@ -1,11 +1,12 @@
 import m from "mithril";
-import LoginInterface from "../../../../shared/data/LoginInterface.ts";
-import Form from "../../structures/Form.tsx";
-import {SiteTools} from "../../../singleton/SiteTools.ts";
-import {Lang} from "../../../singleton/Lang.ts";
-import {PageContent} from "../../../PageComponent.ts";
+import LoginInterface from "../../../shared/data/LoginInterface.ts";
+import Form from "../structures/Form.tsx";
+import {SiteTools} from "../../singleton/SiteTools.ts";
+import {Lang} from "../../singleton/Lang.ts";
+import {PublicPage} from "../../PageComponent.ts";
 
-export default function Login(): PageContent {
+
+export default PublicPage(async () => {
 	const onSent = (response: LoginInterface["Response"]) => {
 		SiteTools.session.userId = response.userId;
 		SiteTools.session.isLoggedIn = true;
@@ -16,7 +17,7 @@ export default function Login(): PageContent {
 	
 	return {
 		history: [],
-		view: () =>  <div id="Login" class="fillSpace horizontal hAlignCenter vAlignCenter">
+		view: () => <div id="Login" class="fillSpace horizontal hAlignCenter vAlignCenter">
 			<Form<LoginInterface> endpoint="/login" onSent={onSent} submitLabel={Lang.get("login")}>
 				<label>
 					<small>{Lang.get("username")}</small>
@@ -29,4 +30,4 @@ export default function Login(): PageContent {
 			</Form>
 		</div>
 	};
-}
+});
