@@ -1,7 +1,7 @@
 {
   "name": "scidataseal",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "scripts": {
     "prepare_dev": "node create_dev_structure.mjs",
     "prepare_dist": "node create_build_structure.mjs",

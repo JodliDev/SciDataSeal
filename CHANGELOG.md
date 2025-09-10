@@ -1,3 +1,4 @@
+## 0.3.0
 - Add an option to manually sync data to the blockchain without having to wait.
 - Change continue tag usage in Solana blockchain.
 - Simplify questionnaire creation by removing options for dataKey and blockchain id and use values from study instead.
@@ -5,3 +6,7 @@
 - Show errors in data log.
 - Resend data when data was lost before confirming.
 - Show balance for blockchain accounts.
+
+## 0.3.1
+- Add project icon.
+- Fix bug when changing user accounts.
