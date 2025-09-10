@@ -3,6 +3,6 @@ services:
         image: jodlidev/scidataseal:latest
         restart: "unless-stopped"
         volumes:
-            - ./config:/scidataseal/config:rw
+            - ./config:/SciDataSeal/config:rw
         ports:
             - "19419:19419"
