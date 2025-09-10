@@ -30,6 +30,7 @@ import getEntry from "./routes/getEntry.ts";
 import {Logger} from "./Logger.ts";
 import syncBlockchain from "./actions/syncBlockchain.ts";
 import syncBlockchainNow from "./routes/syncBlockchainNow.ts";
+import getBalance from "./routes/getBalance.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -79,6 +80,7 @@ async function init() {
 	webServer.use("/api", authenticateMiddleware, getNewDenotation(db));
 	webServer.use("/api", adminMiddleware, syncBlockchainNow(scheduler));
 	webServer.use("/api", adminMiddleware, setBlockchainAccount(db));
+	webServer.use("/api", adminMiddleware, getBalance(db));
 	webServer.use("/api", adminMiddleware, setUser(db));
 	
 	const langProvider = new LangProvider();

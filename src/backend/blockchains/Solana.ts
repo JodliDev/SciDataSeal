@@ -42,6 +42,11 @@ export default class Solana implements BlockchainInterface {
 		};
 	}
 	
+	public async getBalance(publicKey: string): Promise<number> {
+		const connection = new Connection(this.getUrl(), "confirmed");
+		return await connection.getBalance(new PublicKey(publicKey)) / LAMPORTS_PER_SOL;
+	}
+	
 	/**
 	 * Handles the situation where there are insufficient funds for a transaction.
 	 * Meant to be overridden by SolanaTest.

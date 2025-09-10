@@ -2,6 +2,7 @@
 	"_projectName": "SciDataSeal",
 	"admin": "Admin",
 	"apiPassword": "API password",
+	"balance": "Balance",
 	"blockchainName": "Name",
 	"blockchainAccount": "Blockchain account",
 	"blockchainAccounts": "Blockchain accounts",

@@ -8,13 +8,13 @@ import BlockchainAccount from "../../../../src/frontend/views/pages/BlockchainAc
 
 describe("BlockchainAccount", async () => {
 	vi.mock("../../../../src/frontend/actions/postData.ts", () => ({
-		default: vi.fn(() => ({
+		default: vi.fn(() => Promise.resolve({
 			blockchainAccountId: 123
 		}))
 	}));
 	
 	vi.mock("../../../../src/frontend/actions/getData.ts", () => ({
-		default: vi.fn(() => ({
+		default: vi.fn(() => Promise.resolve({
 			blockchainAccountId: 123,
 			blockchainName: "blockchain",
 			blockchainType: "solana",

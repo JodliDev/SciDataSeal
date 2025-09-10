@@ -27,6 +27,13 @@ export default interface BlockchainInterface {
 	createWallet(mnemonic?: string): Promise<WalletData>;
 	
 	/**
+	 * Get the balance for a wallet.
+	 * @param publicKey - The public key of a wallet.
+	 * @return A promise that resilves to the wallet balance.
+	 */
+	getBalance(publicKey: string): Promise<number>;
+	
+	/**
 	 * Saves a message based on the provided parameters and returns an array of signature ids.
 	 *
 	 * @param privateKey - The private key used for authentication or encryption.

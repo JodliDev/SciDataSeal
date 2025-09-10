@@ -4,6 +4,8 @@
 }
 .FeedbackIcon {
 	display: inline-block;
+	width: var(--btnSize);
+	height: var(--btnSize);
 	animation: fade-out 2s ease-in-out;
 	opacity: 0;
 	
@@ -12,8 +14,6 @@
 		display: none;
 	}
 	&.reserveSpace.hidden {
-		width: var(--btnSize);
-		height: var(--btnSize);
 		display: inline-block;
 		visibility: hidden;
 		animation: none;
@@ -29,5 +29,5 @@
 
 
 label .FeedbackIcon, :global .labelLike :local .FeedbackIcon {
-	height: 6px;
+	margin: -9px 0;
 }
