@@ -91,7 +91,10 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 	return {
 		view: () => <div class={`${css.Site} vertical hAlignCenter`}>
 			<div class={`${css.siteContent} vertical fullLine fillSpace hAlignCenter vAlignCenter`}>
-				<h1 class={`${css.header} textCentered`}>{Lang.get("_projectName")}</h1>
+				<div class={`${css.header} horizontal vAlignCenter`}>
+					<img src="/favicon.svg" height="32px" alt="logo"/>
+					<h1 class="textCentered">{Lang.get("_projectName")}</h1>
+				</div>
 				<Navigation entries={currentPage.history}/>
 				<div id={pageName} class={`${css.page} vertical selfAlignStretch`}>{m(currentPage)}</div>
 			</div>

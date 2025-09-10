@@ -3,7 +3,10 @@
 	inset: 10px;
 	
 	.header {
-	
+		color: var(--color-primary-dark);
+		img {
+			margin-right: 10px;
+		}
 	}
 	.siteContent {
 		width: 600px;
