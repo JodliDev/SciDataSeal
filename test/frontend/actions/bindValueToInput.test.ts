@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from "vitest";
-import bindValueToInput, {bindPropertyToInput} from "../../../src/frontend/actions/bindValueToInput.ts";
+import bindValueToInput, {bindBooleanPropertyToInput, bindPropertyToInput} from "../../../src/frontend/actions/bindValueToInput.ts";
 
 describe("bindValueToInput", () => {
 	it("should bind a string input's value and call the setter", () => {
@@ -150,5 +150,35 @@ describe("bindPropertyToInput", () => {
 		
 		binding.onchange(event);
 		expect(obj.key).toBe(false);
+	});
+});
+
+describe("bindBooleanPropertyToInput", () => {
+	it("should treat 1 as true", () => {
+		const obj = {key: 1};
+		const binding = bindBooleanPropertyToInput(obj, "key");
+		
+		expect(binding.checked).toBe(true);
+		
+		const event = {
+			target: {checked: false},
+		} as unknown as InputEvent;
+		
+		binding.onchange(event);
+		expect(obj.key).toBe(false);
+	});
+	
+	it("should treat 0 as false", () => {
+		const obj = {key: 0};
+		const binding = bindBooleanPropertyToInput(obj, "key");
+		
+		expect(binding.checked).toBe(false);
+		
+		const event = {
+			target: {checked: true},
+		} as unknown as InputEvent;
+		
+		binding.onchange(event);
+		expect(obj.key).toBe(true);
 	});
 });

@@ -49,3 +49,12 @@ export default function bindValueToInput<T>(attrValue: T, set: (value: T) => voi
 export function bindPropertyToInput<T extends Record<string, unknown>>(obj: T, key: keyof T, eventOptions?: EventOptions) {
 	return bindValueToInput(obj[key], (value) => obj[key] = value, eventOptions);
 }
+
+/**
+ * Like {@link bindPropertyToInput}, but forces values to be treated as boolean.
+ * Needed because backend responses use 1 for true and 0 for false (because of limitations with Sqlite), which will be confused for number types.
+ * @see bindValueToInput
+ */
+export function bindBooleanPropertyToInput<T extends Record<string, unknown>>(obj: T, key: keyof T, eventOptions?: EventOptions) {
+	return bindValueToInput(!!obj[key], (value) => obj[key] = value as any, eventOptions);
+}

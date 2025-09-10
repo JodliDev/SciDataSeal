@@ -4,7 +4,7 @@ import {Lang} from "../../singleton/Lang.ts";
 import {SiteTools} from "../../singleton/SiteTools.ts";
 import Form from "../structures/Form.tsx";
 import SetUserInterface from "../../../shared/data/SetUserInterface.ts";
-import {bindPropertyToInput} from "../../actions/bindValueToInput.ts";
+import {bindBooleanPropertyToInput, bindPropertyToInput} from "../../actions/bindValueToInput.ts";
 import {tooltip} from "../../actions/floatingMenu.ts";
 import getEntry from "../../actions/getEntry.ts";
 import GetEntryInterface from "../../../shared/data/GetEntryInterface.ts";
@@ -55,7 +55,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 			<Form<SetUserInterface> id={id} endpoint="/setUser" addDeleteBtnFor={id ? "user" : undefined} filterData={filterData} onSent={onSent} onDeleted={onDeleted}>
 				<label {...tooltip(Lang.get("tooltipAdminUser"))}>
 					<small>{Lang.get("admin")}</small>
-					<input type="checkbox" name="isAdmin" {...bindPropertyToInput(user, "isAdmin")}/>
+					<input type="checkbox" name="isAdmin" {...bindBooleanPropertyToInput(user, "isAdmin")}/>
 				</label>
 				<label>
 					<small>{Lang.get("username")}</small>
