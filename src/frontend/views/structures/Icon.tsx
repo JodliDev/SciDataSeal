@@ -5,6 +5,7 @@ import connectAppSvg from "../../assets/icons/connectApp.svg?raw";
 import deleteSvg from "../../assets/icons/delete.svg?raw";
 import listSvg from "../../assets/icons/list.svg?raw";
 import logsSvg from "../../assets/icons/logs.svg?raw";
+import logoutSvg from "../../assets/icons/logout.svg?raw";
 import nextSvg from "../../assets/icons/next.svg?raw";
 import openInNewSvg from "../../assets/icons/openInNew.svg?raw";
 import pendingSvg from "../../assets/icons/pending.svg?raw";
@@ -31,6 +32,7 @@ const IconType = {
 	delete: deleteSvg,
 	list: listSvg,
 	logs: logsSvg,
+	logout: logoutSvg,
 	next: nextSvg,
 	openInNew: openInNewSvg,
 	pending: pendingSvg,

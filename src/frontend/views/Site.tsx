@@ -7,7 +7,7 @@ import SessionData from "../../shared/SessionData.ts";
 import {SiteTools} from "../singleton/SiteTools.ts";
 import Login from "./pages/fallback/Login.tsx";
 import Init from "./pages/fallback/Init.tsx";
-import About from "./pages/fallback/About.tsx";
+import About from "./pages/About.tsx";
 import Navigation from "./Navigation.tsx";
 import ErrorPage from "./pages/fallback/ErrorPage.tsx";
 import {getUrlData} from "../actions/getUrlData.ts";
@@ -34,6 +34,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 		m.redraw();
 		pageName = newPageName;
 		currentQuery = query;
+		const searchParams = new URLSearchParams(query);
 		
 		if(!options.isInit) {
 			pageName = "Init";
@@ -47,7 +48,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 			}
 			else {
 				pageName = "About";
-				currentPage = About();
+				currentPage = await About.component(searchParams);
 				m.redraw();
 				return;
 			}
@@ -57,7 +58,7 @@ export default function Site({attrs: {session, options}}: Vnode<{session: Sessio
 			const imported = await import(`./pages/${pageName}.tsx`) as PageImport;
 			const bundle = imported.default;
 			
-			currentPage = bundle.isAllowed(session) ? await bundle.component(new URLSearchParams(query)) : Login();
+			currentPage = bundle.isAllowed(session) ? await bundle.component(searchParams) : Login();
 		}
 		catch(e) {
 			console.error(e);

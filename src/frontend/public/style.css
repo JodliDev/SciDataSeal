@@ -10,6 +10,9 @@ body {
 .textCentered {
 	text-align: center;
 }
+.buttonHeight {
+	height: var(--btnSize);
+}
 .warn {
 	color: red !important;
 	

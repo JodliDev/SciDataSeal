@@ -31,6 +31,7 @@ import {Logger} from "./Logger.ts";
 import syncBlockchain from "./actions/syncBlockchain.ts";
 import syncBlockchainNow from "./routes/syncBlockchainNow.ts";
 import getBalance from "./routes/getBalance.ts";
+import logout from "./routes/logout.ts";
 
 async function init() {
 	const db = await setupDb()
@@ -65,6 +66,7 @@ async function init() {
 	webServer.use(cookieParser());
 	
 	webServer.use("/api", login(db));
+	webServer.use("/api", logout());
 	if(!Options.isInit)
 		webServer.use("/api", initialize(db));
 	webServer.use("/api", saveData(db));

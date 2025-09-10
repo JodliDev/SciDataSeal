@@ -9,6 +9,8 @@ import {FeedbackCallBack} from "../structures/FeedbackIcon.tsx";
 import getData from "../../actions/getData.ts";
 import ManuallySyncBlockchain from "../../../shared/data/ManuallySyncBlockchain.ts";
 import FeedbackContent from "../structures/FeedbackContent.tsx";
+import {doLogout} from "../../actions/doLogout.ts";
+import LogoutInterface from "../../../shared/data/LogoutInterface.ts";
 
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async () => {
@@ -22,6 +24,11 @@ export default PrivatePage(async () => {
 		catch {
 			syncBlockchainFeedback.setSuccess(false);
 		}
+	}
+	
+	async function logout() {
+		await getData<LogoutInterface>("/logout");
+		doLogout();
 	}
 	
 	return {
@@ -50,7 +57,7 @@ export default PrivatePage(async () => {
 				}
 			</div>
 			<div class="fillSpace"></div>
-			<div class="horizontal">
+			<div class="horizontal buttonHeight">
 				{!!SiteTools.session.isAdmin &&
 					<FeedbackContent callback={syncBlockchainFeedback} waitForSuccessDelay={true}>
 						<div class="clickable" {...tooltip(Lang.get("tooltipSyncBlockchainNow"))} onclick={syncBlockchainNow}>
@@ -59,9 +66,12 @@ export default PrivatePage(async () => {
 					</FeedbackContent>
 				}
 				<div class="fillSpace"></div>
-				<A page="UserSettings" class="clickable selfAlignEnd" {...tooltip(Lang.get("tooltipUserSettingsDesc"))}>
+				<A page="UserSettings" class="clickable" {...tooltip(Lang.get("tooltipUserSettingsDesc"))}>
 					<Icon iconKey="userSettings"/>
 				</A>
+				<div class="clickable" onclick={logout} {...tooltip(Lang.get("logout"))}>
+					<Icon iconKey="logout"/>
+				</div>
 			</div>
 		</>
 	};

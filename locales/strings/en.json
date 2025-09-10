@@ -57,6 +57,7 @@
 	"infoMnemonic": "Save this seed phrase NOW and store it in a safe place. It will never be shown to you again. You need it to be able to recover your wallet.",
 	"listUsers": "List users",
 	"login": "Login",
+	"logout": "Logout",
 	"load": "Load",
 	"mnemonic": "Seed phrase",
 	"noData": "No data",
