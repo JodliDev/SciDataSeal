@@ -8,6 +8,7 @@ export default interface LoginInterface extends PostDataStructureInterface {
 	}
 	Response: {
 		userId: number;
+		isAdmin: boolean;
 	}
 }
 

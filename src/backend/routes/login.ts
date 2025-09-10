@@ -22,7 +22,7 @@ export default function login(db: DbType): express.Router {
 		
 		const user = await db
 			.selectFrom("User")
-			.select(["password", "userId"])
+			.select(["password", "userId", "isAdmin"])
 			.where("username", "=", data.username)
 			.limit(1)
 			.executeTakeFirst();
@@ -36,7 +36,8 @@ export default function login(db: DbType): express.Router {
 		await doLogin(db, response, user.userId);
 		
 		return {
-			userId: user.userId
+			userId: user.userId,
+			isAdmin: user.isAdmin
 		};
 	});
 	return router;

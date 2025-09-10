@@ -9,6 +9,7 @@ export default function Login(): PageContent {
 	const onSent = (response: LoginInterface["Response"]) => {
 		SiteTools.session.userId = response.userId;
 		SiteTools.session.isLoggedIn = true;
+		SiteTools.session.isAdmin = response.isAdmin;
 		SiteTools.switchPage("Home");
 		m.redraw();
 	}
