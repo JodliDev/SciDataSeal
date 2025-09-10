@@ -182,7 +182,7 @@ export default PrivatePage(async query => {
 						</div>
 					}
 					<div class="horizontal hAlignCenter wrapContent">
-						<label {...tooltip(Lang.get("tooltipBlockchainPrivateKey"))}>
+						<label {...tooltip(Lang.get("tooltipBlockchainPublicKey"))}>
 							<small>{Lang.get("publicKey")}</small>
 							<textarea name="publicKey" {...bindValueToInput(publicKey, newValue => publicKey = newValue)}></textarea>
 						</label>

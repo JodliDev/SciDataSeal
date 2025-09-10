@@ -98,7 +98,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 								<input type="checkbox" name="useExisting" {...bindValueToInput(useExisting, newValue => useExisting = newValue)}/>
 							</label>
 							{useExisting &&
-								<label {...tooltip(Lang.get("tooltipBlockchainPrivateKey"))}>
+								<label {...tooltip(Lang.get("tooltipMnemonic"))}>
 									<small>{Lang.get("mnemonic")}</small>
 									<textarea name="mnemonic"></textarea>
 								</label>
