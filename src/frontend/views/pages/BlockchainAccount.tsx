@@ -15,6 +15,7 @@ import FeedbackIcon, {FeedbackCallBack} from "../structures/FeedbackIcon.tsx";
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	async function onSent(response: SetBlockchainInterface["Response"]) {
+		account.blockchainAccountId = response.blockchainAccountId;
 		if(response.mnemonic) {
 			mnemonic = response.mnemonic;
 			m.redraw();
@@ -62,7 +63,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 					<small>{Lang.get("mnemonic")}</small>
 					<pre class="inputLike">{mnemonic}</pre>
 				</div>
-				<button onclick={() => SiteTools.switchPage("Home")}>{Lang.get("done")}</button>
+				<button onclick={() => SiteTools.switchPage("BlockchainAccount", `?id=${account.blockchainAccountId}`)}>{Lang.get("done")}</button>
 			</div>
 			: <div class="vertical hAlignCenter">
 				{ updateMode &&
