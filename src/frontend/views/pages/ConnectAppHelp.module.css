@@ -11,12 +11,12 @@
 	}
 	
 	.optional {
-		white-space: wrap;
 		display: inline;
 		color: dimgray;
+		padding: 0;
 	}
 }
 
-.postDataBox {
+.codeBox {
 	/* Used for Unit Tests*/
 }

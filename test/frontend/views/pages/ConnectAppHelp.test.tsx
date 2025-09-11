@@ -61,7 +61,7 @@ describe("ConnectAppHelp.tsx", async () => {
 		
 		for(const tab of tabs) {
 			const component = await createPage(tab);
-			let box = component.dom.querySelector(`.${css.postDataBox}`)! as HTMLElement;
+			let box = component.dom.querySelector(`.${css.codeBox}`)! as HTMLElement;
 			expect(box.innerText, `tab: ${tab}`).toContain('"id": 6');
 			
 			vi.mocked(getEntry).mockResolvedValue({
@@ -73,7 +73,7 @@ describe("ConnectAppHelp.tsx", async () => {
 			await wait(1);
 			component.redraw();
 			
-			box = component.dom.querySelector(`.${css.postDataBox}`)! as HTMLElement;
+			box = component.dom.querySelector(`.${css.codeBox}`)! as HTMLElement;
 			expect(box.innerText, `tab: ${tab}`).toContain('"id": 16');
 			
 			vi.mocked(getEntry).mockReset();
