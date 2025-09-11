@@ -1,4 +1,4 @@
-## 0.3.4
+## 0.3.5
 - Fix exceptions when no questionnaires exist.
 
 ## 0.3.3
