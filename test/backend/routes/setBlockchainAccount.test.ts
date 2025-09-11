@@ -2,7 +2,7 @@ import {afterAll, afterEach, describe, expect, it, vi} from "vitest";
 import request from "supertest";
 import express from "express";
 import setBlockchainAccount from "../../../src/backend/routes/setBlockchainAccount.ts";
-import {WalletData} from "../../../src/backend/blockchains/BlockchainInterface.ts";
+import BlockchainInterface, {WalletData} from "../../../src/backend/blockchains/BlockchainInterface.ts";
 import getBlockchain from "../../../src/backend/actions/getBlockchain.ts";
 import {mockKysely} from "../../MockKysely.ts";
 
@@ -99,11 +99,8 @@ describe("setBlockchainAccount", () => {
 	it("should use existing mnemonic when useExisting is true", async() => {
 		const createWalletMock = vi.fn();
 		vi.mocked(getBlockchain).mockReturnValueOnce({
-			createWallet: createWalletMock,
-			saveMessage: vi.fn(),
-			isConfirmed: vi.fn(),
-			listData: vi.fn()
-		});
+			createWallet: createWalletMock
+		} satisfies Partial<BlockchainInterface> as any);
 		await request(app)
 			.post("/setBlockchainAccount")
 			.send({
@@ -119,11 +116,8 @@ describe("setBlockchainAccount", () => {
 	it("should create new wallet when useExisting is false", async() => {
 		const createWalletMock = vi.fn();
 		vi.mocked(getBlockchain).mockReturnValueOnce({
-			createWallet: createWalletMock,
-			saveMessage: vi.fn(),
-			isConfirmed: vi.fn(),
-			listData: vi.fn()
-		})
+			createWallet: createWalletMock
+		} satisfies Partial<BlockchainInterface> as any)
 		await request(app)
 			.post("/setBlockchainAccount")
 			.send({

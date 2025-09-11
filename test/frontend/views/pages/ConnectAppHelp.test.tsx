@@ -16,25 +16,21 @@ describe("ConnectAppHelp.tsx", async () => {
 						studyName: "test",
 						studyApiPassword: "test"
 					}
-				case "questionnaire":
-					return {
-						questionnaireId: 6,
-					}
 			}
 		})
 	}));
 	vi.mock("../../../../src/frontend/actions/listEntries.ts", () => ({
 		default: vi.fn(() => [
 			{
-				questionnaireId: 6,
+				id: 6,
 				apiPassword: "test"
 			},
 			{
-				questionnaireId: 16,
+				id: 16,
 				apiPassword: "test2"
 			},
 			{
-				questionnaireId: 26,
+				id: 26,
 				apiPassword: "test3"
 			}
 		])
@@ -64,11 +60,8 @@ describe("ConnectAppHelp.tsx", async () => {
 			let box = component.dom.querySelector(`.${css.codeBox}`)! as HTMLElement;
 			expect(box.innerText, `tab: ${tab}`).toContain('"id": 6');
 			
-			vi.mocked(getEntry).mockResolvedValue({
-				questionnaireId: 16,
-			} as any);
-			
 			const select = component.dom.querySelector("select")!;
+			select.value = "16";
 			select.dispatchEvent(new Event("change"));
 			await wait(1);
 			component.redraw();
