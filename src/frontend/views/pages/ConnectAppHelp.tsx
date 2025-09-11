@@ -111,14 +111,11 @@ class CodeBuilder {
 // noinspection JSUnusedGlobalSymbols
 export default PrivatePage(async (query: URLSearchParams) => {
 	function createQuestionnaireMenu(questionnaires: ListResponseType<"questionnaires">) {
-		async function onChange(event: Event) {
+		function onChange(event: Event) {
 			const target = event.target as HTMLSelectElement;
 			feedback.setLoading(true);
-			const q = await getEntry("questionnaire", parseInt(target.value));
 			
-			if(q) {
-				questionnaire = q;
-			}
+			currentQuestionnaireId = parseInt(target.value);
 			feedback.setLoading(false);
 		}
 		
@@ -172,21 +169,18 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	const studyId = parseInt(query.get("studyId") ?? "0");
 	const study = await getEntry("study", studyId);
 	const questionnaires = (await listEntries("questionnaires", `?studyId=${studyId}`));
-	const loadedQuestionnaire = (await getEntry("questionnaire", questionnaires?.[0]?.id ?? 0));
+	let currentQuestionnaireId = questionnaires?.[0]?.id ?? 0;
 	
 	const createQuestionnaireUrl = window.location.origin + "/api" + ("/setQuestionnaire" satisfies SetQuestionnaireInterface["Endpoint"]);
 	const saveDataUrl = window.location.origin + "/api" + ("/saveData" satisfies SaveDataInterface["Endpoint"]);
 	const setColumnsUrl = window.location.origin + "/api" + ("/setQuestionnaireColumns" satisfies SetQuestionnaireColumnsInterface["Endpoint"]);
 	
-	if(!study || !questionnaires || !loadedQuestionnaire) {
+	if(!study || !questionnaires) {
 		return {
 			history: [],
 			view: () => <div class="selfAlignCenter">{Lang.get("notFound")}</div>
 		};
 	}
-	
-	let questionnaire = loadedQuestionnaire;
-	
 	
 	return {
 		history: [
@@ -235,7 +229,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 							</div>
 							{formatCode(Lang.get("body"), builder => {
 								builder.object(obj => {
-									obj.line("id", builder => builder.value(questionnaire.questionnaireId))
+									obj.line("id", builder => builder.value(currentQuestionnaireId))
 									obj.line("pass", builder => builder.value(study.apiPassword))
 									obj.line("columns", builder => builder.data(["column1", "column2"]))
 								});
@@ -258,7 +252,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 							</div>
 							{formatCode(Lang.get("body"), builder => {
 								builder.object(obj => {
-									obj.line("id", builder => builder.value(questionnaire.questionnaireId))
+									obj.line("id", builder => builder.value(currentQuestionnaireId))
 									obj.line("pass", builder => builder.value(study.apiPassword))
 									obj.line("data", builder => builder.data({"column1":"data", "column2":"more data"}))
 								});
