@@ -38,7 +38,7 @@ export default PrivatePage(async (query: URLSearchParams) => {
 	
 	
 	if(!id) {
-		questionnaire.blockchainDenotation = await getDenotation(questionnaire.blockchainAccountId ?? 0);
+		questionnaire.blockchainDenotation = await getDenotation(study?.blockchainAccountId ?? 0);
 	}
 	
 	return {
