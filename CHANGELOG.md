@@ -1,3 +1,9 @@
+## 0.3.3
+- Add a logout button.
+- Fix admin state after login.
+- Fix exceptions when no questionnaires exist.
+- Add response information to the ConnectAppHelp page.
+
 ## 0.3.2
 - Fix the config path in docker-compose.yml.
 - Fix faulty tooltips.
