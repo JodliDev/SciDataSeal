@@ -93,12 +93,18 @@ class FloatingMenuClass {
 	 *
 	 * @param event - The mouse event that triggers the creation of the dropdown. Used to determine the dropdown's position on the screen.
 	 */
-	private createDropdown(event: MouseEvent): void {
+	private createMenu(event: MouseEvent): void {
 		if(this.view) {
 			this.closeMenu();
 		}
+		for(const key in FloatingMenuClass.openedMenus) { // close other menus with the same id
+			if(key == this.id) {
+				FloatingMenuClass.openedMenus[key].closeMenu();
+			}
+		}
 		this.view = document.createElement("div");
 		this.view.classList.add(css.openedMenu);
+		this.view.classList.add(this.id);
 		
 		const target = event.target as HTMLElement;
 		
@@ -177,7 +183,7 @@ class FloatingMenuClass {
 							this.closeMenu();
 						}
 						else {
-							this.createDropdown(event);
+							this.createMenu(event);
 						}
 					}
 				};
@@ -185,7 +191,7 @@ class FloatingMenuClass {
 				return {
 					onmouseenter: (event: MouseEvent) => {
 						(event as MithrilEvent).redraw = false;
-						this.createDropdown(event);
+						this.createMenu(event);
 					},
 					onmouseleave: (event: MouseEvent) => {
 						(event as MithrilEvent).redraw = false;
@@ -196,7 +202,7 @@ class FloatingMenuClass {
 				return {
 					onmouseenter: (event: MouseEvent) => {
 						(event as MithrilEvent).redraw = false;
-						this.createDropdown(event);
+						this.createMenu(event);
 						if(!this.view) {
 							return;
 						}
